@@ -45,19 +45,19 @@ dotnet run --project src/DesktopLife.App -- --settings
 ## 3. 推荐：一条命令生成便携包
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.1.0
 ```
 
 脚本会输出 JSON，包含：
 
-- `Archive`：`artifacts/DesktopLife-Portable-win-x64-<Git短版本>.zip`。
+- `Archive`：`artifacts/DesktopLife-Portable-win-x64-v<发布版本>.zip`。
 - `PublishedDirectory`：本次独立暂存目录，其中的 `DesktopLife.exe` 就是可独立运行的自包含 EXE。
 - `Bytes`：ZIP 字节数。
 - `SHA256`：ZIP 校验值；同时写入旁边的 `.zip.sha256` 文件。
 
-每次使用新的暂存目录，防止普通发布的旧 DLL 混入便携包。相同 Git 版本的 ZIP 已存在时，脚本拒绝覆盖；请先重命名旧包，或提交新版本后重新生成。
+每次使用新的暂存目录，防止普通发布的旧 DLL 混入便携包。相同发布版本的 ZIP 已存在时，脚本会在构建前拒绝覆盖；请递增 -Version，或先重命名旧包。
 
-版本号来自当前 Git 提交，但构建使用当前工作区内容。正式分享前应先提交应用代码，确保版本号能准确对应源码：
+发布版本由 -Version 指定，默认 0.1.0，也支持 v0.1.0、0.2.0-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v0.1.0。构建使用当前工作区，正式分享前应先提交应用代码：
 
 ```powershell
 git status --short
@@ -67,7 +67,7 @@ git rev-parse --short HEAD
 脚本默认打入 `.NET 10.0.12`，这是此次实际验证的运行环境版本。更新运行环境时显式指定版本，并重新验证：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -RuntimeVersion 10.0.12
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.1.0 -RuntimeVersion 10.0.12
 ```
 
 朋友完整解压 ZIP 后，双击 `Start-DesktopLife.cmd` 即可启动并打开设置；双击 `DesktopLife.exe` 也能启动，设置窗口可通过托盘图标打开。
@@ -168,7 +168,7 @@ Get-FileHash '.\artifacts\DesktopLife-Portable-win-x64-<版本>.zip' -Algorithm 
 检查官方源连接。优先重试还原；不要关闭包签名或完整性校验。已有完整且可信的本地包源时，可使用：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -NuGetSource D:\packages\verified-feed
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.1.0 -NuGetSource D:\packages\verified-feed
 ```
 
 本地源需包含指定版本所需的包，或依赖已有 NuGet 缓存。此前的 `artifacts/portable-nuget-feed` 只是本机临时缓存，不会随仓库上传。

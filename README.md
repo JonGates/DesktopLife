@@ -55,10 +55,10 @@ EXE、设置窗口、任务栏及托盘使用统一昆虫图标。资源位于 `
 运行下面的命令生成 Windows x64 便携 ZIP：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.1.0
 ```
 
-输出为 `artifacts/DesktopLife-Portable-win-x64-<源码版本>.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
+输出为 `artifacts/DesktopLife-Portable-win-x64-v0.1.0.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
 
 便携版支持 Windows 10/11 x64，包含中文/英文、全局快捷键和全部现有昆虫。用户配置仍保存在 `%AppData%\DesktopLife`，不会把开发者的个人配置打包分享。程序退出时释放快捷键；首次启动可能需要片刻解包运行环境。
 

@@ -1,4 +1,6 @@
 ﻿param(
+    [ValidatePattern('^v?\d+\.\d+\.\d+(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$')]
+    [string]$Version = '0.1.0',
     [string]$RuntimeVersion = '10.0.12',
     [string]$NuGetSource
 )
@@ -6,12 +8,14 @@ $ErrorActionPreference = 'Stop'
 $repository = Split-Path $PSScriptRoot -Parent
 $revision = (git -C $repository rev-parse --short HEAD).Trim()
 if ($LASTEXITCODE -ne 0) { throw 'Cannot determine source revision.' }
-$name = "DesktopLife-Portable-win-x64-$revision"
+$releaseVersion = $Version.TrimStart('v')
+$name = "DesktopLife-Portable-win-x64-v$releaseVersion"
 $work = Join-Path $repository ('artifacts/portable-stage-' + [Guid]::NewGuid().ToString('N'))
 $output = Join-Path $work $name
 $archive = Join-Path $repository "artifacts/$name.zip"
+if (Test-Path -LiteralPath $archive) { throw "Archive already exists: $archive. Choose a new version or rename the old archive." }
 $arguments = @('publish', (Join-Path $repository 'src/DesktopLife.App/DesktopLife.App.csproj'), '-c', 'Release', '-r', 'win-x64',
-    '--self-contained', 'true', "-p:RuntimeFrameworkVersion=$RuntimeVersion", '-p:PublishSingleFile=true',
+    '--self-contained', 'true', "-p:RuntimeFrameworkVersion=$RuntimeVersion", "-p:Version=$releaseVersion", '-p:PublishSingleFile=true',
     '-p:IncludeNativeLibrariesForSelfExtract=true', '-p:DisableTransitiveFrameworkReferenceDownloads=true', '-p:DebugType=None', '-p:DebugSymbols=false', '-o', $output, '--nologo')
 if ($NuGetSource) { $arguments += @('--source', $NuGetSource) }
 & dotnet @arguments
@@ -50,7 +54,7 @@ Windows 10/11 x64. Preferences are stored in %AppData%\DesktopLife, outside this
 Source: https://github.com/JonGates/DesktopLife
 '@
 [IO.File]::WriteAllText((Join-Path $output 'README.txt'), $instructions, [Text.UTF8Encoding]::new($true))
-@{ SourceRevision=$revision; RuntimeVersion=$RuntimeVersion; RuntimeIdentifier='win-x64'; SelfContained=$true; BuiltUtc=[DateTime]::UtcNow.ToString('o') } |
+@{ Version=$releaseVersion; SourceRevision=$revision; RuntimeVersion=$RuntimeVersion; RuntimeIdentifier='win-x64'; SelfContained=$true; BuiltUtc=[DateTime]::UtcNow.ToString('o') } |
     ConvertTo-Json | Set-Content -LiteralPath (Join-Path $output 'build-info.json') -Encoding UTF8
 # Preserve the redistribution notices supplied by the runtime NuGet packages.
 $cache = if ($env:NUGET_PACKAGES) { $env:NUGET_PACKAGES } else { Join-Path $env:USERPROFILE '.nuget/packages' }
