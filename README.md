@@ -40,6 +40,8 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 ![英文快捷键设置](docs/images/shortcuts-english.png)
 
+完整步骤见 [开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)，包含单文件 EXE、便携 ZIP、环境准备与发布验证。
+
 ## 给朋友分享（自带运行环境）
 
 运行下面的命令生成 Windows x64 便携 ZIP：
