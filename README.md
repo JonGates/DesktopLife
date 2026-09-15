@@ -40,6 +40,18 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 ![英文快捷键设置](docs/images/shortcuts-english.png)
 
+## 给朋友分享（自带运行环境）
+
+运行下面的命令生成 Windows x64 便携 ZIP：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1
+```
+
+输出为 `artifacts/DesktopLife-Portable-win-x64-<源码版本>.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
+
+便携版支持 Windows 10/11 x64，包含中文/英文、全局快捷键和全部现有昆虫。用户配置仍保存在 `%AppData%\DesktopLife`，不会把开发者的个人配置打包分享。程序退出时释放快捷键；首次启动可能需要片刻解包运行环境。
+
 ## 直接运行
 
 双击根目录 **`Run-DesktopLife.cmd`**，或者 **`artifacts/publish/DesktopLife.exe`**。
