@@ -15,7 +15,7 @@ DesktopLife：Windows 10/11 昆虫屏保与桌面宠物。屏保支持深浅色�
 ## 每次发布时检查
 
 1. 中英文 README 的版本、下载链接、功能和实际发布包保持一致。
-2. Release 标题说明是 Windows Insect Screensaver 还是 Desktop Pets；两种模式的发布页互相链接，提供对应包的直达下载，保留预览版标识和校验信息。
+2. 一个项目版本对应一个 Release，标题同时说明 Desktop App 与 Screensaver；从同一标签分别构建两个子程序，使用相同版本号，上传两个 ZIP 及各自 SHA256。发布页提供两种程序的下载对照，旧 Release 仅作为历史版本，保留预览版标识和校验信息。
 3. 保留真实运行 GIF；新增 GIF 时兼顾清晰度、体积及页面首屏加载。
 4. Topics 只标记实际功能或技术，不添加未实现的平台、功能和无关项目名。
 5. 在 GitHub 搜索中检查 `DesktopLife`、`windows screensaver in:description,readme`、`desktop pets in:name,description,readme`、`topic:screensaver language:C#` 等查询。搜索索引更新可能滞后；不以刚修改后的位置判断效果。

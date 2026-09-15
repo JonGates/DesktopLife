@@ -13,17 +13,17 @@ The native **Windows `.scr` screen saver** offers dark/light backgrounds and aut
 | Experience | Windows x64 portable download | Start here |
 | --- | --- | --- |
 | Native screen saver for an idle computer, with dark/light themes | **[Screensaver v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** | Extract and run `Install-ScreenSaver.cmd`, then choose an idle timeout in Windows. |
-| Desktop companions, a mouse-following fly and roaming insects | **[Desktop pets v0.1.0](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)** | Extract and run `Start-DesktopLife.cmd`. |
+| Desktop companions, a mouse-following fly and roaming insects | **[Desktop pets v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-Portable-win-x64-v0.2.0.zip)** | Extract and run `Start-DesktopLife.cmd`. |
 
-Both are preview releases with the .NET runtime included. Each mode keeps its own settings. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
+DesktopLife v0.2.0 is one preview release with two programs: the desktop app and the screen saver. Both include the .NET runtime and keep separate settings. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
 
 ![DesktopLife Windows desktop pets: insects roaming on the primary monitor](docs/images/live-desktop.gif)
 
 ## Download and run
 
-**[Download DesktopLife v0.1.0 for Windows x64 — portable ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)**
+**[Download DesktopLife v0.2.0 for Windows x64 — portable ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-Portable-win-x64-v0.2.0.zip)**
 
-Version **v0.1.0 is a preview release**. [Release notes and checksums](https://github.com/JonGates/DesktopLife/releases/tag/v0.1.0).
+Version **v0.2.0 is a preview release**. [Release notes and checksums](https://github.com/JonGates/DesktopLife/releases/tag/v0.2.0).
 
 ### Screen saver v0.2.0
 
@@ -31,9 +31,9 @@ Version **v0.1.0 is a preview release**. [Release notes and checksums](https://g
 
 Extract it, run `Configure-ScreenSaver.cmd` to choose **Dark / Light** and populations, and try `Preview-FullScreen.cmd`. Run `Install-ScreenSaver.cmd` to select it in Windows Screen Saver Settings and set the idle timeout. Move the mouse or press a key to exit. Keep the extracted folder in place. [Full bilingual instructions](docs/SCREENSAVER.md).
 
-### Desktop companion v0.1.0
+### Desktop companion v0.2.0
 
-1. Open the release page and download **`DesktopLife-Portable-win-x64-v0.1.0.zip`** from **Assets**.
+1. Open the release page and download **`DesktopLife-Portable-win-x64-v0.2.0.zip`** from **Assets**.
 2. Extract the entire ZIP into a folder.
 3. Double-click **`Start-DesktopLife.cmd`** to launch the app and open settings. You can also run **`DesktopLife.exe`** and double-click its system tray icon to open settings.
 4. Choose **English** in the language selector, adjust insect counts, and click **Save population**.
@@ -101,10 +101,10 @@ dotnet run --project src/DesktopLife.App -- --settings
 Create a self-contained Windows x64 portable package:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.1.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.2.0
 ```
 
-Output: `artifacts/DesktopLife-Portable-win-x64-v0.1.0.zip` and its SHA256 file. The `artifacts/` directory is generated locally and excluded from Git.
+Output: `artifacts/DesktopLife-Portable-win-x64-v0.2.0.zip` and its SHA256 file. The `artifacts/` directory is generated locally and excluded from Git.
 
 See the [development and packaging guide (Chinese)](docs/DEVELOPMENT_AND_PACKAGING.md), [recording guide (Chinese)](docs/images/README.md), and [sprite asset notes (Chinese)](src/DesktopLife.Rendering/Assets/README.md).
 
