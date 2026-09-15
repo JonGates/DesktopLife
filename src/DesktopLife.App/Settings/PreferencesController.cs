@@ -22,9 +22,20 @@ public sealed class PreferencesController : IDisposable
         host.WindowCreated += Capture.Track;
         foreach (var window in host.Overlays) Capture.Track(window);
         LanguageService.Apply(Current.Language);
+        host.SetStyle(Current.Style);
         if (invalid) _warningKey = "ConfigWarning";
         Hotkeys = new(() => { if (host.IsPaused) host.TogglePause(); }, () => { if (!host.IsPaused) host.TogglePause(); });
         if (!Hotkeys.TryApply(Current.StartHotkey, Current.PauseHotkey, () => { }, out var error)) _warningKey = error;
+    }
+    public bool SaveStyle(DesktopLife.Rendering.CreatureStyle style, out string error)
+    {
+        var next = Current with { Style = style };
+        try { _store.SavePreferences(next); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { error = "SaveFailed"; return false; }
+        Current = next;
+        _host.SetStyle(style);
+        error = "";
+        return true;
     }
     public bool SaveLanguage(string language, out string error)
     {

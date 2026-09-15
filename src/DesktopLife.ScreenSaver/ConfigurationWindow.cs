@@ -26,6 +26,9 @@ public sealed class ConfigurationWindow : Window
         Label("背景 / Background");
         var theme = new ComboBox { Margin = new Thickness(0, 0, 0, 18), Height = 32, ItemsSource = new[] { "深色 / Dark", "浅色 / Light" }, SelectedIndex = settings.Light ? 1 : 0 };
         panel.Children.Add(theme);
+        Label("昆虫风格 / Creature style");
+        var style = new ComboBox { Margin = new Thickness(0, 0, 0, 18), Height = 32, ItemsSource = new[] { "写实 / Realistic", "可爱 / Cute" }, SelectedIndex = (int)settings.Style };
+        panel.Children.Add(style);
         TextBox Count(string label, int value)
         {
             Label(label);
@@ -46,7 +49,7 @@ public sealed class ConfigurationWindow : Window
         {
             if (!int.TryParse(roaches.Text, out var r) || r is < 0 or > 500 || !int.TryParse(ants.Text, out var a) || a is < 0 or > 500 || !int.TryParse(caterpillars.Text, out var c) || c is < 0 or > 100)
             { status.Text = "请输入范围内的整数。 / Enter whole numbers within the ranges."; return; }
-            try { store.Save(new(theme.SelectedIndex == 1, r, a, c)); Close(); }
+            try { store.Save(new(theme.SelectedIndex == 1, r, a, c, (DesktopLife.Rendering.CreatureStyle)style.SelectedIndex)); Close(); }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException) { status.Text = "保存失败。 / Could not save: " + e.Message; }
         };
     }

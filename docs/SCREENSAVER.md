@@ -1,6 +1,6 @@
 # DesktopLife 昆虫屏保 · Windows 10/11 Insect Screensaver (.scr)
 
-[中文项目首页](https://github.com/JonGates/DesktopLife#readme) · [English guide](https://github.com/JonGates/DesktopLife/blob/main/README.en.md) · **[下载屏保 / Download screensaver](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)**
+[中文项目首页](https://github.com/JonGates/DesktopLife#readme) · [English guide](https://github.com/JonGates/DesktopLife/blob/main/README.en.md) · **[下载屏保 / Download screensaver](https://github.com/JonGates/DesktopLife/releases/download/v0.3.0/DesktopLife-ScreenSaver-win-x64-v0.3.0.zip)**
 
 Windows 10/11 x64 屏保，自带 .NET 运行环境。独立于桌面宠物模式，可切换深色／浅色背景，支持多显示器、昆虫总数量设置、自动飞行和停落。
 
@@ -41,11 +41,13 @@ Keep the extracted folder in place after selecting the screen saver. To disable 
 dotnet run --project src/DesktopLife.ScreenSaver -- /c
 dotnet run --project src/DesktopLife.ScreenSaver -- /s
 dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-check
-powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.2.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.3.0
 ```
 
-输出：`artifacts/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip` 和 `.zip.sha256`。原桌面模式继续使用 `Package-Portable.ps1` 打包。
+输出：`artifacts/DesktopLife-ScreenSaver-win-x64-v0.3.0.zip` 和 `.zip.sha256`。原桌面模式继续使用 `Package-Portable.ps1` 打包。
 
 源码 / Source: https://github.com/JonGates/DesktopLife
 
 Microsoft: [屏保参数](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms686421(v=vs.85)) · [安装入口](https://learn.microsoft.com/en-us/windows/win32/devnotes/scrnsave-exe)
+
+昆虫风格 / Creature style：配置窗口可选择写实或可爱外观，独立于深浅色背景；下次启动屏保或系统预览时生效。

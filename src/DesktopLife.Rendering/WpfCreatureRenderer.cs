@@ -10,7 +10,22 @@ public sealed class WpfCreatureRenderer : IRenderer
     private static readonly DrawingGroup[] RestingFly = Enumerable.Range(0, 8).Select(i => FlySprite.Create(true, i)).ToArray();
     private static readonly DrawingGroup[] Ants = Enumerable.Range(0, 8).Select(i => SmallInsectSprite.Create(false, i)).ToArray();
     private static readonly DrawingGroup[] Caterpillars = Enumerable.Range(0, 8).Select(i => SmallInsectSprite.Create(true, i)).ToArray();
-    private readonly DrawingGroup[] _roachFrames = [CockroachSprite.Create(false), CockroachSprite.Create(true)];
+    private static readonly DrawingGroup[] Roaches = Enumerable.Range(0, 8).Select(CockroachSprite.Create).ToArray();
+    private static readonly Dictionary<CreatureKind, DrawingGroup[]> Cute = new[] { CreatureKind.Fly, CreatureKind.Ant, CreatureKind.Cockroach, CreatureKind.Caterpillar }
+        .ToDictionary(k => k, k => Enumerable.Range(0, 8).Select(i => CuteInsectSprite.Create(k, i)).ToArray());
+    private static readonly DrawingGroup[] CuteResting = Enumerable.Range(0, 8).Select(i => CuteInsectSprite.Create(CreatureKind.Fly, i, true)).ToArray();
+    private static readonly DrawingGroup SettledFly = FlySprite.Create(true, grooming: false);
+    private static readonly DrawingGroup CuteSettledFly = CuteInsectSprite.Create(CreatureKind.Fly, 0, true, false);
+    public static bool IsGrooming(ICreature creature) => creature.IsResting && creature.RestingSeconds is >= 0.25f and <= 2.65f && creature.RestingSeconds is not (> 1.05f and < 1.4f);
+    public CreatureStyle Style { get; set; }
+    public static int Frame(ICreature creature)
+    {
+        if (!creature.IsResting) return (int)(creature.AnimationPhase * 8) & 7;
+        // Settle, groom in short bouts, then hold still before departure.
+        var t = creature.RestingSeconds;
+        if (t < 0.25f || t > 2.65f || t is > 1.05f and < 1.4f) return 0;
+        return (int)(t * 14) & 7;
+    }
     public void Render(DrawingContext dc, IReadOnlyList<ICreature> creatures, WorldBounds bounds, float time, double scaleX, double scaleY)
     {
         for (var i = 0; i < creatures.Count; i++)
@@ -26,21 +41,17 @@ public sealed class WpfCreatureRenderer : IRenderer
             var transform = new MatrixTransform(matrix);
             transform.Freeze();
             dc.PushTransform(transform);
-            if (creature.Kind == CreatureKind.Cockroach)
-            {
-                var step = (int)(time * 10 + creature.Position.X * 0.03f + creature.Position.Y * 0.02f);
-                dc.DrawDrawing(_roachFrames[step & 1]);
-            }
-                        else
-            {
-                var frame = (int)(time * (creature.IsResting ? 18 : creature.Kind == CreatureKind.Fly ? 53 : 12)) & 7;
+            var frame = Frame(creature);
+            if (Style == CreatureStyle.Cute && Cute.TryGetValue(creature.Kind, out var cute))
+                dc.DrawDrawing(creature.IsResting ? (IsGrooming(creature) ? CuteResting[frame] : CuteSettledFly) : cute[frame]);
+            else
                 dc.DrawDrawing(creature.Kind switch
                 {
+                    CreatureKind.Cockroach => Roaches[frame],
                     CreatureKind.Ant => Ants[frame],
                     CreatureKind.Caterpillar => Caterpillars[frame],
-                    _ => creature.IsResting ? RestingFly[frame] : FlyingFly[frame]
+                    _ => creature.IsResting ? (IsGrooming(creature) ? RestingFly[frame] : SettledFly) : FlyingFly[frame]
                 });
-            }
             dc.Pop();
         }
     }

@@ -71,7 +71,7 @@ internal static class ScreenSaverProbe
                 {
                     Capture(child, Path.Combine(output, "preview-dark.png"));
                     session.Dispose(); Require(!IsWindow(child), "Disposal left a child window");
-                    session = new SaverSession(app, new(true, 12, 13, 4), parent); child = session.PreviewHandle;
+                    session = new SaverSession(app, new(true, 12, 13, 4, DesktopLife.Rendering.CreatureStyle.Cute), parent); child = session.PreviewHandle;
                     phase++;
                 }
                 else if (phase == 1)

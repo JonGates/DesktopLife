@@ -10,14 +10,20 @@ DesktopLife 为 **Windows 10/11** 提供两种昆虫体验：电脑闲置时运�
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面固定 1 只苍蝇，默认 20 只蟑螂、20 只蚂蚁、3 只毛毛虫。控制窗口可调整爬行昆虫总数，不随屏幕数倍增。
 
+## 写实 / 可爱，两种昆虫风格
+
+桌面设置中的“昆虫风格”可立即切换外观，保留数量和位置。屏保设置也支持独立选择。苍蝇落地前减速、分段搓足；爬行昆虫平滑转向，步态随实际移动推进。
+
+![写实与可爱风格对照，WPF 渲染放大示意，非桌面录像](docs/images/creature-styles.png)
+
 ## 选择并下载
 
 | 你想要的效果 | 下载 Windows x64 便携包 | 如何启动 |
 | --- | --- | --- |
-| 电脑闲置时自动显示昆虫，深色／浅色背景 | **[屏保版 v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** | 解压后运行 `Install-ScreenSaver.cmd`，在 Windows 中设置等待时间。 |
-| 工作时让昆虫在桌面活动，苍蝇跟随鼠标 | **[桌面宠物版 v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-Portable-win-x64-v0.2.0.zip)** | 解压后运行 `Start-DesktopLife.cmd`。 |
+| 电脑闲置时自动显示昆虫，深色／浅色背景 | **[屏保版 v0.3.0](https://github.com/JonGates/DesktopLife/releases/download/v0.3.0/DesktopLife-ScreenSaver-win-x64-v0.3.0.zip)** | 解压后运行 `Install-ScreenSaver.cmd`，在 Windows 中设置等待时间。 |
+| 工作时让昆虫在桌面活动，苍蝇跟随鼠标 | **[桌面宠物版 v0.3.0](https://github.com/JonGates/DesktopLife/releases/download/v0.3.0/DesktopLife-Portable-win-x64-v0.3.0.zip)** | 解压后运行 `Start-DesktopLife.cmd`。 |
 
-DesktopLife v0.2.0 为预览版，同一版本提供桌面应用与屏保两个子程序；均自带 .NET 运行环境，分别保存配置。[屏保使用说明](docs/SCREENSAVER.md) · [全部版本与校验文件](https://github.com/JonGates/DesktopLife/releases)
+DesktopLife v0.3.0 为预览版，同一版本提供桌面应用与屏保两个子程序；均自带 .NET 运行环境，分别保存配置。[屏保使用说明](docs/SCREENSAVER.md) · [全部版本与校验文件](https://github.com/JonGates/DesktopLife/releases)
 
 ![DesktopLife Windows desktop pets：主屏实录，桌面昆虫自由爬行](docs/images/live-desktop.gif)
 
@@ -25,25 +31,25 @@ DesktopLife v0.2.0 为预览版，同一版本提供桌面应用与屏保两个�
 
 支持 **Windows 10/11 x64**。便携包自带运行环境，无需安装 .NET、SDK 或 Visual Studio。
 
-**[下载 v0.2.0 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-Portable-win-x64-v0.2.0.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.2.0) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
+**[下载 v0.3.0 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.3.0/DesktopLife-Portable-win-x64-v0.3.0.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.3.0) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
 
-桌面宠物版 v0.2.0 为预览版（Pre-release）。
+桌面宠物版 v0.3.0 为预览版（Pre-release）。
 
-### 屏保版 v0.2.0
+### 屏保版 v0.3.0
 
-**[下载屏保便携包](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** · [屏保发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.2.0)
+**[下载屏保便携包](https://github.com/JonGates/DesktopLife/releases/download/v0.3.0/DesktopLife-ScreenSaver-win-x64-v0.3.0.zip)** · [屏保发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.3.0)
 
 完整解压后，运行 `Configure-ScreenSaver.cmd` 选择深色／浅色和昆虫数量；`Preview-FullScreen.cmd` 体验全屏效果；`Install-ScreenSaver.cmd` 打开 Windows 屏保设置，选择等待时间并应用。移动鼠标或按键退出屏保。屏保包也自带运行环境，安装后需保留解压文件夹。[详细步骤](docs/SCREENSAVER.md)。
 
 ### 桌面宠物版：1. 在 GitHub 下载运行包
 
-如果你打开的是 **Tags** 页面，请切换到旁边的 **Releases**，找到对应版本，展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.2.0.zip`。
+如果你打开的是 **Tags** 页面，请切换到旁边的 **Releases**，找到对应版本，展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.3.0.zip`。
 
 | 下载项 | 用途 |
 | --- | --- |
-| `DesktopLife-Portable-win-x64-v0.2.0.zip` | 桌面宠物模式，包含程序和运行环境。 |
-| `DesktopLife-ScreenSaver-win-x64-v0.2.0.zip` | Windows 屏保模式，包含 `.scr`、配置与安装入口和运行环境。 |
-| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/SHA256SUMS.txt) | 两个 ZIP 共用的 SHA256 清单，每个文件各有一行校验值，无需运行。 |
+| `DesktopLife-Portable-win-x64-v0.3.0.zip` | 桌面宠物模式，包含程序和运行环境。 |
+| `DesktopLife-ScreenSaver-win-x64-v0.3.0.zip` | Windows 屏保模式，包含 `.scr`、配置与安装入口和运行环境。 |
+| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.3.0/SHA256SUMS.txt) | 两个 ZIP 共用的 SHA256 清单，每个文件各有一行校验值，无需运行。 |
 | Tags 页面里的 `zip` / `tar.gz`，或 Releases 的 `Source code` | 项目源码，供开发者使用，不能直接当作便携程序运行。 |
 
 ### 桌面宠物版：2. 解压并启动
@@ -140,10 +146,10 @@ EXE、设置窗口、任务栏及托盘使用统一昆虫图标。资源位于 `
 运行下面的命令生成 Windows x64 便携 ZIP：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.2.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.0
 ```
 
-输出为 `artifacts/DesktopLife-Portable-win-x64-v0.2.0.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
+输出为 `artifacts/DesktopLife-Portable-win-x64-v0.3.0.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
 
 便携版支持 Windows 10/11 x64，包含中文/英文、全局快捷键和全部现有昆虫。用户配置仍保存在 `%AppData%\DesktopLife`，不会把开发者的个人配置打包分享。程序退出时释放快捷键；首次启动可能需要片刻解包运行环境。
 

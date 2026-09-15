@@ -48,7 +48,7 @@ public sealed class SaverSession : IDisposable
             {
                 foreach (var display in displays)
                 {
-                    var surface = new SaverSurface(Simulation, display.Bounds, settings.Light);
+                    var surface = new SaverSurface(Simulation, display.Bounds, settings.Light, style: settings.Style);
                     var window = new SaverWindow(display.Bounds, surface);
                     window.Closed += WindowClosed;
                     _windows.Add(window); _surfaces.Add(surface); window.Show();
@@ -67,7 +67,7 @@ public sealed class SaverSession : IDisposable
                     { ParentWindow = previewParent, WindowStyle = 0x40000000 | 0x10000000, Width = 1, Height = 1 });
                 }
                 finally { if (context != 0) SaverNative.SetThreadDpiAwarenessContext(context); }
-                var surface = new SaverSurface(Simulation, displays[0].Bounds, settings.Light, preview: true);
+                var surface = new SaverSurface(Simulation, displays[0].Bounds, settings.Light, preview: true, style: settings.Style);
                 _surfaces.Add(surface); _preview.RootVisual = surface;
                 ResizePreview();
             }

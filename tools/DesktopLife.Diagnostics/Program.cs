@@ -13,6 +13,7 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--styles") { StyleProbe.Run(args.Length > 1 ? args[1] : "artifacts/style-check"); return; }
         if (args.Length > 1 && args[0] == "--screensaver-external-check") { ScreenSaverProbe.RunExternal(args[1]); return; }
         if (args.Length > 0 && args[0] == "--screensaver-layout-check") { ScreenSaverProbe.RunFullScreen(args.Length > 1 ? args[1] : "artifacts/screensaver-layout-check", synthetic: true); return; }
         if (args.Length > 0 && args[0] == "--screensaver-fullscreen-check") { ScreenSaverProbe.RunFullScreen(args.Length > 1 ? args[1] : "artifacts/screensaver-fullscreen-check"); return; }

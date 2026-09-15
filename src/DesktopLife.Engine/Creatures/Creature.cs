@@ -10,6 +10,10 @@ public abstract class Creature : ICreature
     public float Scale { get; protected set; } = 1;
     public bool IsVisible { get; protected set; } = true;
     public virtual bool IsResting => false;
+    public float AnimationPhase { get; protected set; }
+    public float RestingSeconds { get; protected set; }
+    protected void AdvanceGait(Vector2 previous, float stride) =>
+        AnimationPhase = (AnimationPhase + Vector2.Distance(previous, Position) / stride) % 1;
     public virtual void Relocate(Vector2 position) { Position = position; Velocity = Vector2.Zero; }
     public abstract void Update(float deltaTime, in CreatureContext context);
 }

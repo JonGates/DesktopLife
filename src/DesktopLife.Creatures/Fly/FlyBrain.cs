@@ -55,7 +55,8 @@ public sealed class FlyBrain(FlyOptions options)
         {
             var toLanding = _landingTarget - position;
             var distanceToLanding = toLanding.Length();
-            var step = MathF.Min(options.FollowSpeed * dt, distanceToLanding);
+            var landingSpeed = MathF.Min(options.FollowSpeed, MathF.Max(18, distanceToLanding * 8));
+            var step = MathF.Min(landingSpeed * dt, distanceToLanding);
             if (distanceToLanding <= step + 0.001f)
             {
                 State = FlyState.Landed;
@@ -63,7 +64,7 @@ public sealed class FlyBrain(FlyOptions options)
                 return new(_landingTarget, Vector2.Zero);
             }
             // A fixed destination is independent of later cursor movement; never snap across the screen.
-            velocity = toLanding / distanceToLanding * options.FollowSpeed;
+            velocity = toLanding / distanceToLanding * landingSpeed;
             return new(position + toLanding / distanceToLanding * step, velocity);
         }
         if (State == FlyState.Landed)

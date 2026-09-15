@@ -48,7 +48,7 @@ public sealed class SettingsStore(string? filePath = null)
         {
             if (!File.Exists(PreferencesPath)) return new();
             var value = JsonSerializer.Deserialize<AppPreferences>(File.ReadAllText(PreferencesPath)) ?? throw new JsonException();
-            if (value.StartHotkey == null || value.PauseHotkey == null || value.Language is not ("zh-CN" or "en-US") || !Hotkey.TryParse(value.StartHotkey, out var a) || !Hotkey.TryParse(value.PauseHotkey, out var b) || (a.Key != 0 && a == b)) throw new JsonException();
+            if (!Enum.IsDefined(value.Style) || value.StartHotkey == null || value.PauseHotkey == null || value.Language is not ("zh-CN" or "en-US") || !Hotkey.TryParse(value.StartHotkey, out var a) || !Hotkey.TryParse(value.PauseHotkey, out var b) || (a.Key != 0 && a == b)) throw new JsonException();
             return value;
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)

@@ -21,6 +21,7 @@ public partial class SettingsWindow : Window
         _preferences = preferences ?? new PreferencesController(host, store);
         InitializeComponent();
         LanguagePicker.SelectedIndex = LanguageService.Current == "en-US" ? 1 : 0;
+        StylePicker.SelectedIndex = (int)_preferences.Current.Style;
         StartKey.Text = _preferences.Current.StartHotkey;
         PauseKey.Text = _preferences.Current.PauseHotkey;
         LanguageService.Changed += Translate;
@@ -52,6 +53,16 @@ public partial class SettingsWindow : Window
         if (_preferences.WarningKey != null) SetStatus(_preferences.WarningKey);
     }
 
+    private void StyleChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready) return;
+        if (_preferences.SaveStyle((DesktopLife.Rendering.CreatureStyle)StylePicker.SelectedIndex, out var error)) SetStatus("StyleSaved");
+        else
+        {
+            _ready = false; StylePicker.SelectedIndex = (int)_preferences.Current.Style; _ready = true;
+            SetStatus(error);
+        }
+    }
     private void CaptureError() => SetStatus("CaptureFailed");
     private void CaptureChanged(object sender, RoutedEventArgs e)
     {

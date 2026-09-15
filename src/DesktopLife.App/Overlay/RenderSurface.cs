@@ -7,7 +7,8 @@ public sealed class RenderSurface(SimulationWorld world) : FrameworkElement
 {
     public WorldBounds Viewport { get; set; } = world.Bounds;
     private readonly DebugHud _hud = new();
-    private readonly IRenderer _renderer = new WpfCreatureRenderer();
+    public CreatureStyle InsectStyle { get => _renderer.Style; set { _renderer.Style = value; InvalidateVisual(); } }
+    private readonly WpfCreatureRenderer _renderer = new WpfCreatureRenderer();
     public double UpdateMs { get; set; }
     public string StateLabel { get; set; } = "Offscreen";
     public int CockroachCount { get; set; }

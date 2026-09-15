@@ -15,7 +15,11 @@ public sealed class FlyCreature : Creature
     }
     public override void Update(float deltaTime, in CreatureContext context)
     {
+        if (!float.IsFinite(deltaTime) || deltaTime <= 0) return;
+        var wasResting = IsResting;
         var motion = _brain.Update(Position, Velocity, deltaTime, in context);
+        RestingSeconds = IsResting ? (wasResting ? RestingSeconds + MathF.Min(deltaTime, 0.05f) : 0) : 0;
+        AnimationPhase = (AnimationPhase + MathF.Min(deltaTime, 0.05f) * (53f / 8)) % 1;
         Position = motion.Position;
         Velocity = motion.Velocity;
         if (Velocity.LengthSquared() > 35 * 35 && float.IsFinite(deltaTime) && deltaTime > 0)

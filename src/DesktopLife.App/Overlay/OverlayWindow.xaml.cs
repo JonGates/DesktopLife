@@ -19,6 +19,7 @@ public partial class OverlayWindow : Window
 #if DEBUG
     private double _nextIdleDraw;
 #endif
+    public DesktopLife.Rendering.CreatureStyle InsectStyle { get => _surface.InsectStyle; set => _surface.InsectStyle = value; }
     public DisplayWorld Session { get; private set; }
 
     public void UpdateDisplay(DisplayWorld session)

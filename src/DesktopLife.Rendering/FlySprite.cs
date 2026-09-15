@@ -15,7 +15,7 @@ internal static class FlySprite
         bitmap.Freeze();
         return bitmap;
     }
-    public static DrawingGroup Create(bool resting, int phase = 0)
+    public static DrawingGroup Create(bool resting, int phase = 0, bool grooming = true)
     {
         var frame = new CroppedBitmap(Atlas, new Int32Rect(resting ? 0 : Atlas.PixelWidth / 2, 0, Atlas.PixelWidth / 2, Atlas.PixelHeight));
         frame.Freeze();
@@ -51,10 +51,10 @@ internal static class FlySprite
             var leg = new Pen(new SolidColorBrush(Color.FromRgb(52, 43, 32)), 12) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
             for (var side = -1; side <= 1; side += 2)
             {
-                var rub = resting ? Math.Sin(phase * Math.PI / 4) : 0;
+                var rub = resting && grooming ? Math.Sin(phase * Math.PI / 4) : 0;
                 var root = new Point(560, 512 + side * 80);
-                var knee = new Point(660 + rub * 20, 512 + side * (resting ? 85 : 115));
-                var foot = new Point(725 + rub * 14, 512 + side * (resting ? 12 + (1 + rub) * 15 : 100));
+                var knee = new Point(660 + rub * 20, 512 + side * (resting && grooming ? 85 : 115));
+                var foot = new Point(725 + rub * 14, 512 + side * (resting && grooming ? 12 + (1 + rub) * 15 : 100));
                 dc.DrawLine(leg, root, knee); dc.DrawLine(leg, knee, foot);
             }
             dc.Pop();

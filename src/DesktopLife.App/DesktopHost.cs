@@ -31,6 +31,13 @@ public sealed class DesktopHost : IDisposable
     public DisplaySimulation Simulation { get; } = new(Environment.TickCount);
     public IReadOnlyList<OverlayWindow> Overlays { get; private set; } = [];
     public bool IsPaused { get; private set; }
+    public DesktopLife.Rendering.CreatureStyle Style { get; private set; }
+    public void SetStyle(DesktopLife.Rendering.CreatureStyle style)
+    {
+        _dispatcher.VerifyAccess();
+        Style = style;
+        foreach (var window in Overlays) window.InsectStyle = style;
+    }
     public event Action<System.Windows.Window>? WindowCreated;
     public event Action? LayoutChanged;
     public event Action? StateChanged;
@@ -76,7 +83,7 @@ public sealed class DesktopHost : IDisposable
                 }
                 else
                 {
-                    window = new OverlayWindow(session);
+                    window = new OverlayWindow(session) { InsectStyle = Style };
                     window.Closed += OnWindowClosed;
                     WindowCreated?.Invoke(window);
                 }

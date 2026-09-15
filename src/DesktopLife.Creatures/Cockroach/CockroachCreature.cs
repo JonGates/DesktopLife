@@ -26,10 +26,17 @@ public sealed class CockroachCreature : Creature
 
     public override void Update(float deltaTime, in CreatureContext context)
     {
+        if (!float.IsFinite(deltaTime) || deltaTime <= 0) return;
+        var previous = Position;
         var motion = _brain.Update(this, deltaTime, in context);
         Position = motion.Position;
         Velocity = motion.Velocity;
-        if (Velocity.LengthSquared() > 1) Rotation = MathF.Atan2(Velocity.Y, Velocity.X);
+        AdvanceGait(previous, 20);
+        if (Velocity.LengthSquared() > 1)
+        {
+            var turn = MathF.IEEERemainder(MathF.Atan2(Velocity.Y, Velocity.X) - Rotation, MathF.Tau);
+            Rotation += Math.Clamp(turn, -12 * MathF.Min(deltaTime, 0.05f), 12 * MathF.Min(deltaTime, 0.05f));
+        }
         IsVisible = State != CockroachState.Hidden;
     }
 }

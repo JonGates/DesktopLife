@@ -5,9 +5,9 @@ using DesktopLife.Engine.World;
 using DesktopLife.Rendering;
 namespace DesktopLife.ScreenSaver;
 
-public sealed class SaverSurface(DisplaySimulation simulation, WorldBounds viewport, bool light, bool preview = false) : FrameworkElement
+public sealed class SaverSurface(DisplaySimulation simulation, WorldBounds viewport, bool light, bool preview = false, CreatureStyle style = CreatureStyle.Realistic) : FrameworkElement
 {
-    private readonly WpfCreatureRenderer _renderer = new();
+    private readonly WpfCreatureRenderer _renderer = new() { Style = style };
     private readonly Brush _background = new SolidColorBrush(light ? Color.FromRgb(231, 240, 233) : Color.FromRgb(29, 42, 49));
     protected override void OnRender(DrawingContext dc)
     {

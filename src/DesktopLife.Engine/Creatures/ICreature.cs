@@ -10,5 +10,7 @@ public interface ICreature
     float Scale { get; }
     bool IsVisible { get; }
     bool IsResting => false;
+    float AnimationPhase => 0;
+    float RestingSeconds => 0;
     void Update(float deltaTime, in CreatureContext context);
 }

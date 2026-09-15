@@ -6,7 +6,8 @@ namespace DesktopLife.Rendering;
 /// <summary>Cached top-down placeholder with six animated legs and long antennae; +X is forward.</summary>
 internal static class CockroachSprite
 {
-    public static DrawingGroup Create(bool alternateStep)
+    public static DrawingGroup Create(bool alternateStep) => Create(alternateStep ? 4 : 0);
+    public static DrawingGroup Create(int phase)
     {
         var drawing = new DrawingGroup();
         var body = new LinearGradientBrush(Color.FromRgb(128, 72, 35), Color.FromRgb(69, 34, 18), 90);
@@ -22,7 +23,7 @@ internal static class CockroachSprite
                 for (var pair = 0; pair < 3; pair++)
                 {
                     var x = 5 - pair * 6;
-                    var step = ((pair + (side > 0 ? 1 : 0)) % 2 == 0) == alternateStep ? 2 : -2;
+                    var step = Math.Sin(phase * Math.PI / 4 + pair * Math.PI + (side > 0 ? Math.PI : 0)) * 2;
                     var knee = new Point(x + step, side * 9);
                     dc.DrawLine(leg, new Point(x, side * 4), knee);
                     dc.DrawLine(leg, knee, new Point(x - 4 + step, side * 12));

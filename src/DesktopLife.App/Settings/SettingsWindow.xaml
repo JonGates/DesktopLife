@@ -27,6 +27,12 @@
     <StackPanel Margin="26,22,26,8">
         <DockPanel LastChildFill="True"><ComboBox x:Name="LanguagePicker" DockPanel.Dock="Right" Width="116" VerticalAlignment="Center" SelectionChanged="LanguageChanged" AutomationProperties.Name="{DynamicResource Language}"><ComboBoxItem Content="简体中文" Tag="zh-CN"/><ComboBoxItem Content="English" Tag="en-US"/></ComboBox><TextBlock Text="DesktopLife" FontFamily="Segoe UI Semibold" FontSize="29"/></DockPanel>
         <TextBlock Text="{DynamicResource Subtitle}" Foreground="#596B7D" Margin="0,4,0,18"/>
+        <TextBlock Text="{DynamicResource Appearance}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+        <ComboBox x:Name="StylePicker" Height="34" Margin="0,0,0,8" SelectionChanged="StyleChanged" AutomationProperties.Name="{DynamicResource Appearance}">
+            <ComboBoxItem Content="{DynamicResource RealisticStyle}"/>
+            <ComboBoxItem Content="{DynamicResource CuteStyle}"/>
+        </ComboBox>
+        <TextBlock Text="{DynamicResource StyleHelp}" TextWrapping="Wrap" Foreground="#596B7D" Margin="0,0,0,18"/>
         <Border Background="White" BorderBrush="#D6E0EA" BorderThickness="1" CornerRadius="10" Padding="16">
             <StackPanel>
                 <DockPanel>
