@@ -39,7 +39,7 @@ internal static class FlyRenderProbe
             for (var phase = 0; phase < 8; phase++)
             {
                 var kind = row < 2 ? CreatureKind.Fly : row == 2 ? CreatureKind.Ant : CreatureKind.Caterpillar;
-                renderer.Render(dc, [new PoseCreature(new(40 + phase * 80, 40 + row * 80), row == 1, kind)], new(0, 0, 640, 320), phase / (row == 0 ? 53f : row == 1 ? 18f : 12f), 1, 1);
+                renderer.Render(dc, [new PoseCreature(new(40 + phase * 80, 40 + row * 80), row == 1, kind, phase / 8f, 0.5f + phase / 14f)], new(0, 0, 640, 320), phase / (row == 0 ? 53f : row == 1 ? 18f : 12f), 1, 1);
             }
         }
         var sheetBitmap = new RenderTargetBitmap(1280, 640, 192, 192, PixelFormats.Pbgra32);
@@ -59,7 +59,7 @@ internal static class FlyRenderProbe
         {
             var visual = new DrawingVisual();
             using (var dc = visual.RenderOpen())
-                renderer.Render(dc, [new PoseCreature(new(-920, 80), resting)], new(-1000, 0, 160, 160), time, scale, scale);
+                renderer.Render(dc, [new PoseCreature(new(-920, 80), resting, animationPhase: time * (53f / 8) % 1, restingSeconds: time)], new(-1000, 0, 160, 160), time, scale, scale);
             var bitmap = new RenderTargetBitmap(160, 160, 96 * scale, 96 * scale, PixelFormats.Pbgra32);
             bitmap.Render(visual);
             return bitmap;
@@ -83,7 +83,7 @@ internal static class FlyRenderProbe
         public override CreatureKind Kind { get; }
         private readonly bool _resting;
         public override bool IsResting => _resting;
-        public PoseCreature(Vector2 position, bool resting, CreatureKind kind = CreatureKind.Fly) { Position = position; _resting = resting; Kind = kind; }
+        public PoseCreature(Vector2 position, bool resting, CreatureKind kind = CreatureKind.Fly, float animationPhase = 0, float restingSeconds = 0) { Position = position; _resting = resting; Kind = kind; AnimationPhase = animationPhase; RestingSeconds = restingSeconds; }
         public override void Update(float deltaTime, in CreatureContext context) { }
     }
 }
