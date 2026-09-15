@@ -13,6 +13,10 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 1 && args[0] == "--screensaver-external-check") { ScreenSaverProbe.RunExternal(args[1]); return; }
+        if (args.Length > 0 && args[0] == "--screensaver-layout-check") { ScreenSaverProbe.RunFullScreen(args.Length > 1 ? args[1] : "artifacts/screensaver-layout-check", synthetic: true); return; }
+        if (args.Length > 0 && args[0] == "--screensaver-fullscreen-check") { ScreenSaverProbe.RunFullScreen(args.Length > 1 ? args[1] : "artifacts/screensaver-fullscreen-check"); return; }
+        if (args.Length > 0 && args[0] == "--screensaver-check") { ScreenSaverProbe.Run(args.Length > 1 ? args[1] : "artifacts/screensaver-check"); return; }
         if (args.Length > 0 && args[0] == "--recording-backdrop") { RecordingBackdrop.Run(); return; }
         if (args.Length > 0 && args[0] == "--readme-demo") { ReadmeDemo.Run(args.Length > 1 ? args[1] : "artifacts/readme-demo"); return; }
         if (args.Length > 0 && args[0] == "--preferences") { PreferencesProbe.Run(args.Length > 1 ? args[1] : "artifacts/preferences-probe"); return; }

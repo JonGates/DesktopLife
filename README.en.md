@@ -6,6 +6,8 @@
 
 Built with **C# / .NET 10 / WPF / Win32** for **Windows 10/11 x64**. The portable download includes the runtime; extract it and run.
 
+Also available as a **Windows `.scr` screen saver** with dark/light backgrounds, autonomous insects, multi-monitor support and separate population settings.
+
 ![DesktopLife Windows desktop pets: insects roaming on the primary monitor](docs/images/live-desktop.gif)
 
 ## Download and run
@@ -13,6 +15,14 @@ Built with **C# / .NET 10 / WPF / Win32** for **Windows 10/11 x64**. The portabl
 **[Download DesktopLife v0.1.0 for Windows x64 — portable ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)**
 
 Version **v0.1.0 is a preview release**. [Release notes and checksums](https://github.com/JonGates/DesktopLife/releases/tag/v0.1.0).
+
+### Screen saver v0.2.0
+
+**[Download the self-contained screen saver ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** · [Release notes](https://github.com/JonGates/DesktopLife/releases/tag/v0.2.0)
+
+Extract it, run `Configure-ScreenSaver.cmd` to choose **Dark / Light** and populations, and try `Preview-FullScreen.cmd`. Run `Install-ScreenSaver.cmd` to select it in Windows Screen Saver Settings and set the idle timeout. Move the mouse or press a key to exit. Keep the extracted folder in place. [Full bilingual instructions](docs/SCREENSAVER.md).
+
+### Desktop companion v0.1.0
 
 1. Open the release page and download **`DesktopLife-Portable-win-x64-v0.1.0.zip`** from **Assets**.
 2. Extract the entire ZIP into a folder.

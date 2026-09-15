@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>DesktopLife.ScreenSaver</AssemblyName>
+    <ApplicationManifest>../DesktopLife.App/app.manifest</ApplicationManifest>
+    <ApplicationIcon>../DesktopLife.App/Assets/DesktopLife.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../DesktopLife.Engine/DesktopLife.Engine.csproj" />
+    <ProjectReference Include="../DesktopLife.Creatures/DesktopLife.Creatures.csproj" />
+    <ProjectReference Include="../DesktopLife.Rendering/DesktopLife.Rendering.csproj" />
+    <ProjectReference Include="../DesktopLife.Windows/DesktopLife.Windows.csproj" />
+    <Resource Include="../DesktopLife.App/Assets/DesktopLife.ico" Link="DesktopLife.ico" />
+  </ItemGroup>
+</Project>

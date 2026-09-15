@@ -9,5 +9,6 @@
     <ProjectReference Include="../../src/DesktopLife.Rendering/DesktopLife.Rendering.csproj" />
     <ProjectReference Include="../../src/DesktopLife.Creatures/DesktopLife.Creatures.csproj" />
     <ProjectReference Include="../../src/DesktopLife.App/DesktopLife.App.csproj" />
+    <ProjectReference Include="../../src/DesktopLife.ScreenSaver/DesktopLife.ScreenSaver.csproj" />
   </ItemGroup>
 </Project>

@@ -191,3 +191,23 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 - `artifacts`、`bin`、`obj` 已被 Git 忽略，构建产物不会随 `git push` 上传。
 - 直接将 ZIP 发给朋友，或另外创建 GitHub Release 并上传 ZIP 和 SHA256 文件。提交源码不会自动生成 Release 下载附件。
 - 当前流程生成免安装运行的程序；如需带安装向导、桌面快捷方式和卸载入口的安装器，需要另外增加安装器构建步骤。
+
+## 屏保版补充
+
+新增独立项目 `src/DesktopLife.ScreenSaver`，复用引擎与素材，生成标准 Windows `.scr`。桌面模式打包入口保持 `Package-Portable.ps1`。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.2.0
+```
+
+输出 `artifacts/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip`，包含自带运行环境的 `DesktopLife.scr`、安装/配置/全屏体验脚本；SHA256 校验文件位于 ZIP 旁。完整使用、配置位置与标准参数见 [屏保说明](SCREENSAVER.md)。
+
+验证命令：
+
+```powershell
+dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-check
+dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-fullscreen-check
+dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-layout-check
+```
+
+后两项会短暂打开全屏窗口并自动关闭；分别验证当前真实显示器和包含负坐标、错位边缘的模拟双屏布局。

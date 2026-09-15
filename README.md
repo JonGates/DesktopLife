@@ -4,6 +4,8 @@
 
 DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍蝇跟随鼠标，蟑螂、蚂蚁和毛毛虫在桌面自由爬行，支持多显示器跨屏移动、自定义数量和全局快捷键。下载便携包，解压即可运行。
 
+现在也提供 **Windows `.scr` 屏幕保护程序**：深色／浅色背景、自动游走、多屏显示及独立数量设置。[屏保使用说明](docs/SCREENSAVER.md)。
+
 **Windows desktop pets with interactive insects.** A mouse-following fly, roaming ants, cockroaches and caterpillars, multi-monitor movement, customizable populations, and global hotkeys. Built with C# / .NET 10 / WPF / Win32.
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面固定 1 只苍蝇，默认 20 只蟑螂、20 只蚂蚁、3 只毛毛虫。控制窗口可调整爬行昆虫总数，不随屏幕数倍增。
@@ -17,6 +19,12 @@ DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍�
 **[下载 v0.1.0 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.1.0) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
 
 当前 v0.1.0 为预览版（Pre-release）。
+
+### 屏保版 v0.2.0
+
+**[下载屏保便携包](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** · [屏保发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.2.0)
+
+完整解压后，运行 `Configure-ScreenSaver.cmd` 选择深色／浅色和昆虫数量；`Preview-FullScreen.cmd` 体验全屏效果；`Install-ScreenSaver.cmd` 打开 Windows 屏保设置，选择等待时间并应用。移动鼠标或按键退出屏保。屏保包也自带运行环境，安装后需保留解压文件夹。[详细步骤](docs/SCREENSAVER.md)。
 
 ### 1. 在 GitHub 下载运行包
 
