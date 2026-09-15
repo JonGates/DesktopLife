@@ -44,7 +44,7 @@
             <StackPanel>
                 <Grid>
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="苍蝇" Target="{Binding ElementName=FlyCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="跟随鼠标飞行 · 0–20" FontSize="12" Foreground="#596B7D"/></StackPanel>
+                    <StackPanel VerticalAlignment="Center"><Label Content="苍蝇" Target="{Binding ElementName=FlyCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="持续绕飞 · 点击停落 3 秒 · 0–20" FontSize="12" Foreground="#596B7D"/></StackPanel>
                     <TextBox x:Name="FlyCount" Grid.Column="1" MaxLength="6" Text="1" AutomationProperties.Name="苍蝇总数量"/>
                     <TextBlock Grid.Column="2" Text="只" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 </Grid>

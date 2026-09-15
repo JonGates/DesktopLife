@@ -9,12 +9,12 @@ public sealed class MouseTracker
         _initialized = false;
         State = default;
     }
-    public void Update(Vector2 position, float elapsedSeconds)
+    public void Update(Vector2 position, float elapsedSeconds, MouseClick? click = null)
     {
         if (!float.IsFinite(elapsedSeconds) || elapsedSeconds <= 0 || !float.IsFinite(position.X) || !float.IsFinite(position.Y)) return;
         if (!_initialized)
         {
-            State = new(position, Vector2.Zero, 0, false, TimeSpan.Zero);
+            State = new(position, Vector2.Zero, 0, false, TimeSpan.Zero, click);
             _initialized = true;
             return;
         }
@@ -23,6 +23,6 @@ public sealed class MouseTracker
         var speed = distance / MathF.Max(elapsedSeconds, 0.0001f);
         var moving = distance >= 1 && speed > 15;
         var idle = moving ? TimeSpan.Zero : State.IdleTime + TimeSpan.FromSeconds(MathF.Min(elapsedSeconds, 3600));
-        State = new(position, delta, speed, moving, idle);
+        State = new(position, delta, speed, moving, idle, click);
     }
 }

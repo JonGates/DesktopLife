@@ -164,7 +164,7 @@ public class DisplaySimulationTests
         var random = new HeadingRandom(0);
         fly.Update(0.02f, new(new(new(990, 410), Vector2.One, 20, true, TimeSpan.Zero), layout.Bounds, 0, random, Layout: layout));
         for (var i = 0; i < 300 && fly.State != FlyState.Offscreen; i++)
-            fly.Update(0.02f, new(new(new(990, 410), Vector2.Zero, 0, false, TimeSpan.FromSeconds(3)), layout.Bounds, i * 0.02f, random, Layout: layout));
+            fly.Update(0.02f, new(new(new(-500, -500), Vector2.Zero, 0, false, TimeSpan.FromSeconds(3)), layout.Bounds, i * 0.02f, random, Layout: layout));
         Assert.Equal(FlyState.Offscreen, fly.State);
         Assert.False(layout.Contains(fly.Position));
     }

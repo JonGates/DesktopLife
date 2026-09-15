@@ -9,6 +9,7 @@ public abstract class Creature : ICreature
     public float Rotation { get; protected set; }
     public float Scale { get; protected set; } = 1;
     public bool IsVisible { get; protected set; } = true;
+    public virtual bool IsResting => false;
     public virtual void Relocate(Vector2 position) { Position = position; Velocity = Vector2.Zero; }
     public abstract void Update(float deltaTime, in CreatureContext context);
 }

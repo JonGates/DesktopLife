@@ -15,7 +15,7 @@ public partial class OverlayWindow : Window
     private bool _closed;
     private bool _placementQueued;
     private bool _wasVisible;
-    private static readonly string[] StateLabels = ["Offscreen", "Approach", "Orbit", "Panic", "Depart"];
+    private static readonly string[] StateLabels = ["Offscreen", "Approach", "Orbit", "Panic", "Depart", "Landing", "Landed"];
 #if DEBUG
     private double _nextIdleDraw;
 #endif

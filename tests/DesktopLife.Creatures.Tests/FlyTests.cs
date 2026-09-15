@@ -47,13 +47,13 @@ public class FlyTests
     }
 
     [Fact]
-    public void IdleMouseCausesDepartureAndFlyReallyLeavesBounds()
+    public void CursorOutsideDesktopCausesDepartureAndFlyReallyLeavesBounds()
     {
         var fly = new FlyCreature(Cursor + new Vector2(100, 0));
         Step(fly);
-        Step(fly, moving: false, speed: 0, idle: 1.6f);
+        Step(fly, moving: false, speed: 0, idle: 1.6f, cursor: new(-500, -500));
         Assert.Equal(FlyState.Depart, fly.State);
-        for (var i = 0; i < 600; i++) Step(fly, moving: false, speed: 0, idle: 2 + i / 60f);
+        for (var i = 0; i < 600; i++) Step(fly, moving: false, speed: 0, idle: 2 + i / 60f, cursor: new(-500, -500));
         Assert.Equal(FlyState.Offscreen, fly.State);
         Assert.False(fly.IsVisible);
         Assert.False(Bounds.Contains(fly.Position));
@@ -64,10 +64,10 @@ public class FlyTests
     {
         var fly = new FlyCreature(Cursor + new Vector2(100, 0));
         Step(fly);
-        Step(fly, moving: false, idle: 2);
+        Step(fly, moving: false, idle: 2, cursor: new(-500, -500));
         Step(fly);
         Assert.Equal(FlyState.Approach, fly.State);
-        for (var i = 0; i < 600; i++) Step(fly, moving: false, speed: 0, idle: 3);
+        for (var i = 0; i < 600; i++) Step(fly, moving: false, speed: 0, idle: 3, cursor: new(-500, -500));
         var before = fly.Position;
         Step(fly);
         Assert.Equal(FlyState.Approach, fly.State);
@@ -89,13 +89,13 @@ public class FlyTests
     }
 
     [Fact]
-    public void StationaryMouseDoesNotSummonOffscreenFly()
+    public void StationaryMouseAlsoSummonsFly()
     {
         var fly = new FlyCreature(new(-90, 540));
         for (var i = 0; i < 60; i++) Step(fly, moving: false, speed: 0, idle: 4);
-        Assert.Equal(FlyState.Offscreen, fly.State);
-        Assert.False(fly.IsVisible);
-        Assert.Equal(new Vector2(-90, 540), fly.Position);
+        Assert.Equal(FlyState.Approach, fly.State);
+        Assert.True(fly.IsVisible);
+        Assert.True(fly.Position.X > -90);
     }
 
     [Fact]

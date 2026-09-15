@@ -4,6 +4,18 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面默认共 1 只苍蝇、20 只蟑螂，通过控制窗口调整总数，不随屏幕数倍增。
 
+## 苍蝇互动
+
+- 苍蝇持续跟随并围绕鼠标飞行，鼠标静止时也不会离开。
+- **单击鼠标左键**指定落点。苍蝇先飞过去，实际落下后静止 **3 秒**，再恢复围绕当前鼠标飞行。
+- 停落期间移动鼠标不会带走苍蝇；再次点击可指定新落点，同一点再次点击会重新计时。
+- 使用写实透明素材，飞行时展翅、停落时收翅。下图为程序实际尺寸下的两种姿态（左停落、右飞行）。
+- 点击通过只读系统钩子观察，不消费或阻止原来的点击；本程序设置窗口内的操作不会指定落点。暂停期间的点击不会在恢复后补执行。
+
+![写实苍蝇姿态](docs/images/fly-poses.png)
+
+素材由内置 imagegen 生成；完整提示词与透明度说明见 [素材说明](src/DesktopLife.Rendering/Assets/README.md)。
+
 ## 数量控制与跨屏
 
 - 双击 `Run-DesktopLife.cmd` 打开控制窗口，或双击托盘图标 / 右键选择“数量设置”。程序已运行时再次执行启动脚本，会打开已有实例的设置。
@@ -22,7 +34,7 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 - 当前发布包使用本机已有的 **.NET 10 Desktop Runtime x64**，无需重新安装开发环境。
 - 请保留 `artifacts/publish/` 内所有文件；不要只复制 exe。
-- 移动鼠标后稍等，苍蝇会从桌面的外露边缘进入；静止后会飞出屏幕。
+- 启动后稍等，苍蝇会从桌面的外露边缘进入并围绕鼠标。
 - 启动后几秒内，蟑螂从屏幕四周陆续爬出。鼠标靠近时会四散，逃到边缘后可藏起来，安全时再出现。
 - 右下角系统托盘（可能在折叠区域中）找到 **DesktopLife**，菜单显示屏幕数和总生物数；**暂停 / 恢复 / 退出**同时作用于所有屏幕。
 - 只允许运行一个实例；重复打开不会再生成一只苍蝇。
@@ -65,6 +77,12 @@ dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --controls arti
 # 同一生物跨两个视口，在 100% / 125% / 150% 下拼合一致
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --seams artifacts/seam-probe
 
+# 实际主循环的点击落点、3 秒停留、暂停恢复与跨屏降落；原生鼠标钩子注册/释放
+dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --fly-landing artifacts/fly-landing-probe
+
+# 写实素材飞行/停落两种姿态、透明背景和物理坐标
+dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --fly-art artifacts/fly-art-probe
+
 # Release 发布：默认使用已安装的 Desktop Runtime
 powershell -ExecutionPolicy Bypass -File scripts/Publish.ps1
 
@@ -80,22 +98,22 @@ powershell -ExecutionPolicy Bypass -File scripts/Publish.ps1 -SelfContained
 | --- | --- |
 | `DesktopLife.Engine` | DesktopLayout 的屏幕并集与外露边界、MouseTracker、GameLoop、CreatureManager、SimulationWorld；不引用 WPF / Win32 |
 | `DesktopLife.Creatures` | Fly 与 Cockroach 状态机、全局群体差额调整、共享世界与布局同步、邻近避让；仅依赖 Engine |
-| `DesktopLife.Windows` | Win32 鼠标采样、显示器枚举与物理矩形、窗口扩展样式 |
-| `DesktopLife.Rendering` | 根据 CreatureKind 在一个 DrawingContext 中批量绘制；两种生物各两帧矢量素材在启动时缓存并 Freeze |
+| `DesktopLife.Windows` | Win32 鼠标采样、只读全局左键观察、显示器枚举与物理矩形、窗口扩展样式 |
+| `DesktopLife.Rendering` | 按物种与姿态批量绘制；苍蝇使用嵌入的透明写实图集，蟑螂为两帧矢量素材；素材缓存并 Freeze |
 | `DesktopLife.App` | DesktopHost 统一管理每屏视口、单一主循环及鼠标采样、数量控制窗口、JSON 配置、托盘、Debug HUD、异常日志 |
 
 模拟坐标为屏幕物理像素，Renderer 显式减去显示器原点，再除以当前 WPF DPI 比例。Manifest 使用 PerMonitorV2。
 
 Overlay 在显示前配置 `WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE | WS_EX_TOOLWINDOW`，去除 `WS_EX_APPWINDOW`；同时使用 `ShowActivated=false`、`SWP_NOACTIVATE` 与消息处理防止激活。穿透依赖原生 layered window 样式，不仅是 WPF 命中开关。技术依据：[Microsoft Window Features](https://learn.microsoft.com/en-us/windows/win32/winmsg/window-features)。
 
-状态转换：`Offscreen → Approach → Orbit → Panic → Approach`；静止超过阈值时转为 `Depart → Offscreen`，恢复移动可打断离开。逻辑步长限制为 50ms；鼠标速度与空闲时间使用真实采样间隔。暂停时取消渲染事件订阅，恢复时重新建立鼠标采样基线。
+苍蝇默认 `Offscreen → Approach → Orbit`，快速甩动鼠标会短暂 `Panic`；点击进入 `Landing → Landed → Approach`。停落 3 秒从到达落点后开始，使用真实帧间隔；仅在鼠标不属于实际桌面区域时离开。运动步长限制为 50ms。暂停取消更新并清空待处理点击，恢复时重新建立鼠标采样基线。
 
 蟑螂使用 `Hidden → Emerge → Crawl → Panic → Flee` 状态机；到边缘后 Hidden，安全后可恢复 Crawl。个体速度、游走转向、反应时长和逃跑偏角使用可固定种子的随机源。CreatureManager 将只读邻居集合交给行为层，24px 范围内的可见蟑螂互相避让。没有每只生物的定时器或控件。
 
 ## 范围与限制
 
-- 支持 Windows x64 多显示器，素材为程序绘制的占位图形。
-- 已通过 Debug / Release 构建和 78 项 xUnit 测试，以及真实控制窗口、双屏窗口、跨屏渲染和全局暂停/恢复检查。详见 `docs/SHARED_DESKTOP_VERIFICATION.md`；旧版本验证记录作为历史保留。
+- 支持 Windows x64 多显示器。苍蝇为生成的写实图像，蟑螂仍是程序绘制的占位图形。
+- 已通过 Debug / Release 构建和 89 项 xUnit 测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。详见 `docs/FLY_LANDING_VERIFICATION.md`；旧版本验证记录作为历史保留。
 - 尚未完成稳定 60 FPS 和 500 只群体的性能验收；数量上限是输入约束，不代表任何设备均能流畅运行上限数量。
 - 125% / 150% 已通过离屏渲染检查，插拔与拓扑变化已通过模拟布局的真实窗口检查；实际混合系统缩放、物理拔插、浏览器点击体验和不同 GPU 尚未完整验收。
 - 暂无蚂蚁、开机自启、安装器。

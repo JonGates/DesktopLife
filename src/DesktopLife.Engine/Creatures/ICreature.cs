@@ -9,5 +9,6 @@ public interface ICreature
     float Rotation { get; }
     float Scale { get; }
     bool IsVisible { get; }
+    bool IsResting => false;
     void Update(float deltaTime, in CreatureContext context);
 }

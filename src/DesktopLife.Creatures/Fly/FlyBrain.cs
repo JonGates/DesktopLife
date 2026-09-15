@@ -17,6 +17,9 @@ public sealed class FlyBrain(FlyOptions options)
     private float _panicCooldown;
     private Vector2 _escapeDirection;
     private Vector2 _departTarget;
+    private Vector2 _landingTarget;
+    private long _lastClickSequence;
+    private double _landedRemaining;
     public FlyState State { get; private set; } = FlyState.Offscreen;
 
     public FlyMotion Update(Vector2 position, Vector2 velocity, float dt, in CreatureContext context)
@@ -29,18 +32,53 @@ public sealed class FlyBrain(FlyOptions options)
             _noisePhase = context.Random.NextFloat(0, MathF.Tau);
             _initialized = true;
         }
-        _panicCooldown = MathF.Max(0, _panicCooldown - dt);
         var mouseOnScreen = (context.Layout?.Contains(context.Mouse.Position) ?? context.Bounds.ContainsScreenPoint(context.Mouse.Position));
+        if (context.Mouse.Click is { } click && click.Sequence > _lastClickSequence)
+        {
+            _lastClickSequence = click.Sequence;
+            if (context.Layout?.Contains(click.Position) ?? context.Bounds.ContainsScreenPoint(click.Position))
+            {
+                _landingTarget = click.Position;
+                State = FlyState.Landing;
+            }
+        }
+        if ((State is FlyState.Landing or FlyState.Landed) &&
+            !(context.Layout?.Contains(_landingTarget) ?? context.Bounds.ContainsScreenPoint(_landingTarget)))
+            State = mouseOnScreen ? FlyState.Approach : FlyState.Offscreen;
+
+        if (State == FlyState.Landing)
+        {
+            var toLanding = _landingTarget - position;
+            var distanceToLanding = toLanding.Length();
+            var step = MathF.Min(options.FollowSpeed * dt, distanceToLanding);
+            if (distanceToLanding <= step + 0.001f)
+            {
+                State = FlyState.Landed;
+                _landedRemaining = options.LandedSeconds;
+                return new(_landingTarget, Vector2.Zero);
+            }
+            // A fixed destination is independent of later cursor movement; never snap across the screen.
+            velocity = toLanding / distanceToLanding * options.FollowSpeed;
+            return new(position + toLanding / distanceToLanding * step, velocity);
+        }
+        if (State == FlyState.Landed)
+        {
+            var elapsed = float.IsFinite(context.ElapsedSeconds) && context.ElapsedSeconds > 0 ? context.ElapsedSeconds : dt;
+            _landedRemaining -= elapsed;
+            if (_landedRemaining > 0.000001) return new(_landingTarget, Vector2.Zero);
+            State = FlyState.Approach;
+        }
+        _panicCooldown = MathF.Max(0, _panicCooldown - dt);
         var active = context.Mouse.IsMoving && mouseOnScreen;
         var awakened = false;
-        if ((State is FlyState.Offscreen or FlyState.Depart) && active)
+        if ((State is FlyState.Offscreen or FlyState.Depart) && mouseOnScreen)
         {
             State = FlyState.Approach;
             awakened = true;
         }
         if (State == FlyState.Offscreen) return new(position, Vector2.Zero);
 
-        if ((!mouseOnScreen || context.Mouse.IdleTime.TotalSeconds > options.IdleDepartSeconds) && State != FlyState.Depart)
+        if (!mouseOnScreen && State != FlyState.Depart)
         {
             var outer = context.Layout?.NearestEdge(position);
             _departTarget = outer is { } edge ? edge.Point - edge.Inward * 110 : ChooseExit(position, context.Bounds, context.Random);

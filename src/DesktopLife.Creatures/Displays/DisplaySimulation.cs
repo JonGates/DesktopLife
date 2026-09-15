@@ -3,6 +3,7 @@ using DesktopLife.Creatures.Cockroach;
 using DesktopLife.Creatures.Fly;
 using DesktopLife.Engine.Creatures;
 using DesktopLife.Engine.Math;
+using DesktopLife.Engine.Input;
 using DesktopLife.Engine.World;
 
 namespace DesktopLife.Creatures.Displays;
@@ -57,9 +58,9 @@ public sealed class DisplaySimulation(int seed)
         return Vector2.Lerp(edge.Start, edge.End, World.Random.NextFloat(0.1f, 0.9f)) + edge.Inward * (outside ? -0.01f : 1);
     }
 
-    public void Update(float elapsedSeconds, Vector2 cursor)
+    public void Update(float elapsedSeconds, Vector2 cursor, MouseClick? click = null)
     {
-        if (Worlds.Count > 0) World.Update(elapsedSeconds, cursor);
+        if (Worlds.Count > 0) World.Update(elapsedSeconds, cursor, click);
     }
 
     public void ResetInput() => World.Mouse.Reset();

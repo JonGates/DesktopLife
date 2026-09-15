@@ -13,6 +13,16 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--fly-landing")
+        {
+            FlyLandingProbe.Run(args.Length > 1 ? args[1] : "artifacts/fly-landing-probe");
+            return;
+        }
+        if (args.Length > 0 && args[0] == "--fly-art")
+        {
+            FlyRenderProbe.Run(args.Length > 1 ? args[1] : "artifacts/fly-art-probe");
+            return;
+        }
         if (args.Length > 0 && args[0] == "--seams")
         {
             SeamProbe.Run(args.Length > 1 ? args[1] : "artifacts/seam-probe");

@@ -6,6 +6,7 @@ public sealed class FlyCreature : Creature
     public override CreatureKind Kind => CreatureKind.Fly;
     private readonly FlyBrain _brain;
     public FlyState State => _brain.State;
+    public override bool IsResting => State == FlyState.Landed;
     public FlyCreature(Vector2 position, FlyOptions? options = null)
     {
         Position = position;

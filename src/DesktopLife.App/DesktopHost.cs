@@ -5,6 +5,7 @@ using DesktopLife.App.Overlay;
 using DesktopLife.Creatures.Displays;
 using DesktopLife.Engine.Time;
 using DesktopLife.Engine.World;
+using DesktopLife.Engine.Input;
 using DesktopLife.Windows;
 using Microsoft.Win32;
 
@@ -15,6 +16,7 @@ public sealed class DesktopHost : IDisposable
 {
     private readonly Dispatcher _dispatcher;
     private readonly Func<IReadOnlyList<DisplayArea>> _getDisplays;
+    private readonly bool _observeMouseClicks;
     private readonly Stopwatch _clock = new();
     private readonly GameLoop _loop = new();
     private bool _subscribed;
@@ -23,6 +25,9 @@ public sealed class DesktopHost : IDisposable
     private bool _reconciling;
     private int _refreshQueued;
     private TimeSpan? _lastRenderingTime;
+    private GlobalMouseClickSource? _mouseClicks;
+    public MouseClickBuffer Clicks { get; } = new();
+    public bool IsClickHookInstalled => _mouseClicks?.IsInstalled == true;
     public DisplaySimulation Simulation { get; } = new(Environment.TickCount);
     public IReadOnlyList<OverlayWindow> Overlays { get; private set; } = [];
     public bool IsPaused { get; private set; }
@@ -30,10 +35,11 @@ public sealed class DesktopHost : IDisposable
     public event Action? StateChanged;
     public event Action? ExitRequested;
 
-    public DesktopHost(Dispatcher dispatcher, Func<IReadOnlyList<DisplayArea>>? getDisplays = null)
+    public DesktopHost(Dispatcher dispatcher, Func<IReadOnlyList<DisplayArea>>? getDisplays = null, bool observeMouseClicks = true)
     {
         _dispatcher = dispatcher;
         _getDisplays = getDisplays ?? MonitorService.GetDisplays;
+        _observeMouseClicks = observeMouseClicks;
     }
 
     public void Start()
@@ -42,6 +48,7 @@ public sealed class DesktopHost : IDisposable
         ObjectDisposedException.ThrowIf(_disposed, this);
         if (_started) return;
         _started = true;
+        if (_observeMouseClicks) _mouseClicks = new GlobalMouseClickSource(Clicks);
         SystemEvents.DisplaySettingsChanged += OnDisplayChanged;
         SynchronizeDisplays();
         _clock.Start();
@@ -91,6 +98,7 @@ public sealed class DesktopHost : IDisposable
         _dispatcher.VerifyAccess();
         if (_disposed) return;
         IsPaused = !IsPaused;
+        Clicks.Enabled = !IsPaused;
         if (IsPaused)
         {
             Unsubscribe();
@@ -140,7 +148,7 @@ public sealed class DesktopHost : IDisposable
         var time = _loop.Tick(_clock.Elapsed.TotalSeconds);
         if (time.DeltaTime <= 0 || !CursorService.TryGetPosition(out var cursor)) return;
         var start = Stopwatch.GetTimestamp();
-        Simulation.Update(time.ElapsedSeconds, cursor);
+        Simulation.Update(time.ElapsedSeconds, cursor, Clicks.TakeLatest());
         var elapsed = Stopwatch.GetElapsedTime(start).TotalMilliseconds;
         foreach (var window in Overlays) window.PresentFrame(time, elapsed);
     }
@@ -165,6 +173,8 @@ public sealed class DesktopHost : IDisposable
         _dispatcher.VerifyAccess();
         if (_disposed) return;
         _disposed = true;
+        Clicks.Enabled = false;
+        _mouseClicks?.Dispose();
         SystemEvents.DisplaySettingsChanged -= OnDisplayChanged;
         Unsubscribe();
         foreach (var window in Overlays) { window.Closed -= OnWindowClosed; window.Close(); }

@@ -23,11 +23,6 @@ public class PauseResumeTests
         Assert.Equal(0, world.Mouse.State.Speed);
         Assert.False(world.Mouse.State.IsMoving);
         Assert.NotEqual(FlyState.Panic, fly.State);
-        if (!visible)
-        {
-            Assert.Equal(FlyState.Offscreen, fly.State);
-            Assert.Equal(before, fly.Position);
-        }
-        else Assert.InRange(Vector2.Distance(before, fly.Position), 0, 8);
+        Assert.InRange(Vector2.Distance(before, fly.Position), 0, 8);
     }
 }

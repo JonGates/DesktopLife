@@ -11,13 +11,13 @@ public sealed class SimulationWorld(WorldBounds bounds, IRandomSource random, IE
     public DesktopLayout? Layout { get; set; }
     public IRandomSource Random { get; } = random;
     public float TotalTime { get; private set; }
-    public void Update(float elapsedSeconds, Vector2 cursor)
+    public void Update(float elapsedSeconds, Vector2 cursor, MouseClick? click = null)
     {
         if (!float.IsFinite(elapsedSeconds) || elapsedSeconds <= 0) return;
-        Mouse.Update(cursor, elapsedSeconds);
+        Mouse.Update(cursor, elapsedSeconds, click);
         var dt = MathF.Min(elapsedSeconds, 0.05f);
         TotalTime += dt;
-        var context = new CreatureContext(Mouse.State, Bounds, TotalTime, Random, Layout: Layout);
+        var context = new CreatureContext(Mouse.State, Bounds, TotalTime, Random, Layout: Layout, ElapsedSeconds: elapsedSeconds);
         Manager.Update(dt, in context);
     }
 }
