@@ -16,11 +16,13 @@ internal static class ControlsProbe
     {
         Directory.CreateDirectory(output);
         var store = new SettingsStore(Path.Combine(Path.GetFullPath(output), "settings.json"));
-        store.Save(new(1, 20));
-        if (store.Load(out _) != new PopulationSettings(1, 20)) throw new Exception("Settings round-trip failed");
+        store.Save(new(20, 20, 3));
+        if (store.Load(out _) != new PopulationSettings(20, 20, 3)) throw new Exception("Settings round-trip failed");
+        File.WriteAllText(store.FilePath, "{\"Flies\":19,\"Cockroaches\":37}");
+        if (store.Load(out _) != new PopulationSettings(37, 20, 3)) throw new Exception("Legacy settings migration failed");
         File.WriteAllText(store.FilePath, "{bad-json");
         if (store.Load(out var warning) != new PopulationSettings() || warning == null) throw new Exception("Corrupt settings fallback failed");
-        store.Save(new(1, 20));
+        store.Save(new(20, 20, 3));
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
         using var host = new DesktopHost(app.Dispatcher);
         var window = new SettingsWindow(host, store);
@@ -29,9 +31,10 @@ internal static class ControlsProbe
         string? failure = null;
         Guid[] original = [];
         void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
-        void Apply(string flies, string roaches)
+        void Apply(string ants, string roaches)
         {
-            ((TextBox)window.FindName("FlyCount")).Text = flies;
+            ((TextBox)window.FindName("AntCount")).Text = ants;
+            ((TextBox)window.FindName("CaterpillarCount")).Text = roaches == "0" ? "0" : "3";
             ((TextBox)window.FindName("RoachCount")).Text = roaches;
             ((Button)window.FindName("ApplyButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
@@ -44,31 +47,31 @@ internal static class ControlsProbe
                 {
                     case 1:
                         original = host.Simulation.World.Manager.Creatures.Select(c => c.Id).ToArray();
-                        Apply("2", "37");
-                        Require(host.Simulation.TotalFlyCount == 2 && host.Simulation.TotalCockroachCount == 37, "Apply did not change global counts");
-                        Require(store.Load(out _) == new PopulationSettings(2, 37), "Apply did not persist counts");
+                        Apply("30", "37");
+                        Require(host.Simulation.TotalFlyCount == 1 && host.Simulation.TotalAntCount == 30 && host.Simulation.TotalCockroachCount == 37, "Apply did not change global counts");
+                        Require(store.Load(out _) == new PopulationSettings(37, 30, 3), "Apply did not persist counts");
                         Require(original.All(id => host.Simulation.World.Manager.Creatures.Any(c => c.Id == id)), "Increasing counts replaced existing creatures");
                         break;
                     case 2:
                         foreach (var invalid in new[] { "1.5", "-1", "501", "abc", "" })
                         {
-                            Apply("2", invalid);
-                            Require(host.Simulation.TotalCockroachCount == 37 && store.Load(out _) == new PopulationSettings(2, 37), "Invalid input changed settings");
+                            Apply("30", invalid);
+                            Require(host.Simulation.TotalCockroachCount == 37 && store.Load(out _) == new PopulationSettings(37, 30, 3), "Invalid input changed settings");
                         }
                         Apply("0", "0");
-                        Require(host.Simulation.World.Manager.Creatures.Count == 0, "Zero population failed");
+                        Require(host.Simulation.World.Manager.Creatures.Count == 1, "Zero population failed");
                         break;
                     case 3:
-                        Require(host.Overlays.All(w => ((RenderSurface)w.Content).VisibleCount == 0), "Removed creatures left visible counts");
+                        Require(host.Overlays.All(w => ((RenderSurface)w.Content).VisibleCount <= 1), "Removed creatures left visible counts");
                         ((Button)window.FindName("PauseButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
                         Apply("3", "12");
                         Require(host.IsPaused && host.Overlays.All(w => !w.IsVisible), "Applying while paused resumed overlays");
                         var blocked = Path.Combine(Path.GetFullPath(output), "blocked-parent");
                         File.WriteAllText(blocked, "This is a file, not a directory.");
                         var badWindow = new SettingsWindow(host, new SettingsStore(Path.Combine(blocked, "settings.json")));
-                        ((TextBox)badWindow.FindName("FlyCount")).Text = "4";
+                        ((TextBox)badWindow.FindName("AntCount")).Text = "4";
                         ((Button)badWindow.FindName("ApplyButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                        Require(host.Simulation.TotalFlyCount == 3 && ((TextBlock)badWindow.FindName("Status")).Text.Contains("保存失败"), "Save failure changed live population or gave no error");
+                        Require(host.Simulation.TotalFlyCount == 1 && host.Simulation.TotalAntCount == 3 && ((TextBlock)badWindow.FindName("Status")).Text.Contains("保存失败"), "Save failure changed live population or gave no error");
                         badWindow.Close();
                         break;
                     case 4:
@@ -87,7 +90,7 @@ internal static class ControlsProbe
                     case 5:
                         Require(host.Overlays.Count > 0 && host.Simulation.World.TotalTime > 0, "Closing settings stopped the desktop");
                         var reopened = new SettingsWindow(host, store);
-                        Require(((TextBox)reopened.FindName("FlyCount")).Text == "3" && ((TextBox)reopened.FindName("RoachCount")).Text == "12", "Reopening lost configured values");
+                        Require(((TextBox)reopened.FindName("AntCount")).Text == "3" && ((TextBox)reopened.FindName("RoachCount")).Text == "12", "Reopening lost configured values");
                         reopened.Close();
                         host.Dispose();
                         timer.Stop();

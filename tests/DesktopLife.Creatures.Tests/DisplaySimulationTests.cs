@@ -32,25 +32,25 @@ public class DisplaySimulationTests
         var sim = new DisplaySimulation(7);
         sim.Synchronize([Primary, Right]);
         var original = sim.World.Manager.Creatures.ToArray();
-        sim.SetPopulation(3, 25);
-        Assert.Equal(28, sim.World.Manager.Creatures.Count);
+        sim.SetPopulation(new(25, 30, 4));
+        Assert.Equal(60, sim.World.Manager.Creatures.Count);
         Assert.All(original, c => Assert.Contains(c, sim.World.Manager.Creatures));
-        sim.SetPopulation(1, 10);
+        sim.SetPopulation(new(10, 0, 0));
         Assert.Equal(1, sim.World.Manager.Creatures.Count(c => c.Kind == CreatureKind.Fly));
         Assert.Equal(10, sim.World.Manager.Creatures.Count(c => c.Kind == CreatureKind.Cockroach));
-        sim.SetPopulation(0, 0);
-        Assert.Empty(sim.World.Manager.Creatures);
+        sim.SetPopulation(new(0, 0, 0));
+        Assert.Single(sim.World.Manager.Creatures);
         sim.Synchronize([Right]);
-        Assert.Empty(sim.World.Manager.Creatures);
-        sim.SetPopulation(2, 4);
-        Assert.Equal(6, sim.World.Manager.Creatures.Count);
+        Assert.Single(sim.World.Manager.Creatures);
+        sim.SetPopulation(new(4, 2, 1));
+        Assert.Equal(8, sim.World.Manager.Creatures.Count);
     }
     [Fact]
     public void LayoutChangesAndZeroScreensPreserveIdsAndConfiguredTotal()
     {
         var sim = new DisplaySimulation(7);
         sim.Synchronize([Primary, Right]);
-        sim.SetPopulation(2, 8);
+        sim.SetPopulation(new(8, 2, 1));
         var ids = sim.World.Manager.Creatures.Select(c => c.Id).ToArray();
         sim.Synchronize([Right with { IsPrimary = true }]);
         Assert.Equal(ids, sim.World.Manager.Creatures.Select(c => c.Id));
@@ -68,7 +68,7 @@ public class DisplaySimulationTests
     }
     [Theory]
     [InlineData(-1, 20)]
-    [InlineData(21, 20)]
+    [InlineData(501, 20)]
     [InlineData(1, -1)]
     [InlineData(1, 501)]
     public void InvalidCountsDoNotChangePopulation(int flies, int roaches)
@@ -76,7 +76,7 @@ public class DisplaySimulationTests
         var sim = new DisplaySimulation(7);
         sim.Synchronize([Primary]);
         var ids = sim.World.Manager.Creatures.Select(c => c.Id).ToArray();
-        Assert.Throws<ArgumentOutOfRangeException>(() => sim.SetPopulation(flies, roaches));
+        Assert.Throws<ArgumentOutOfRangeException>(() => sim.SetPopulation(new(flies, roaches, 0)));
         Assert.Equal(ids, sim.World.Manager.Creatures.Select(c => c.Id));
     }
     [Fact]

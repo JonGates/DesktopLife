@@ -88,7 +88,7 @@ internal static class FlyLandingProbe
             }
             catch (Exception error) { failure = error.ToString(); timer.Stop(); app.Shutdown(1); }
         };
-        app.Startup += (_, _) => { host.Start(); host.SetPopulation(1, 0); timer.Start(); };
+        app.Startup += (_, _) => { host.Start(); host.SetPopulation(new(0, 0, 0)); timer.Start(); };
         var result = app.Run();
         timer.Stop();
         File.WriteAllText(Path.Combine(output, "result.txt"), failure ?? "PASS: native hook install/dispose; real shared frame loop lands at original click, rests through pause, drops paused click, resumes after 3s, and lands on another display.");

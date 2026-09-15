@@ -15,12 +15,16 @@ public partial class SettingsWindow : Window
         _host = host;
         _store = store;
         InitializeComponent();
-        FlyCount.Text = host.Simulation.TotalFlyCount.ToString(CultureInfo.InvariantCulture);
+        Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
-        FlySlider.Value = host.Simulation.TotalFlyCount;
         RoachSlider.Value = host.Simulation.TotalCockroachCount;
-        FlyCount.LostFocus += (_, _) => SyncSlider(FlyCount, FlySlider);
         RoachCount.LostFocus += (_, _) => SyncSlider(RoachCount, RoachSlider);
+        AntCount.Text = host.Simulation.TotalAntCount.ToString(CultureInfo.InvariantCulture);
+        CaterpillarCount.Text = host.Simulation.TotalCaterpillarCount.ToString(CultureInfo.InvariantCulture);
+        AntSlider.Value = host.Simulation.TotalAntCount;
+        CaterpillarSlider.Value = host.Simulation.TotalCaterpillarCount;
+        AntCount.LostFocus += (_, _) => SyncSlider(AntCount, AntSlider);
+        CaterpillarCount.LostFocus += (_, _) => SyncSlider(CaterpillarCount, CaterpillarSlider);
         _host.LayoutChanged += RefreshLayout;
         _host.StateChanged += RefreshState;
         Closed += (_, _) => { _host.LayoutChanged -= RefreshLayout; _host.StateChanged -= RefreshState; };
@@ -33,36 +37,42 @@ public partial class SettingsWindow : Window
     {
         if (int.TryParse(input.Text, out var count) && count >= slider.Minimum && count <= slider.Maximum) slider.Value = count;
     }
-    private void FlySliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    private void AntSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
-        if (FlyCount != null) FlyCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
+        if (AntCount != null) AntCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
     }
     private void RoachSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (RoachCount != null) RoachCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
     }
+    private void CaterpillarSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (CaterpillarCount != null) CaterpillarCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
+    }
     private void ApplyClicked(object sender, RoutedEventArgs e)
     {
-        if (!int.TryParse(FlyCount.Text, out var flies) || flies < 0 || flies > PopulationSettings.MaxFlies ||
-            !int.TryParse(RoachCount.Text, out var roaches) || roaches < 0 || roaches > PopulationSettings.MaxCockroaches)
+        if (!int.TryParse(RoachCount.Text, out var roaches) || roaches < 0 || roaches > PopulationSettings.MaxCockroaches ||
+            !int.TryParse(AntCount.Text, out var ants) || ants < 0 || ants > PopulationSettings.MaxAnts ||
+            !int.TryParse(CaterpillarCount.Text, out var caterpillars) || caterpillars < 0 || caterpillars > PopulationSettings.MaxCaterpillars)
         {
-            Status.Text = "请输入有效整数：苍蝇 0–20，蟑螂 0–500。";
+            Status.Text = "请输入有效整数：蟑螂、蚂蚁 0–500，毛毛虫 0–100。";
             return;
         }
         try
         {
-            _store.Save(new(flies, roaches));
-            _host.SetPopulation(flies, roaches);
-            FlySlider.Value = flies;
+            var settings = new PopulationSettings(roaches, ants, caterpillars);
+            _store.Save(settings);
+            _host.SetPopulation(settings);
             RoachSlider.Value = roaches;
-            Status.Text = $"已保存：全桌面 {flies} 只苍蝇、{roaches} 只蟑螂。下次启动自动恢复。";
+            AntSlider.Value = ants;
+            CaterpillarSlider.Value = caterpillars;
+            Status.Text = $"已保存：蟑螂 {roaches}、蚂蚁 {ants}、毛毛虫 {caterpillars}。苍蝇固定 1 只。";
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
             Status.Text = "保存失败，数量未更改。请检查用户配置目录是否可写。";
         }
-    }
-    private void PauseClicked(object sender, RoutedEventArgs e) => _host.TogglePause();
+    }    private void PauseClicked(object sender, RoutedEventArgs e) => _host.TogglePause();
     private void RefreshState() => PauseButton.Content = _host.IsPaused ? "恢复全部" : "暂停全部";
     private void MapSizeChanged(object sender, SizeChangedEventArgs e) => RefreshLayout();
 

@@ -45,14 +45,14 @@ public partial class App : Application
         void RefreshTray()
         {
             _tray.SetPopulationSummary(Desktop.Simulation.Worlds.Count,
-                Desktop.Simulation.TotalFlyCount, Desktop.Simulation.TotalCockroachCount);
+                Desktop.Simulation.TotalFlyCount, Desktop.Simulation.TotalCockroachCount, Desktop.Simulation.TotalAntCount, Desktop.Simulation.TotalCaterpillarCount);
             _tray.SetPaused(Desktop.IsPaused);
         }
         Desktop.LayoutChanged += RefreshTray;
         Desktop.StateChanged += RefreshTray;
         Desktop.Start();
         var settings = _settingsStore.Load(out _settingsWarning);
-        Desktop.SetPopulation(settings.Flies, settings.Cockroaches);
+        Desktop.SetPopulation(settings);
         if (e.Args.Contains("--settings")) ShowSettings();
     }
 

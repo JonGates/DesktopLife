@@ -16,9 +16,11 @@ public sealed class DisplaySimulation(int seed)
     public SimulationWorld World { get; } = new(new(0, 0, 1920, 1080), new RandomSource(seed), []);
     public DesktopLayout Layout { get; private set; } = new([]);
     public IReadOnlyList<DisplayWorld> Worlds { get; private set; } = [];
-    public int TotalFlyCount { get; private set; } = 1;
+    public int TotalFlyCount => 1;
     public int TotalCockroachCount { get; private set; } = 20;
 
+    public int TotalAntCount { get; private set; } = 20;
+    public int TotalCaterpillarCount { get; private set; } = 3;
     public void Synchronize(IReadOnlyList<DisplayArea> displays)
     {
         var next = new DesktopLayout(displays); // Validate before mutating live state.
@@ -34,22 +36,28 @@ public sealed class DisplaySimulation(int seed)
                 if (!next.Contains(creature.Position)) creature.Relocate(next.Clamp(creature.Position));
             World.Mouse.Reset();
         }
-        SetPopulation(TotalFlyCount, TotalCockroachCount);
+        SetPopulation(new(TotalCockroachCount, TotalAntCount, TotalCaterpillarCount));
     }
 
-    public void SetPopulation(int flies, int cockroaches)
+    public void SetPopulation(PopulationSettings settings)
     {
-        new PopulationSettings(flies, cockroaches).Validate();
-        var population = new List<ICreature>(flies + cockroaches);
-        population.AddRange(World.Manager.Creatures.Where(c => c.Kind == CreatureKind.Fly).Take(flies));
-        while (population.Count < flies) population.Add(new FlyCreature(SpawnPoint(outside: true)));
-        population.AddRange(World.Manager.Creatures.Where(c => c.Kind == CreatureKind.Cockroach).Take(cockroaches));
-        while (population.Count < flies + cockroaches) population.Add(new CockroachCreature(SpawnPoint(), initiallyHidden: true));
+        settings.Validate();
+        var population = new List<ICreature>();
+        Add(CreatureKind.Fly, 1, () => new FlyCreature(SpawnPoint(outside: true)));
+        Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true));
+        Add(CreatureKind.Ant, settings.Ants, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Ant));
+        Add(CreatureKind.Caterpillar, settings.Caterpillars, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Caterpillar));
         World.Manager.Replace(population);
-        TotalFlyCount = flies;
-        TotalCockroachCount = cockroaches;
+        TotalCockroachCount = settings.Cockroaches;
+        TotalAntCount = settings.Ants;
+        TotalCaterpillarCount = settings.Caterpillars;
+        void Add(CreatureKind kind, int count, Func<ICreature> create)
+        {
+            var retained = World.Manager.Creatures.Where(c => c.Kind == kind).Take(count).ToArray();
+            population.AddRange(retained);
+            for (var i = retained.Length; i < count; i++) population.Add(create());
+        }
     }
-
     private Vector2 SpawnPoint(bool outside = false)
     {
         if (Layout.Edges.Count == 0) return World.Bounds.Center;

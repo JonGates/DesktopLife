@@ -114,11 +114,11 @@ public sealed class DesktopHost : IDisposable
         StateChanged?.Invoke();
     }
 
-    public void SetPopulation(int flies, int cockroaches)
+    public void SetPopulation(PopulationSettings settings)
     {
         _dispatcher.VerifyAccess();
         ObjectDisposedException.ThrowIf(_disposed, this);
-        Simulation.SetPopulation(flies, cockroaches);
+        Simulation.SetPopulation(settings);
         StateChanged?.Invoke();
     }
 

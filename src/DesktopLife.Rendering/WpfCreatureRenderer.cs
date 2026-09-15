@@ -6,8 +6,10 @@ using DesktopLife.Engine.World;
 namespace DesktopLife.Rendering;
 public sealed class WpfCreatureRenderer : IRenderer
 {
-    private static readonly DrawingGroup FlyingFly = FlySprite.Create(false);
-    private static readonly DrawingGroup RestingFly = FlySprite.Create(true);
+    private static readonly DrawingGroup[] FlyingFly = Enumerable.Range(0, 8).Select(i => FlySprite.Create(false, i)).ToArray();
+    private static readonly DrawingGroup[] RestingFly = Enumerable.Range(0, 8).Select(i => FlySprite.Create(true, i)).ToArray();
+    private static readonly DrawingGroup[] Ants = Enumerable.Range(0, 8).Select(i => SmallInsectSprite.Create(false, i)).ToArray();
+    private static readonly DrawingGroup[] Caterpillars = Enumerable.Range(0, 8).Select(i => SmallInsectSprite.Create(true, i)).ToArray();
     private readonly DrawingGroup[] _roachFrames = [CockroachSprite.Create(false), CockroachSprite.Create(true)];
     public void Render(DrawingContext dc, IReadOnlyList<ICreature> creatures, WorldBounds bounds, float time, double scaleX, double scaleY)
     {
@@ -29,7 +31,16 @@ public sealed class WpfCreatureRenderer : IRenderer
                 var step = (int)(time * 10 + creature.Position.X * 0.03f + creature.Position.Y * 0.02f);
                 dc.DrawDrawing(_roachFrames[step & 1]);
             }
-            else dc.DrawDrawing(creature.IsResting ? RestingFly : FlyingFly);
+                        else
+            {
+                var frame = (int)(time * (creature.IsResting ? 18 : creature.Kind == CreatureKind.Fly ? 53 : 12)) & 7;
+                dc.DrawDrawing(creature.Kind switch
+                {
+                    CreatureKind.Ant => Ants[frame],
+                    CreatureKind.Caterpillar => Caterpillars[frame],
+                    _ => creature.IsResting ? RestingFly[frame] : FlyingFly[frame]
+                });
+            }
             dc.Pop();
         }
     }

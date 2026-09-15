@@ -27,10 +27,10 @@ public sealed class TrayService : IDisposable
         _icon.DoubleClick += (_, _) => showSettings();
     }
 
-    public void SetPopulationSummary(int screens, int flies, int cockroaches)
+    public void SetPopulationSummary(int screens, int flies, int cockroaches, int ants, int caterpillars)
     {
-        _summary.Text = $"{screens} 块屏幕 · {flies} 只苍蝇 · {cockroaches} 只蟑螂";
-        _icon.Text = $"DesktopLife — {screens} 屏 / {flies} 苍蝇 / {cockroaches} 蟑螂";
+        _summary.Text = $"{screens} 块屏幕 · {flies} 只苍蝇 · {cockroaches} 只蟑螂 · {ants} 只蚂蚁 · {caterpillars} 只毛毛虫";
+        _icon.Text = $"DesktopLife — {screens} 屏 / {flies} 苍蝇 / {cockroaches} 蟑螂 / {ants} 蚂蚁 / {caterpillars} 毛毛虫";
     }
 
     public void SetPaused(bool paused) => _pause.Text = paused ? "恢复" : "暂停";
