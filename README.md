@@ -1,10 +1,14 @@
-# DesktopLife
+# DesktopLife · Windows 桌面宠物与昆虫 | Desktop Pets
 
-Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
+**简体中文** · [English](README.en.md) · [下载便携版 / Download](https://github.com/JonGates/DesktopLife/releases) · [反馈问题 / Report a bug](https://github.com/JonGates/DesktopLife/issues)
+
+DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍蝇跟随鼠标，蟑螂、蚂蚁和毛毛虫在桌面自由爬行，支持多显示器跨屏移动、自定义数量和全局快捷键。下载便携包，解压即可运行。
+
+**Windows desktop pets with interactive insects.** A mouse-following fly, roaming ants, cockroaches and caterpillars, multi-monitor movement, customizable populations, and global hotkeys. Built with C# / .NET 10 / WPF / Win32.
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面固定 1 只苍蝇，默认 20 只蟑螂、20 只蚂蚁、3 只毛毛虫。控制窗口可调整爬行昆虫总数，不随屏幕数倍增。
 
-![DesktopLife 主屏实录：昆虫在桌面自由爬行](docs/images/live-desktop.gif)
+![DesktopLife Windows desktop pets：主屏实录，桌面昆虫自由爬行](docs/images/live-desktop.gif)
 
 ## 下载与使用（无需开发环境）
 
@@ -97,7 +101,9 @@ EXE、设置窗口、任务栏及托盘使用统一昆虫图标。资源位于 `
 
 此功能调用 Windows `WDA_EXCLUDEFROMCAPTURE`，要求 Windows 10 2004 或更新版本。只对支持该机制的截图、录屏和共享工具有效，不能保证所有监控软件无法录制，也不会隐藏任务栏/托盘图标或进程。Windows 拒绝应用时会提示失败。具体限制见 [Microsoft 文档](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity)。
 
-## 给朋友分享（自带运行环境）
+## 打包分享（开发者）
+
+直接分享已发布的程序，可将 [Releases 下载页](https://github.com/JonGates/DesktopLife/releases) 发给朋友。以下步骤用于从源码重新打包。
 
 运行下面的命令生成 Windows x64 便携 ZIP：
 
@@ -109,11 +115,11 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 
 便携版支持 Windows 10/11 x64，包含中文/英文、全局快捷键和全部现有昆虫。用户配置仍保存在 `%AppData%\DesktopLife`，不会把开发者的个人配置打包分享。程序退出时释放快捷键；首次启动可能需要片刻解包运行环境。
 
-## 直接运行
+## 从本地构建运行（开发者）
 
 双击根目录 **`Run-DesktopLife.cmd`**，或者 **`artifacts/publish/DesktopLife.exe`**。
 
-- 当前发布包使用本机已有的 **.NET 10 Desktop Runtime x64**，无需重新安装开发环境。
+- `artifacts/publish/` 是本地生成的依赖运行环境版本，需要本机安装 **.NET 10 Desktop Runtime x64**。Releases 中的便携 ZIP 自带运行环境。
 - 请保留 `artifacts/publish/` 内所有文件；不要只复制 exe。
 - 启动后稍等，苍蝇会从桌面的外露边缘进入并围绕鼠标。
 - 启动后几秒内，蟑螂从屏幕四周陆续爬出。鼠标靠近时会四散，逃到边缘后可藏起来，安全时再出现。
