@@ -8,6 +8,7 @@ namespace DesktopLife.App;
 public partial class App : Application
 {
     private TrayService? _tray;
+    private PreferencesController? _preferences;
     private Mutex? _instance;
     private bool _ownsInstance;
     public DesktopHost? Desktop { get; private set; }
@@ -40,6 +41,7 @@ public partial class App : Application
             if (!Dispatcher.HasShutdownStarted) Dispatcher.BeginInvoke(new Action(ShowSettings));
         }, null, Timeout.Infinite, executeOnlyOnce: false);
         Desktop = new DesktopHost(Dispatcher);
+        _preferences = new PreferencesController(Desktop, _settingsStore);
         _tray = new TrayService(ShowSettings, Desktop.TogglePause, () => Shutdown());
         Desktop.ExitRequested += () => Shutdown();
         void RefreshTray()
@@ -53,7 +55,7 @@ public partial class App : Application
         Desktop.Start();
         var settings = _settingsStore.Load(out _settingsWarning);
         Desktop.SetPopulation(settings);
-        if (e.Args.Contains("--settings")) ShowSettings();
+        if (e.Args.Contains("--settings") || _preferences.WarningKey != null) ShowSettings();
     }
 
     public void ShowSettings()
@@ -61,7 +63,7 @@ public partial class App : Application
         if (Desktop == null) return;
         if (_settingsWindow == null)
         {
-            _settingsWindow = new SettingsWindow(Desktop, _settingsStore, _settingsWarning);
+            _settingsWindow = new SettingsWindow(Desktop, _settingsStore, _settingsWarning, _preferences);
             _settingsWindow.Closed += (_, _) => _settingsWindow = null;
         }
         _settingsWindow.Show();
@@ -73,6 +75,7 @@ public partial class App : Application
     {
         _showSettingsRegistration?.Unregister(null);
         _showSettingsSignal?.Dispose();
+        _preferences?.Dispose();
         Desktop?.Dispose();
         _tray?.Dispose();
         if (_ownsInstance) _instance?.ReleaseMutex();

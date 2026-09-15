@@ -1,3 +1,4 @@
+using System.Windows.Input;
 using System.Globalization;
 using System.IO;
 using System.Windows;
@@ -10,11 +11,24 @@ public partial class SettingsWindow : Window
 {
     private readonly DesktopHost _host;
     private readonly SettingsStore _store;
-    public SettingsWindow(DesktopHost host, SettingsStore store, string? warning = null)
+    private readonly PreferencesController _preferences;
+    private bool _ready;
+    private string _statusKey = "Hint";
+    public SettingsWindow(DesktopHost host, SettingsStore store, string? warning = null, PreferencesController? preferences = null)
     {
         _host = host;
         _store = store;
+        _preferences = preferences ?? new PreferencesController(host, store);
         InitializeComponent();
+        LanguagePicker.SelectedIndex = LanguageService.Current == "en-US" ? 1 : 0;
+        StartKey.Text = _preferences.Current.StartHotkey;
+        PauseKey.Text = _preferences.Current.PauseHotkey;
+        LanguageService.Changed += Translate;
+        Closed += (_, _) => { LanguageService.Changed -= Translate; _preferences.Hotkeys.Captured -= CapturedHotkey; _preferences.Hotkeys.IsCapturing = false; if (preferences == null) _preferences.Dispose(); };
+        _preferences.Hotkeys.Captured += CapturedHotkey;
+        Deactivated += (_, _) => _preferences.Hotkeys.IsCapturing = false;
+        Activated += (_, _) => _preferences.Hotkeys.IsCapturing = StartKey.IsKeyboardFocusWithin || PauseKey.IsKeyboardFocusWithin;
+        _ready = true;
         Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
         RoachSlider.Value = host.Simulation.TotalCockroachCount;
@@ -30,9 +44,41 @@ public partial class SettingsWindow : Window
         Closed += (_, _) => { _host.LayoutChanged -= RefreshLayout; _host.StateChanged -= RefreshState; };
         Loaded += (_, _) => RefreshLayout();
         RefreshState();
-        if (warning != null) Status.Text = warning;
+        if (warning != null) SetStatus("ConfigWarning");
+        if (_preferences.WarningKey != null) SetStatus(_preferences.WarningKey);
     }
 
+    private void SetStatus(string key) { _statusKey = key; Status.Text = LanguageService.Get(key); }
+    private void Translate() { RefreshState(); RefreshLayout(); SetStatus(_statusKey); }
+    private void LanguageChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready) return;
+        var language = ((ComboBoxItem)LanguagePicker.SelectedItem).Tag.ToString()!;
+        if (_preferences.SaveLanguage(language, out var error)) SetStatus("LanguageSaved");
+        else
+        {
+            _ready = false; LanguagePicker.SelectedIndex = LanguageService.Current == "en-US" ? 1 : 0; _ready = true;
+            SetStatus(error);
+        }
+    }
+    private void SaveKeysClicked(object sender, RoutedEventArgs e) => SetStatus(_preferences.SaveHotkeys(StartKey.Text, PauseKey.Text, out var error) ? "KeysSaved" : error);
+    private void CapturedHotkey(string text) { if (Keyboard.FocusedElement is TextBox input && (input == StartKey || input == PauseKey)) input.Text = text; }
+    private void KeyFocus(object sender, KeyboardFocusChangedEventArgs e) => _preferences.Hotkeys.IsCapturing = true;
+    private void KeyBlur(object sender, KeyboardFocusChangedEventArgs e) => _preferences.Hotkeys.IsCapturing = false;
+    private void CaptureKey(object sender, KeyEventArgs e)
+    {
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (key == Key.Tab) return;
+        e.Handled = true;
+        if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift) return;
+        var input = (TextBox)sender;
+        if (key == Key.Back && Keyboard.Modifiers == ModifierKeys.None) { input.Text = ""; return; }
+        var modifiers = Keyboard.Modifiers;
+        var name = key is >= Key.D0 and <= Key.D9 ? ((int)(key - Key.D0)).ToString() : key.ToString();
+        var text = (modifiers.HasFlag(ModifierKeys.Control) ? "Ctrl+" : "") + (modifiers.HasFlag(ModifierKeys.Alt) ? "Alt+" : "") + (modifiers.HasFlag(ModifierKeys.Shift) ? "Shift+" : "") + name;
+        if (modifiers.HasFlag(ModifierKeys.Windows) || !Hotkey.TryParse(text, out _)) { SetStatus("InvalidHotkey"); return; }
+        input.Text = text;
+    }
     private static void SyncSlider(TextBox input, Slider slider)
     {
         if (int.TryParse(input.Text, out var count) && count >= slider.Minimum && count <= slider.Maximum) slider.Value = count;
@@ -55,7 +101,7 @@ public partial class SettingsWindow : Window
             !int.TryParse(AntCount.Text, out var ants) || ants < 0 || ants > PopulationSettings.MaxAnts ||
             !int.TryParse(CaterpillarCount.Text, out var caterpillars) || caterpillars < 0 || caterpillars > PopulationSettings.MaxCaterpillars)
         {
-            Status.Text = "请输入有效整数：蟑螂、蚂蚁 0–500，毛毛虫 0–100。";
+            SetStatus("InvalidCounts");
             return;
         }
         try
@@ -66,20 +112,21 @@ public partial class SettingsWindow : Window
             RoachSlider.Value = roaches;
             AntSlider.Value = ants;
             CaterpillarSlider.Value = caterpillars;
-            Status.Text = $"已保存：蟑螂 {roaches}、蚂蚁 {ants}、毛毛虫 {caterpillars}。苍蝇固定 1 只。";
+            SetStatus("Saved");
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
-            Status.Text = "保存失败，数量未更改。请检查用户配置目录是否可写。";
+            SetStatus("SaveFailed");
         }
-    }    private void PauseClicked(object sender, RoutedEventArgs e) => _host.TogglePause();
-    private void RefreshState() => PauseButton.Content = _host.IsPaused ? "恢复全部" : "暂停全部";
+    }
+    private void PauseClicked(object sender, RoutedEventArgs e) => _host.TogglePause();
+    private void RefreshState() => PauseButton.Content = LanguageService.Get(_host.IsPaused ? "Resume" : "Pause");
     private void MapSizeChanged(object sender, SizeChangedEventArgs e) => RefreshLayout();
 
     private void RefreshLayout()
     {
         if (DisplayMap == null) return;
-        DisplaySummary.Text = $"{_host.Simulation.Worlds.Count} 块屏幕";
+        DisplaySummary.Text = LanguageService.Choose($"{_host.Simulation.Worlds.Count} 块屏幕", $"{_host.Simulation.Worlds.Count} displays");
         DisplayMap.Children.Clear();
         var layout = _host.Simulation.Layout;
         if (layout.Displays.Count == 0) return;
@@ -98,7 +145,7 @@ public partial class SettingsWindow : Window
                 Background = new SolidColorBrush(display.IsPrimary ? Color.FromRgb(225, 238, 254) : Color.FromRgb(241, 245, 249)),
                 BorderBrush = new SolidColorBrush(Color.FromRgb(87, 127, 167)), BorderThickness = new Thickness(1.5),
                 ToolTip = $"{display.Id}\n{display.Bounds.Width} × {display.Bounds.Height}\n({display.Bounds.Left}, {display.Bounds.Top})",
-                Child = new TextBlock { Text = $"{i + 1}" + (display.IsPrimary ? " · 主屏" : ""), FontFamily = new FontFamily("Segoe UI"),
+                Child = new TextBlock { Text = $"{i + 1}" + (display.IsPrimary ? " · " + LanguageService.Get("Primary") : ""), FontFamily = new FontFamily("Segoe UI"),
                     HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center, FontSize = 13 }
             };
             Canvas.SetLeft(tile, offsetX + (display.Bounds.Left - layout.Bounds.Left) * scale);

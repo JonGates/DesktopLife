@@ -18,7 +18,7 @@ public sealed class SettingsStore(string? filePath = null)
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException or ArgumentOutOfRangeException)
         {
-            warning = "无法读取已保存的数量，已使用默认值。可重新设置后保存。";
+            warning = LanguageService.Get("ConfigWarning");
             return new();
         }
     }
@@ -26,7 +26,11 @@ public sealed class SettingsStore(string? filePath = null)
     public void Save(PopulationSettings settings)
     {
         settings.Validate();
-        var fullPath = Path.GetFullPath(FilePath);
+        Write(FilePath, settings);
+    }
+    private static void Write<T>(string path, T settings)
+    {
+        var fullPath = Path.GetFullPath(path);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
         var temporary = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try
@@ -36,4 +40,19 @@ public sealed class SettingsStore(string? filePath = null)
         }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
     }
+    public string PreferencesPath => Path.ChangeExtension(FilePath, ".preferences.json");
+    public AppPreferences LoadPreferences(out bool invalid)
+    {
+        invalid = false;
+        try
+        {
+            if (!File.Exists(PreferencesPath)) return new();
+            var value = JsonSerializer.Deserialize<AppPreferences>(File.ReadAllText(PreferencesPath)) ?? throw new JsonException();
+            if (value.StartHotkey == null || value.PauseHotkey == null || value.Language is not ("zh-CN" or "en-US") || !Hotkey.TryParse(value.StartHotkey, out var a) || !Hotkey.TryParse(value.PauseHotkey, out var b) || (a.Key != 0 && a == b)) throw new JsonException();
+            return value;
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException)
+        { invalid = true; return new(); }
+    }
+    public void SavePreferences(AppPreferences value) => Write(PreferencesPath, value);
 }

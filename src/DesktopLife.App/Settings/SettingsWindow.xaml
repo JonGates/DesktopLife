@@ -1,7 +1,7 @@
 <Window x:Class="DesktopLife.App.Settings.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="DesktopLife · 数量设置" Width="540" Height="760" MinWidth="470" MinHeight="600"
+    Title="{DynamicResource Title}" Width="540" Height="760" MinWidth="470" MinHeight="600"
     WindowStartupLocation="CenterScreen" Background="#F3F6FA" Foreground="#17324D"
     FontFamily="Microsoft YaHei UI" FontSize="14">
     <Window.Resources>
@@ -20,52 +20,64 @@
     </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Margin="26,0,26,20">
-            <Button x:Name="PauseButton" Content="暂停全部" Click="PauseClicked" DockPanel.Dock="Left"/>
-            <Button x:Name="ApplyButton" Content="保存并应用" Click="ApplyClicked" IsDefault="True" DockPanel.Dock="Right" Background="#2563B8" Foreground="White" BorderBrush="#2563B8"/>
+            <Button x:Name="PauseButton" Content="{DynamicResource Pause}" Click="PauseClicked" DockPanel.Dock="Left"/>
+            <Button x:Name="ApplyButton" Content="{DynamicResource Apply}" Click="ApplyClicked" IsDefault="True" DockPanel.Dock="Right" Background="#2563B8" Foreground="White" BorderBrush="#2563B8"/>
         </DockPanel>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
     <StackPanel Margin="26,22,26,8">
-        <TextBlock Text="DesktopLife" FontFamily="Segoe UI Semibold" FontSize="29"/>
-        <TextBlock Text="让生物在整个桌面自由活动" Foreground="#596B7D" Margin="0,4,0,18"/>
+        <DockPanel LastChildFill="True"><ComboBox x:Name="LanguagePicker" DockPanel.Dock="Right" Width="116" VerticalAlignment="Center" SelectionChanged="LanguageChanged" AutomationProperties.Name="{DynamicResource Language}"><ComboBoxItem Content="简体中文" Tag="zh-CN"/><ComboBoxItem Content="English" Tag="en-US"/></ComboBox><TextBlock Text="DesktopLife" FontFamily="Segoe UI Semibold" FontSize="29"/></DockPanel>
+        <TextBlock Text="{DynamicResource Subtitle}" Foreground="#596B7D" Margin="0,4,0,18"/>
         <Border Background="White" BorderBrush="#D6E0EA" BorderThickness="1" CornerRadius="10" Padding="16">
             <StackPanel>
                 <DockPanel>
-                    <TextBlock Text="屏幕排列" FontWeight="SemiBold"/>
+                    <TextBlock Text="{DynamicResource Layout}" FontWeight="SemiBold"/>
                     <TextBlock x:Name="DisplaySummary" HorizontalAlignment="Right" Foreground="#596B7D"/>
                 </DockPanel>
                 <Canvas x:Name="DisplayMap" Height="112" Margin="0,14,0,10" SizeChanged="MapSizeChanged"
-                    ClipToBounds="True" AutomationProperties.Name="已识别的屏幕排列"/>
-                <TextBlock Text="相接边缘可跨屏移动，方向跟随 Windows 显示设置。" TextWrapping="Wrap" FontSize="12" Foreground="#596B7D"/>
+                    ClipToBounds="True" AutomationProperties.Name="{DynamicResource LayoutName}"/>
+                <TextBlock Text="{DynamicResource LayoutHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#596B7D"/>
             </StackPanel>
         </Border>
-        <TextBlock Text="全桌面总数量" FontSize="18" FontWeight="SemiBold" Margin="0,22,0,4"/>
-        <TextBlock Text="所有屏幕共享这些生物，增加屏幕不会增加数量。" TextWrapping="Wrap" Foreground="#596B7D" FontSize="12" Margin="0,0,0,12"/>
+        <TextBlock Text="{DynamicResource Counts}" FontSize="18" FontWeight="SemiBold" Margin="0,22,0,4"/>
+        <TextBlock Text="{DynamicResource CountHelp}" TextWrapping="Wrap" Foreground="#596B7D" FontSize="12" Margin="0,0,0,12"/>
         <Border Background="White" BorderBrush="#D6E0EA" BorderThickness="1" CornerRadius="10" Padding="16">
             <StackPanel>
-                <TextBlock Text="苍蝇 · 固定 1 只" FontWeight="SemiBold"/><TextBlock Text="围绕鼠标飞行 · 点击后停落 3 秒并搓足" FontSize="12" Foreground="#596B7D" Margin="0,4,0,8"/>                <Grid Margin="0,16,0,0">
+                <TextBlock Text="{DynamicResource Fly}" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource FlyHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#596B7D" Margin="0,4,0,8"/>                <Grid Margin="0,16,0,0">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="蟑螂" Target="{Binding ElementName=RoachCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="爬行与躲避鼠标 · 0–500" FontSize="12" Foreground="#596B7D"/></StackPanel>
-                    <TextBox x:Name="RoachCount" Grid.Column="1" MaxLength="6" Text="20" AutomationProperties.Name="蟑螂总数量"/>
-                    <TextBlock Grid.Column="2" Text="只" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <StackPanel VerticalAlignment="Center"><Label Content="{DynamicResource Roach}" Target="{Binding ElementName=RoachCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource RoachHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#596B7D"/></StackPanel>
+                    <TextBox x:Name="RoachCount" Grid.Column="1" MaxLength="6" Text="20" AutomationProperties.Name="{DynamicResource RoachCountName}"/>
+                    <TextBlock Grid.Column="2" Text="{DynamicResource Unit}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 </Grid>
-                <Slider x:Name="RoachSlider" Minimum="0" Maximum="500" Value="20" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,12,0,0" ValueChanged="RoachSliderChanged" AutomationProperties.Name="蟑螂数量滑块"/>
+                <Slider x:Name="RoachSlider" Minimum="0" Maximum="500" Value="20" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,12,0,0" ValueChanged="RoachSliderChanged" AutomationProperties.Name="{DynamicResource RoachSliderName}"/>
                 <Grid Margin="0,16,0,0">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="蚂蚁" Target="{Binding ElementName=AntCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="快速爬行与躲避鼠标 · 0–500" FontSize="12" Foreground="#596B7D"/></StackPanel>
-                    <TextBox x:Name="AntCount" Grid.Column="1" MaxLength="6" Text="20" AutomationProperties.Name="蚂蚁总数量"/>
-                    <TextBlock Grid.Column="2" Text="只" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <StackPanel VerticalAlignment="Center"><Label Content="{DynamicResource Ant}" Target="{Binding ElementName=AntCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource AntHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#596B7D"/></StackPanel>
+                    <TextBox x:Name="AntCount" Grid.Column="1" MaxLength="6" Text="20" AutomationProperties.Name="{DynamicResource AntCountName}"/>
+                    <TextBlock Grid.Column="2" Text="{DynamicResource Unit}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 </Grid>
-                <Slider x:Name="AntSlider" Minimum="0" Maximum="500" Value="20" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,12,0,0" ValueChanged="AntSliderChanged" AutomationProperties.Name="蚂蚁数量滑块"/>
+                <Slider x:Name="AntSlider" Minimum="0" Maximum="500" Value="20" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,12,0,0" ValueChanged="AntSliderChanged" AutomationProperties.Name="{DynamicResource AntSliderName}"/>
                 <Grid Margin="0,16,0,0">
                     <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="毛毛虫" Target="{Binding ElementName=CaterpillarCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="缓慢蠕动 · 0–100" FontSize="12" Foreground="#596B7D"/></StackPanel>
-                    <TextBox x:Name="CaterpillarCount" Grid.Column="1" MaxLength="6" Text="3" AutomationProperties.Name="毛毛虫总数量"/>
-                    <TextBlock Grid.Column="2" Text="只" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                    <StackPanel VerticalAlignment="Center"><Label Content="{DynamicResource Caterpillar}" Target="{Binding ElementName=CaterpillarCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource CaterpillarHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#596B7D"/></StackPanel>
+                    <TextBox x:Name="CaterpillarCount" Grid.Column="1" MaxLength="6" Text="3" AutomationProperties.Name="{DynamicResource CaterpillarCountName}"/>
+                    <TextBlock Grid.Column="2" Text="{DynamicResource Unit}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
                 </Grid>
-                <Slider x:Name="CaterpillarSlider" Minimum="0" Maximum="100" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,12,0,0" ValueChanged="CaterpillarSliderChanged" AutomationProperties.Name="毛毛虫数量滑块"/>
+                <Slider x:Name="CaterpillarSlider" Minimum="0" Maximum="100" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,12,0,0" ValueChanged="CaterpillarSliderChanged" AutomationProperties.Name="{DynamicResource CaterpillarSliderName}"/>
             </StackPanel>
         </Border>
-        <TextBlock x:Name="Status" Text="爬行昆虫设为 0 可关闭。关闭窗口后，生物会继续运行。" TextWrapping="Wrap" Foreground="#596B7D" Margin="0,14,0,14" FontSize="12" MinHeight="32" AutomationProperties.LiveSetting="Polite"/>
+        <Border Background="White" BorderBrush="#D6E0EA" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,16,0,0">
+<StackPanel>
+<TextBlock Text="{DynamicResource Hotkeys}" FontWeight="SemiBold"/>
+<TextBlock Text="{DynamicResource KeyHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#596B7D" Margin="0,6,0,10"/>
+<Grid><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition/></Grid.ColumnDefinitions>
+<Label Content="{DynamicResource Start}" Target="{Binding ElementName=StartKey}" VerticalAlignment="Center"/>
+<TextBox x:Name="StartKey" Grid.Column="1" FontSize="16" IsReadOnly="True" PreviewKeyDown="CaptureKey" GotKeyboardFocus="KeyFocus" LostKeyboardFocus="KeyBlur" AutomationProperties.Name="{DynamicResource Start}"/></Grid>
+<Grid Margin="0,8,0,10"><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition/></Grid.ColumnDefinitions>
+<Label Content="{DynamicResource Stop}" Target="{Binding ElementName=PauseKey}" VerticalAlignment="Center"/>
+<TextBox x:Name="PauseKey" Grid.Column="1" FontSize="16" IsReadOnly="True" PreviewKeyDown="CaptureKey" GotKeyboardFocus="KeyFocus" LostKeyboardFocus="KeyBlur" AutomationProperties.Name="{DynamicResource Stop}"/></Grid>
+<Button x:Name="SaveKeysButton" Content="{DynamicResource SaveKeys}" Click="SaveKeysClicked" HorizontalAlignment="Right"/>
+</StackPanel></Border>
+<TextBlock x:Name="Status" Text="{DynamicResource Hint}" TextWrapping="Wrap" Foreground="#596B7D" Margin="0,14,0,14" FontSize="12" MinHeight="32" AutomationProperties.LiveSetting="Polite"/>
     </StackPanel>
     </ScrollViewer>
     </DockPanel>

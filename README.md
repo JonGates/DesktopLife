@@ -19,7 +19,7 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 ## 数量控制与跨屏
 
 - 双击 `Run-DesktopLife.cmd` 打开控制窗口，或双击托盘图标 / 右键选择“数量设置”。程序已运行时再次执行启动脚本，会打开已有实例的设置。
-- 苍蝇固定 **1 只**，无需数量设置。蟑螂和蚂蚁 **0–500**、毛毛虫 **0–100**，输入或拖动滑块，点击 **保存并应用**。爬行昆虫设为 0 可关闭。旧配置中的蟑螂数量保留，旧苍蝇数量忽略。
+- 苍蝇固定 **1 只**，无需数量设置。蟑螂和蚂蚁 **0–500**、毛毛虫 **0–100**，输入或拖动滑块，点击 **保存数量**。爬行昆虫设为 0 可关闭。旧配置中的蟑螂数量保留，旧苍蝇数量忽略。
 - 所有屏幕共享同一批生物。增加数量只补充差额，减少数量保留其余个体；屏幕插拔不改变总数。
 - 自动读取 Windows 显示设置中的左右、上下、负坐标与错位排列。蟑螂、蚂蚁和毛毛虫均可从相接的边缘连续爬到邻屏；苍蝇跟随全桌面鼠标。
 - 错位屏幕只在实际相接的边缘段通行；没有屏幕的空隙和仅角点接触处不作为爬行通道。若两屏不相接，可在 Windows 显示设置中调整排列。
@@ -27,6 +27,18 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 - 关闭设置窗口后继续在托盘运行；“暂停全部 / 恢复全部”控制所有屏幕，暂停中修改数量和接入屏幕仍保持暂停。
 
 ![数量设置窗口](docs/images/settings-window.png)
+
+## 语言与快捷键
+
+- 右上角切换 **简体中文 / English**，窗口、提示、托盘立即更新，选择自动保存。
+- 向下滚动到“全局快捷键”，点击输入框并按组合键，点击 **保存快捷键**。Backspace 清空后保存可禁用对应操作。
+- 支持 Ctrl、Alt、Shift 搭配字母、数字或 F1–F11；重复组合和被占用的组合会提示错误，并保留原设置。
+- 启动／恢复只恢复运行，暂停只暂停；重复按同一操作不会反向切换。关闭设置窗口后快捷键仍有效。
+- 快捷键只在 DesktopLife 进程运行期间有效；退出程序后请用启动脚本或 exe 启动。
+- 语言与快捷键保存在 `%AppData%\DesktopLife\settings.preferences.json`，与原数量配置分开保存。
+- 使用 Windows [RegisterHotKey](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerhotkey) 注册组合键，禁用或退出时释放。
+
+![英文快捷键设置](docs/images/shortcuts-english.png)
 
 ## 直接运行
 
@@ -39,7 +51,7 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 - 右下角系统托盘（可能在折叠区域中）找到 **DesktopLife**，菜单显示屏幕数和总生物数；**暂停 / 恢复 / 退出**同时作用于所有屏幕。
 - 只允许运行一个实例；重复打开不会再生成一只苍蝇。
 - Release 没有 HUD。Debug 右上角显示输入状态、更新频率、逻辑更新时间、Fly 状态与生物数量。
-- 目前没有全局快捷键；`Ctrl + Alt + D` 随后续产品化阶段实现。
+- 全局快捷键默认：`Ctrl+Alt+S` 启动／恢复，`Ctrl+Alt+P` 暂停，可在设置窗口修改。
 
 ## 开发与验证
 
@@ -83,6 +95,9 @@ dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --fly-landing a
 # 写实素材飞行/停落两种姿态、透明背景和物理坐标
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --fly-art artifacts/fly-art-probe
 
+# 语言持久化、实际快捷键注册/冲突/回滚、消息分发与中英文窗口
+dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --preferences artifacts/preferences-probe
+
 # Release 发布：默认使用已安装的 Desktop Runtime
 powershell -ExecutionPolicy Bypass -File scripts/Publish.ps1
 
@@ -113,7 +128,7 @@ Overlay 在显示前配置 `WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE
 ## 范围与限制
 
 - 支持 Windows x64 多显示器。苍蝇为生成的写实图像，蟑螂仍是程序绘制的占位图形。
-- 已通过 Debug / Release 构建和 89 项 xUnit 测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。详见 `docs/FLY_LANDING_VERIFICATION.md`；旧版本验证记录作为历史保留。
+- 已通过 Debug / Release 构建和 93 项 xUnit 测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。详见 `docs/FLY_LANDING_VERIFICATION.md`；旧版本验证记录作为历史保留。
 - 尚未完成稳定 60 FPS 和 500 只群体的性能验收；数量上限是输入约束，不代表任何设备均能流畅运行上限数量。
 - 125% / 150% 已通过离屏渲染检查，插拔与拓扑变化已通过模拟布局的真实窗口检查；实际混合系统缩放、物理拔插、浏览器点击体验和不同 GPU 尚未完整验收。
 - 暂无蚂蚁、开机自启、安装器。
