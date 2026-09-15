@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DesktopLife.Engine\DesktopLife.Engine.csproj" />
+    <ProjectReference Include="..\DesktopLife.Creatures\DesktopLife.Creatures.csproj" />
+    <ProjectReference Include="..\DesktopLife.Rendering\DesktopLife.Rendering.csproj" />
+    <ProjectReference Include="..\DesktopLife.Windows\DesktopLife.Windows.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>DesktopLife</AssemblyName>
+    <PlatformTarget>x64</PlatformTarget>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- WPF owns process DPI via manifest; WinForms is used only for NotifyIcon. -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+</Project>

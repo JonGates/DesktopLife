@@ -1,0 +1,7 @@
+<Window x:Class="DesktopLife.App.Overlay.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DesktopLife Overlay" WindowStyle="None" AllowsTransparency="True"
+        Background="Transparent" ShowInTaskbar="False" ShowActivated="False"
+        Topmost="True" ResizeMode="NoResize" Focusable="False"
+        IsHitTestVisible="False" Width="800" Height="600" />

@@ -1,0 +1,61 @@
+using System.IO;
+using System.Numerics;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using DesktopLife.Engine.Creatures;
+using DesktopLife.Engine.World;
+using DesktopLife.Rendering;
+
+namespace DesktopLife.Diagnostics;
+
+internal static class Program
+{
+    [STAThread]
+    private static void Main(string[] args)
+    {
+        if (args.Length > 0 && args[0] == "--displays")
+        {
+            DisplayProbe.Run(args.Length > 1 ? args[1] : "artifacts/display-probe");
+            return;
+        }
+        if (args.Length > 0 && args[0] == "--live")
+        {
+            LiveProbe.Run(args.Length > 1 ? args[1] : "artifacts/live-probe");
+            return;
+        }
+        var output = Path.GetFullPath(args.Length > 0 ? args[0] : "artifacts/render-check");
+        Directory.CreateDirectory(output);
+        var renderer = new WpfCreatureRenderer();
+        var bounds = new WorldBounds(-1920, 0, 1920, 1080);
+        ICreature[] creatures = [new RenderCreature(new(-1720, 200), CreatureKind.Fly), new RenderCreature(new(-1620, 200), CreatureKind.Cockroach)];
+        foreach (var scale in new[] { 1.0, 1.25, 1.5 })
+        {
+            var visual = new DrawingVisual();
+            using (var dc = visual.RenderOpen()) renderer.Render(dc, creatures, bounds, 0.1f, scale, scale);
+            var bitmap = new RenderTargetBitmap(400, 400, 96 * scale, 96 * scale, PixelFormats.Pbgra32);
+            bitmap.Render(visual);
+            var pixels = new byte[400 * 400 * 4];
+            bitmap.CopyPixels(pixels, 1600, 0);
+            if (pixels[(200 * 400 + 200) * 4 + 3] == 0) throw new Exception($"Fly missed expected physical position at {scale}");
+            var roachCenter = (200 * 400 + 300) * 4;
+            if (pixels[roachCenter + 3] == 0) throw new Exception($"Cockroach missed expected physical position at {scale}");
+            if (pixels[roachCenter + 2] <= pixels[roachCenter + 1] * 1.15) throw new Exception("Cockroach must render its brown sprite, not the green fly sprite");
+            if (pixels[(100 * 400 + 100) * 4 + 3] != 0) throw new Exception("Background is not transparent");
+            var occupied = 0;
+            for (var i = 3; i < pixels.Length; i += 4) if (pixels[i] != 0) occupied++;
+            if (occupied is < 500 or > 1600) throw new Exception($"Unexpected combined sprite size: {occupied} pixels");
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using var stream = File.Create(Path.Combine(output, $"population-{scale * 100:F0}.png"));
+            encoder.Save(stream);
+            Console.WriteLine($"PASS: {scale * 100:F0}% render, fly (200,200), cockroach (300,200), brown sprite, transparent background, {occupied} painted pixels");
+        }
+    }
+
+    private sealed class RenderCreature : Creature
+    {
+        public override CreatureKind Kind { get; }
+        public RenderCreature(Vector2 position, CreatureKind kind) { Position = position; Kind = kind; }
+        public override void Update(float deltaTime, in CreatureContext context) { }
+    }
+}

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/DesktopLife.Rendering/DesktopLife.Rendering.csproj" />
+    <ProjectReference Include="../../src/DesktopLife.Creatures/DesktopLife.Creatures.csproj" />
+    <ProjectReference Include="../../src/DesktopLife.App/DesktopLife.App.csproj" />
+  </ItemGroup>
+</Project>
