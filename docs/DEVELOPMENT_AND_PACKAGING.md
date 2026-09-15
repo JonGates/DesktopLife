@@ -194,7 +194,24 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.2.0
 ```
 
-将两个 ZIP 和各自的 `.zip.sha256` 上传到同一个 `v0.2.0` Release。检查两个包的 `build-info.json` 中 Version 一致，SourceRevision 解析到同一个 Git 提交（可用 `git rev-parse <SourceRevision>` 比较完整哈希）。后续版本同步更新两条命令的版本号；保留旧 Release 作为历史记录。
+打包脚本各自生成 `.zip.sha256` 供本地检查；发布时将校验值合并为一个清单，只上传两个 ZIP 和一个 `SHA256SUMS.txt` 到同一个 `v0.2.0` Release。检查两个包的 `build-info.json` 中 Version 一致，SourceRevision 解析到同一个 Git 提交（可用 `git rev-parse <SourceRevision>` 比较完整哈希）。后续版本同步更新两条命令的版本号；保留旧 Release 作为历史记录。
+
+生成统一校验清单（每行是一个 ZIP 的 SHA256 和文件名）：
+
+```powershell
+$releaseVersion = '0.2.0'
+$packageNames = @(
+    "DesktopLife-Portable-win-x64-v$releaseVersion.zip",
+    "DesktopLife-ScreenSaver-win-x64-v$releaseVersion.zip"
+)
+$checksumLines = foreach ($packageName in $packageNames) {
+    $packageHash = (Get-FileHash -LiteralPath "artifacts/$packageName" -Algorithm SHA256 -ErrorAction Stop).Hash
+    "$packageHash  $packageName"
+}
+$checksumLines | Set-Content -LiteralPath artifacts/SHA256SUMS.txt -Encoding ASCII
+```
+
+GitHub 自动提供的 Source code ZIP / tar.gz 是源码附件；我们维护的发布附件共三个。Tags 页保留各历史版本，不用于展示这三个程序下载附件。
 
 - 提交源码、打包脚本、开发文档和验证记录。
 - `artifacts`、`bin`、`obj` 已被 Git 忽略，构建产物不会随 `git push` 上传。

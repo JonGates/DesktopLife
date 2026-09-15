@@ -15,7 +15,7 @@ The native **Windows `.scr` screen saver** offers dark/light backgrounds and aut
 | Native screen saver for an idle computer, with dark/light themes | **[Screensaver v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** | Extract and run `Install-ScreenSaver.cmd`, then choose an idle timeout in Windows. |
 | Desktop companions, a mouse-following fly and roaming insects | **[Desktop pets v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-Portable-win-x64-v0.2.0.zip)** | Extract and run `Start-DesktopLife.cmd`. |
 
-DesktopLife v0.2.0 is one preview release with two programs: the desktop app and the screen saver. Both include the .NET runtime and keep separate settings. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
+DesktopLife v0.2.0 is one preview release with two programs: the desktop app and the screen saver. Both include the .NET runtime and keep separate settings. The release contains two ZIPs and one [SHA256SUMS.txt](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/SHA256SUMS.txt) listing both checksums. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
 
 ![DesktopLife Windows desktop pets: insects roaming on the primary monitor](docs/images/live-desktop.gif)
 

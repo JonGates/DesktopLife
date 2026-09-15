@@ -43,7 +43,7 @@ DesktopLife v0.2.0 为预览版，同一版本提供桌面应用与屏保两个�
 | --- | --- |
 | `DesktopLife-Portable-win-x64-v0.2.0.zip` | 桌面宠物模式，包含程序和运行环境。 |
 | `DesktopLife-ScreenSaver-win-x64-v0.2.0.zip` | Windows 屏保模式，包含 `.scr`、配置与安装入口和运行环境。 |
-| `DesktopLife-Portable-win-x64-v0.2.0.zip.sha256` | 可选的文件校验信息，无需运行。 |
+| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/SHA256SUMS.txt) | 两个 ZIP 共用的 SHA256 清单，每个文件各有一行校验值，无需运行。 |
 | Tags 页面里的 `zip` / `tar.gz`，或 Releases 的 `Source code` | 项目源码，供开发者使用，不能直接当作便携程序运行。 |
 
 ### 桌面宠物版：2. 解压并启动
