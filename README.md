@@ -4,6 +4,39 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面固定 1 只苍蝇，默认 20 只蟑螂、20 只蚂蚁、3 只毛毛虫。控制窗口可调整爬行昆虫总数，不随屏幕数倍增。
 
+## 下载与使用（无需开发环境）
+
+支持 **Windows 10/11 x64**。便携包自带运行环境，无需安装 .NET、SDK 或 Visual Studio。
+
+**[下载 v0.1.0 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.1.0) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
+
+当前 v0.1.0 为预览版（Pre-release）。
+
+### 1. 在 GitHub 下载运行包
+
+如果你打开的是 **Tags** 页面，请切换到旁边的 **Releases**，找到对应版本，展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.1.0.zip`。
+
+| 下载项 | 用途 |
+| --- | --- |
+| `DesktopLife-Portable-win-x64-v0.1.0.zip` | **普通用户下载这个**：包含可直接运行的程序和运行环境。 |
+| `DesktopLife-Portable-win-x64-v0.1.0.zip.sha256` | 可选的文件校验信息，无需运行。 |
+| Tags 页面里的 `zip` / `tar.gz`，或 Releases 的 `Source code` | 项目源码，供开发者使用，不能直接当作便携程序运行。 |
+
+### 2. 解压并启动
+
+1. 将下载的 ZIP **完整解压**到一个文件夹，再打开解压后的目录。
+2. 双击 **`Start-DesktopLife.cmd`**，启动程序并打开设置窗口。
+3. 也可以直接双击 **`DesktopLife.exe`** 启动；双击右下角系统托盘中的 DesktopLife 图标打开设置（图标可能收在 `^` 隐藏图标区域）。
+
+### 3. 开始使用
+
+- **调整数量**：修改蟑螂、蚂蚁、毛毛虫数量，点击“保存数量”；设为 0 可关闭该物种。所有屏幕共享这些数量，苍蝇固定 1 只。
+- **与苍蝇互动**：移动鼠标让它跟随；单击左键指定落点，实际停落 3 秒后继续飞行。
+- **暂停／恢复**：默认 `Ctrl+Alt+P` 暂停，`Ctrl+Alt+S` 恢复；也可在设置中操作或修改快捷键。快捷键在程序运行时有效。
+- **语言**：设置窗口右上角切换简体中文或 English。
+- **多屏**：自动识别 Windows 显示排列；相接的屏幕边缘可连续通行，无需按屏幕分别设置数量。
+- **退出**：关闭设置窗口后，昆虫仍会运行。右键托盘图标，选择“退出”才能结束程序。
+
 ## 功能演示
 
 ### 苍蝇跟随鼠标，点击后停落 3 秒
