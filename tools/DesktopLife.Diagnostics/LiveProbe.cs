@@ -38,7 +38,7 @@ internal static class LiveProbe
                     Gen0 = GC.CollectionCount(0), Gen1 = GC.CollectionCount(1), Gen2 = GC.CollectionCount(2) });
                 if (phase == 0 && clock.Elapsed.TotalSeconds >= 8)
                 {
-                    if (surfaces.Any(s => s.VisibleCount == 0 || s.Fps < 10)) throw new Exception("No visible creatures or update loop is below 10 Hz");
+                    if (surfaces.Sum(s => s.VisibleCount) == 0 || surfaces.Any(s => s.Fps < 10)) throw new Exception("No visible creatures or update loop is below 10 Hz");
                     var dpi = VisualTreeHelper.GetDpi(surface);
                     var bitmap = new RenderTargetBitmap((int)Math.Ceiling(surface.ActualWidth * dpi.DpiScaleX), (int)Math.Ceiling(surface.ActualHeight * dpi.DpiScaleY), 96 * dpi.DpiScaleX, 96 * dpi.DpiScaleY, PixelFormats.Pbgra32);
                     bitmap.Render(surface);
@@ -57,7 +57,7 @@ internal static class LiveProbe
                 }
                 else if (phase == 2 && clock.Elapsed.TotalSeconds >= 20)
                 {
-                    if (overlays.Any(w => !w.IsVisible) || surfaces.Where((s, i) => s.Seconds <= pauseTimes[i] + 5 || s.VisibleCount == 0).Any()) throw new Exception("Resume did not restart visible simulation");
+                    if (overlays.Any(w => !w.IsVisible) || surfaces.Where((s, i) => s.Seconds <= pauseTimes[i] + 5).Any()) throw new Exception("Resume did not restart visible simulation");
                     phase = 3;
                     timer.Stop();
                     app.Shutdown();

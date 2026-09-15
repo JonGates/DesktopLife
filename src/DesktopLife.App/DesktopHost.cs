@@ -27,6 +27,7 @@ public sealed class DesktopHost : IDisposable
     public IReadOnlyList<OverlayWindow> Overlays { get; private set; } = [];
     public bool IsPaused { get; private set; }
     public event Action? LayoutChanged;
+    public event Action? StateChanged;
     public event Action? ExitRequested;
 
     public DesktopHost(Dispatcher dispatcher, Func<IReadOnlyList<DisplayArea>>? getDisplays = null)
@@ -102,6 +103,15 @@ public sealed class DesktopHost : IDisposable
             foreach (var window in Overlays) { window.Show(); window.PlaceOnDisplay(); }
             Subscribe();
         }
+        StateChanged?.Invoke();
+    }
+
+    public void SetPopulation(int flies, int cockroaches)
+    {
+        _dispatcher.VerifyAccess();
+        ObjectDisposedException.ThrowIf(_disposed, this);
+        Simulation.SetPopulation(flies, cockroaches);
+        StateChanged?.Invoke();
     }
 
     private void Subscribe()

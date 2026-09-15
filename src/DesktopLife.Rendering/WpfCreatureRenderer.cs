@@ -13,7 +13,7 @@ public sealed class WpfCreatureRenderer : IRenderer
         for (var i = 0; i < creatures.Count; i++)
         {
             var creature = creatures[i];
-            if (!creature.IsVisible) continue;
+            if (!creature.IsVisible || !bounds.Contains(creature.Position, 40)) continue;
             var p = ScreenCoordinates.ToLocal(creature.Position, new Vector2(bounds.Left, bounds.Top), (float)scaleX, (float)scaleY);
             var matrix = Matrix.Identity;
             matrix.Scale(creature.Scale, creature.Scale);

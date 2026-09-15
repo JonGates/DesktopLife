@@ -6,14 +6,22 @@ namespace DesktopLife.Creatures.Cockroach;
 public sealed class CockroachCreature : Creature
 {
     public override CreatureKind Kind => CreatureKind.Cockroach;
-    private readonly CockroachBrain _brain;
+    private CockroachBrain _brain;
+    private readonly CockroachOptions _options;
     public CockroachState State => _brain.State;
 
     public CockroachCreature(Vector2 position, bool initiallyHidden = false, CockroachOptions? options = null)
     {
         Position = position;
-        _brain = new(options ?? new CockroachOptions(), initiallyHidden);
+        _options = options ?? new CockroachOptions();
+        _brain = new(_options, initiallyHidden);
         IsVisible = !initiallyHidden;
+    }
+
+    public override void Relocate(Vector2 position)
+    {
+        base.Relocate(position);
+        _brain = new(_options, !IsVisible);
     }
 
     public override void Update(float deltaTime, in CreatureContext context)

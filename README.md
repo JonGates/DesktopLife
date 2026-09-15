@@ -2,15 +2,19 @@
 
 Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
-当前交付：**苍蝇 + 蟑螂，多屏支持**。每个扩展桌面屏幕独立生成默认 1 只苍蝇、20 只蟑螂，数量随屏幕数自动变化。
+当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面默认共 1 只苍蝇、20 只蟑螂，通过控制窗口调整总数，不随屏幕数倍增。
 
-| 屏幕数 | 苍蝇 | 蟑螂 |
-| --- | --- | --- |
-| 1 | 1 | 20 |
-| 2 | 2 | 40 |
-| 3 | 3 | 60 |
+## 数量控制与跨屏
 
-按 Windows 提供的逻辑显示器计数；复制显示模式共享同一桌面。鼠标只触发所在屏幕的生物。支持负坐标、上下排列、不同分辨率；插拔和布局变化时同步窗口和数量，未变化的屏幕保留生物状态，位置或尺寸改变的屏幕重新生成。暂停期间接入新屏仍保持暂停。
+- 双击 `Run-DesktopLife.cmd` 打开控制窗口，或双击托盘图标 / 右键选择“数量设置”。程序已运行时再次执行启动脚本，会打开已有实例的设置。
+- 苍蝇 **0–20**、蟑螂 **0–500**，输入或拖动滑块，点击 **保存并应用**。0 表示关闭该物种。
+- 所有屏幕共享同一批生物。增加数量只补充差额，减少数量保留其余个体；屏幕插拔不改变总数。
+- 自动读取 Windows 显示设置中的左右、上下、负坐标与错位排列。同一只蟑螂可从相接的边缘连续爬到邻屏；苍蝇跟随全桌面鼠标。
+- 错位屏幕只在实际相接的边缘段通行；没有屏幕的空隙和仅角点接触处不作为爬行通道。若两屏不相接，可在 Windows 显示设置中调整排列。
+- 屏幕移除或移动后，仍在有效区域的生物保留状态；失去屏幕的生物移回最近的有效位置，保留身份与总数。
+- 关闭设置窗口后继续在托盘运行；“暂停全部 / 恢复全部”控制所有屏幕，暂停中修改数量和接入屏幕仍保持暂停。
+
+![数量设置窗口](docs/images/settings-window.png)
 
 ## 直接运行
 
@@ -18,7 +22,7 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 - 当前发布包使用本机已有的 **.NET 10 Desktop Runtime x64**，无需重新安装开发环境。
 - 请保留 `artifacts/publish/` 内所有文件；不要只复制 exe。
-- 移动鼠标后稍等，苍蝇会从屏幕左侧进入；静止后会飞出屏幕。
+- 移动鼠标后稍等，苍蝇会从桌面的外露边缘进入；静止后会飞出屏幕。
 - 启动后几秒内，蟑螂从屏幕四周陆续爬出。鼠标靠近时会四散，逃到边缘后可藏起来，安全时再出现。
 - 右下角系统托盘（可能在折叠区域中）找到 **DesktopLife**，菜单显示屏幕数和总生物数；**暂停 / 恢复 / 退出**同时作用于所有屏幕。
 - 只允许运行一个实例；重复打开不会再生成一只苍蝇。
@@ -55,6 +59,12 @@ dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --live artifact
 # 使用生产窗口管理器与模拟屏幕布局，验证插拔、负坐标、暂停中接入、分辨率改变
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --displays artifacts/display-probe
 
+# 实际设置控件、配置保存/错误、全局数量、零数量、暂停和关闭/重开
+dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --controls artifacts/controls-probe
+
+# 同一生物跨两个视口，在 100% / 125% / 150% 下拼合一致
+dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --seams artifacts/seam-probe
+
 # Release 发布：默认使用已安装的 Desktop Runtime
 powershell -ExecutionPolicy Bypass -File scripts/Publish.ps1
 
@@ -68,11 +78,11 @@ powershell -ExecutionPolicy Bypass -File scripts/Publish.ps1 -SelfContained
 
 | 项目 | 职责 |
 | --- | --- |
-| `DesktopLife.Engine` | MouseTracker、GameLoop、WorldBounds、固定种子随机源、CreatureManager、SimulationWorld；不引用 WPF / Win32 |
-| `DesktopLife.Creatures` | Fly 与 Cockroach 状态机、每屏群体创建与布局同步、邻近避让；仅依赖 Engine |
+| `DesktopLife.Engine` | DesktopLayout 的屏幕并集与外露边界、MouseTracker、GameLoop、CreatureManager、SimulationWorld；不引用 WPF / Win32 |
+| `DesktopLife.Creatures` | Fly 与 Cockroach 状态机、全局群体差额调整、共享世界与布局同步、邻近避让；仅依赖 Engine |
 | `DesktopLife.Windows` | Win32 鼠标采样、显示器枚举与物理矩形、窗口扩展样式 |
 | `DesktopLife.Rendering` | 根据 CreatureKind 在一个 DrawingContext 中批量绘制；两种生物各两帧矢量素材在启动时缓存并 Freeze |
-| `DesktopLife.App` | DesktopHost 统一管理每屏 Overlay、单一 CompositionTarget.Rendering 主循环及鼠标采样、托盘、Debug HUD、异常日志 |
+| `DesktopLife.App` | DesktopHost 统一管理每屏视口、单一主循环及鼠标采样、数量控制窗口、JSON 配置、托盘、Debug HUD、异常日志 |
 
 模拟坐标为屏幕物理像素，Renderer 显式减去显示器原点，再除以当前 WPF DPI 比例。Manifest 使用 PerMonitorV2。
 
@@ -85,12 +95,12 @@ Overlay 在显示前配置 `WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE
 ## 范围与限制
 
 - 支持 Windows x64 多显示器，素材为程序绘制的占位图形。
-- 已通过 Debug / Release 构建和 56 项 xUnit 测试；本机双屏各 1920×1080、100% 缩放的窗口尺寸、穿透、不抢焦点和全局暂停/恢复检查通过。详见 `docs/MULTI_DISPLAY_VERIFICATION.md`；之前的里程碑记录保留在 `docs/MILESTONE1_VERIFICATION.md` 和 `docs/MILESTONE2_VERIFICATION.md`。
-- 本次双屏群体运行采样约 27–32 次更新/秒，未达到稳定 60 FPS。后续仍需性能优化与长时间验收。
+- 已通过 Debug / Release 构建和 78 项 xUnit 测试，以及真实控制窗口、双屏窗口、跨屏渲染和全局暂停/恢复检查。详见 `docs/SHARED_DESKTOP_VERIFICATION.md`；旧版本验证记录作为历史保留。
+- 尚未完成稳定 60 FPS 和 500 只群体的性能验收；数量上限是输入约束，不代表任何设备均能流畅运行上限数量。
 - 125% / 150% 已通过离屏渲染检查，插拔与拓扑变化已通过模拟布局的真实窗口检查；实际混合系统缩放、物理拔插、浏览器点击体验和不同 GPU 尚未完整验收。
-- 暂无蚂蚁、密度菜单、物种开关、设置保存、开机自启、安装器。下一阶段是 Ant / Pheromone。
-- 此里程碑没有 `settings.json`。后续配置路径预定为 `%AppData%\DesktopLife\settings.json`。
+- 暂无蚂蚁、开机自启、安装器。
+- 数量配置保存在 `%AppData%\DesktopLife\settings.json`；每次保存立即应用，下次启动自动读取。文件损坏或数量无效时使用默认值，并在设置窗口提示；保存失败时保留原数量。
 - 异常日志：`%LocalAppData%\DesktopLife\logs\yyyy-MM-dd.log`。
 - 自带运行时的发布在本次网络环境下载中断；本次实际交付的是轻量依赖运行时版本。
 
-完整产品规格：`docs/DesktopLife_Codex_Development_Spec.md`；多屏计划：`docs/superpowers/plans/2026-09-15-multiple-displays.md`。
+完整产品规格：`docs/DesktopLife_Codex_Development_Spec.md`；当前计划：`docs/superpowers/plans/2026-09-15-shared-desktop-controls.md`。本次用户要求已取代此前“每屏固定 1/20”的规则。

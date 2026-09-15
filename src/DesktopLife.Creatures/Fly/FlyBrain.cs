@@ -30,7 +30,7 @@ public sealed class FlyBrain(FlyOptions options)
             _initialized = true;
         }
         _panicCooldown = MathF.Max(0, _panicCooldown - dt);
-        var mouseOnScreen = context.Bounds.ContainsScreenPoint(context.Mouse.Position);
+        var mouseOnScreen = (context.Layout?.Contains(context.Mouse.Position) ?? context.Bounds.ContainsScreenPoint(context.Mouse.Position));
         var active = context.Mouse.IsMoving && mouseOnScreen;
         var awakened = false;
         if ((State is FlyState.Offscreen or FlyState.Depart) && active)
@@ -42,7 +42,8 @@ public sealed class FlyBrain(FlyOptions options)
 
         if ((!mouseOnScreen || context.Mouse.IdleTime.TotalSeconds > options.IdleDepartSeconds) && State != FlyState.Depart)
         {
-            _departTarget = ChooseExit(position, context.Bounds, context.Random);
+            var outer = context.Layout?.NearestEdge(position);
+            _departTarget = outer is { } edge ? edge.Point - edge.Inward * 110 : ChooseExit(position, context.Bounds, context.Random);
             State = FlyState.Depart;
         }
 
@@ -67,7 +68,8 @@ public sealed class FlyBrain(FlyOptions options)
                 if (_panicRemaining <= 0) State = FlyState.Approach;
                 break;
             case FlyState.Depart:
-                if (Vector2.Distance(position, _departTarget) < 20 || !context.Bounds.Contains(position, 75))
+                if (context.Layout is { } departureLayout ? !departureLayout.Contains(position) :
+                    Vector2.Distance(position, _departTarget) < 20 || !context.Bounds.Contains(position, 75))
                 {
                     State = FlyState.Offscreen;
                     return new(position, Vector2.Zero);
@@ -88,7 +90,19 @@ public sealed class FlyBrain(FlyOptions options)
                 break;
         }
         velocity = Vector2.Lerp(velocity, desired, 1 - MathF.Exp(-9 * dt));
-        return new(position + velocity * dt, velocity);
+        var next = position + velocity * dt;
+        if (State == FlyState.Depart && context.Layout is { } layout && layout.Contains(position))
+        {
+            var constrained = layout.ConstrainMove(position, next);
+            if (Vector2.DistanceSquared(constrained, next) > 0.0001f)
+            {
+                // Stop at the first exposed boundary even when a narrow gap could be crossed in one tick.
+                var edge = layout.NearestEdge(constrained);
+                State = FlyState.Offscreen;
+                return new(edge.Point - edge.Inward * 0.01f, Vector2.Zero);
+            }
+        }
+        return new(next, velocity);
     }
 
     private static Vector2 ChooseExit(Vector2 position, WorldBounds bounds, IRandomSource random)

@@ -39,11 +39,11 @@ public sealed class CockroachBrain(CockroachOptions options, bool initiallyHidde
             _initialized = true;
         }
 
-        var mouseOnScreen = context.Bounds.ContainsScreenPoint(context.Mouse.Position);
+        var mouseOnScreen = (context.Layout?.Contains(context.Mouse.Position) ?? context.Bounds.ContainsScreenPoint(context.Mouse.Position));
         var fearRadius = options.FearRadius + MathF.Min(context.Mouse.Speed, 1800) * 0.035f;
         var distanceToMouse = Vector2.Distance(position, context.Mouse.Position);
         var threatened = mouseOnScreen && distanceToMouse < fearRadius;
-        var edge = CockroachSteering.NearestEdge(position, context.Bounds);
+        var edge = NearestEdge(position, in context);
 
         if (State == CockroachState.Hidden)
         {
@@ -51,8 +51,9 @@ public sealed class CockroachBrain(CockroachOptions options, bool initiallyHidde
             // Stay hidden while the cursor guards the entry point, even if the timer expired.
             if (_hiddenRemaining > 0 || (mouseOnScreen && Vector2.Distance(edge.Point, context.Mouse.Position) < fearRadius + 35))
                 return new(position, Vector2.Zero);
-            position = edge.Point - edge.Inward * 12;
+            position = context.Layout is null ? edge.Point - edge.Inward * 12 : edge.Point + edge.Inward;
             _emergeTarget = edge.Point + edge.Inward * 55;
+            if (context.Layout is { } emergenceLayout) _emergeTarget = emergenceLayout.ConstrainMove(position, _emergeTarget);
             _heading = MathF.Atan2(edge.Inward.Y, edge.Inward.X);
             State = CockroachState.Emerge;
         }
@@ -79,7 +80,7 @@ public sealed class CockroachBrain(CockroachOptions options, bool initiallyHidde
                 break;
             case CockroachState.Flee:
                 _fleeRemaining -= dt;
-                if (_fleeRemaining <= 0 && !threatened && context.Bounds.Contains(position))
+                if (_fleeRemaining <= 0 && !threatened && (context.Layout?.Contains(position) ?? context.Bounds.Contains(position)))
                 {
                     State = CockroachState.Crawl;
                     _heading = MathF.Atan2(velocity.Y, velocity.X);
@@ -112,23 +113,52 @@ public sealed class CockroachBrain(CockroachOptions options, bool initiallyHidde
 
         var escaping = State is CockroachState.Panic or CockroachState.Flee;
         velocity = Vector2.Lerp(velocity, desired, 1 - MathF.Exp(-(escaping ? 18 : 10) * dt));
+        var movementStart = position;
         position += velocity * dt;
-        if (escaping && !context.Bounds.Contains(position, 18))
+        if (escaping && context.Layout is { } desktop && desktop.Contains(movementStart))
+        {
+            var constrained = desktop.ConstrainMove(movementStart, position);
+            if (Vector2.DistanceSquared(constrained, position) > 0.0001f)
+            {
+                State = CockroachState.Hidden;
+                _hiddenRemaining = context.Random.NextFloat(1.5f, 5);
+                return new(constrained, Vector2.Zero);
+            }
+        }
+        if (escaping && !(context.Layout?.Contains(position, 18) ?? context.Bounds.Contains(position, 18)))
         {
             State = CockroachState.Hidden;
             _hiddenRemaining = context.Random.NextFloat(1.5f, 5);
             return new(position, Vector2.Zero);
         }
-        if (State == CockroachState.Crawl && !context.Bounds.Contains(position, -10))
+        if ((State is CockroachState.Crawl or CockroachState.Emerge) && context.Layout is { } layout)
+        {
+            var constrained = layout.ConstrainMove(movementStart, position);
+            if (Vector2.DistanceSquared(constrained, position) > 0.0001f)
+            {
+                var inward = layout.NearestEdge(constrained).Inward;
+                velocity = VectorMath.NormalizeOrZero(velocity + inward * _crawlSpeed * 2) * _crawlSpeed;
+                _heading = MathF.Atan2(velocity.Y, velocity.X);
+            }
+            position = constrained;
+        }
+        else if (State == CockroachState.Crawl && !context.Bounds.Contains(position, -10))
         {
             position = new(
                 Math.Clamp(position.X, context.Bounds.Left + 10, context.Bounds.Right - 10),
                 Math.Clamp(position.Y, context.Bounds.Top + 10, context.Bounds.Bottom - 10));
-            var inward = CockroachSteering.NearestEdge(position, context.Bounds).Inward;
+            var inward = NearestEdge(position, in context).Inward;
             velocity = VectorMath.NormalizeOrZero(velocity + inward * _crawlSpeed * 2) * _crawlSpeed;
             _heading = MathF.Atan2(velocity.Y, velocity.X);
         }
         return new(position, velocity);
+    }
+
+    private static (Vector2 Point, Vector2 Inward, float Distance) NearestEdge(Vector2 position, in CreatureContext context)
+    {
+        if (context.Layout is not { } layout) return CockroachSteering.NearestEdge(position, context.Bounds);
+        var edge = layout.NearestEdge(position);
+        return (edge.Point, edge.Inward, edge.Distance);
     }
 
     private Vector2 EscapeDirection(Vector2 position, in CreatureContext context)
@@ -136,7 +166,7 @@ public sealed class CockroachBrain(CockroachOptions options, bool initiallyHidde
         var away = VectorMath.NormalizeOrZero(position - context.Mouse.Position);
         if (away == Vector2.Zero) away = new(MathF.Cos(_heading), MathF.Sin(_heading));
         var direction = CockroachSteering.Rotate(away, _escapeTurn);
-        var edge = CockroachSteering.NearestEdge(position, context.Bounds);
+        var edge = NearestEdge(position, in context);
         if (edge.Distance < 100 && Vector2.Dot(away, -edge.Inward) > 0.3f) direction -= edge.Inward * 0.2f;
         return VectorMath.NormalizeOrZero(direction);
     }

@@ -4,22 +4,18 @@ public sealed class TrayService : IDisposable
 {
     private readonly Forms.NotifyIcon _icon;
     private readonly Forms.ContextMenuStrip _menu = new();
-    private bool _paused;
+    private readonly Forms.ToolStripMenuItem _pause;
     private readonly Forms.ToolStripItem _summary;
 
-    public TrayService(Action togglePause, Action exit)
+    public TrayService(Action showSettings, Action togglePause, Action exit)
     {
         _summary = _menu.Items.Add("DesktopLife · 桌面生物");
         _summary.Enabled = false;
         _menu.Items.Add(new Forms.ToolStripSeparator());
-        var pause = new Forms.ToolStripMenuItem("暂停");
-        pause.Click += (_, _) =>
-        {
-            togglePause();
-            _paused = !_paused;
-            pause.Text = _paused ? "恢复" : "暂停";
-        };
-        _menu.Items.Add(pause);
+        _menu.Items.Add("数量设置…", null, (_, _) => showSettings());
+        _pause = new Forms.ToolStripMenuItem("暂停");
+        _pause.Click += (_, _) => togglePause();
+        _menu.Items.Add(_pause);
         _menu.Items.Add("退出", null, (_, _) => exit());
         _icon = new Forms.NotifyIcon
         {
@@ -28,6 +24,7 @@ public sealed class TrayService : IDisposable
             ContextMenuStrip = _menu,
             Visible = true
         };
+        _icon.DoubleClick += (_, _) => showSettings();
     }
 
     public void SetPopulationSummary(int screens, int flies, int cockroaches)
@@ -35,6 +32,8 @@ public sealed class TrayService : IDisposable
         _summary.Text = $"{screens} 块屏幕 · {flies} 只苍蝇 · {cockroaches} 只蟑螂";
         _icon.Text = $"DesktopLife — {screens} 屏 / {flies} 苍蝇 / {cockroaches} 蟑螂";
     }
+
+    public void SetPaused(bool paused) => _pause.Text = paused ? "恢复" : "暂停";
 
     public void Dispose()
     {

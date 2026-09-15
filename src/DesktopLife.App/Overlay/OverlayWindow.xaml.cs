@@ -12,7 +12,6 @@ public partial class OverlayWindow : Window
 {
     private HwndSource? _source;
     private readonly RenderSurface _surface;
-    private readonly FlyCreature _fly;
     private bool _closed;
     private bool _placementQueued;
     private bool _wasVisible;
@@ -26,6 +25,8 @@ public partial class OverlayWindow : Window
     {
         if (!ReferenceEquals(Session.World, session.World)) throw new ArgumentException("Cannot replace a window's simulation.", nameof(session));
         Session = session;
+        _surface.Viewport = session.Display.Bounds;
+        _surface.InvalidateVisual();
     }
 
     public OverlayWindow(DisplayWorld session)
@@ -33,8 +34,7 @@ public partial class OverlayWindow : Window
         Session = session;
         InitializeComponent();
         Title = $"DesktopLife Overlay [{session.Display.Id}]";
-        _fly = (FlyCreature)session.World.Manager.Creatures[0];
-        _surface = new RenderSurface(session.World) { CockroachCount = DisplaySimulation.CockroachesPerDisplay };
+        _surface = new RenderSurface(session.World) { Viewport = session.Display.Bounds, ClipToBounds = true };
         Content = _surface;
         SourceInitialized += (_, _) =>
         {
@@ -76,11 +76,12 @@ public partial class OverlayWindow : Window
         _surface.UpdateMs = updateMs;
         _surface.Seconds = time.TotalTime;
         _surface.Fps = _surface.Fps * 0.9 + (1 / time.ElapsedSeconds) * 0.1;
-        _surface.StateLabel = StateLabels[(int)_fly.State];
         var creatures = Session.World.Manager.Creatures;
+        _surface.StateLabel = creatures.FirstOrDefault(c => c is FlyCreature) is FlyCreature fly ? StateLabels[(int)fly.State] : "Disabled";
+        _surface.CockroachCount = creatures.Count(c => c.Kind == DesktopLife.Engine.Creatures.CreatureKind.Cockroach);
         var visibleCount = 0;
         for (var i = 0; i < creatures.Count; i++)
-            if (creatures[i].IsVisible) visibleCount++;
+            if (creatures[i].IsVisible && Session.Display.Bounds.Contains(creatures[i].Position, 40)) visibleCount++;
         _surface.VisibleCount = visibleCount;
         var anyVisible = visibleCount > 0;
         var redraw = anyVisible || _wasVisible;

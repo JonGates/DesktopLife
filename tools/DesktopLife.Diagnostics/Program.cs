@@ -13,6 +13,16 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--seams")
+        {
+            SeamProbe.Run(args.Length > 1 ? args[1] : "artifacts/seam-probe");
+            return;
+        }
+        if (args.Length > 0 && args[0] == "--controls")
+        {
+            ControlsProbe.Run(args.Length > 1 ? args[1] : "artifacts/controls-probe");
+            return;
+        }
         if (args.Length > 0 && args[0] == "--displays")
         {
             DisplayProbe.Run(args.Length > 1 ? args[1] : "artifacts/display-probe");

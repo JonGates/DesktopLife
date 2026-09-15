@@ -42,8 +42,8 @@ internal static class DisplayProbe
         void Require(bool condition, string message) { if (!condition) throw new Exception(message); }
         void CheckWindows(int count, bool visible)
         {
-            Require(host.Overlays.Count == count && host.Simulation.TotalFlyCount == count &&
-                host.Simulation.TotalCockroachCount == count * 20, "Incorrect per-screen population or window count");
+            Require(host.Overlays.Count == count && host.Simulation.TotalFlyCount == 1 &&
+                host.Simulation.TotalCockroachCount == 20, "Incorrect per-screen population or window count");
             Require(!unexpectedExit, "Topology update requested application exit");
             foreach (var window in host.Overlays)
             {
@@ -84,7 +84,7 @@ internal static class DisplayProbe
                         host.SynchronizeDisplays();
                         CheckWindows(3, false);
                         Require(ReferenceEquals(retained, host.Overlays[0]), "Unaffected window recreated");
-                        Require(!IsWindow(removedHandle), "Resized screen leaked its previous HWND");
+                        Require(IsWindow(removedHandle), "Resize should retain the viewport HWND");
                         pausedTimes = host.Simulation.Worlds.Select(w => w.World.TotalTime).ToArray();
                         break;
                     case 4:
@@ -101,9 +101,11 @@ internal static class DisplayProbe
                         CheckWindows(2, true);
                         break;
                     case 6:
+                        removedHandle = new WindowInteropHelper(host.Overlays[0]).Handle;
                         layout = [];
                         host.SynchronizeDisplays();
                         CheckWindows(0, true);
+                        Require(!IsWindow(removedHandle), "Removed display leaked its HWND");
                         break;
                     case 7:
                         layout = [a];
