@@ -13,6 +13,7 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--readme-demo") { ReadmeDemo.Run(args.Length > 1 ? args[1] : "artifacts/readme-demo"); return; }
         if (args.Length > 0 && args[0] == "--preferences") { PreferencesProbe.Run(args.Length > 1 ? args[1] : "artifacts/preferences-probe"); return; }
         if (args.Length > 0 && args[0] == "--fly-landing")
         {
