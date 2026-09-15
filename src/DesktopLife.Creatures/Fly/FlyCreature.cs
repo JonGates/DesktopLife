@@ -18,7 +18,13 @@ public sealed class FlyCreature : Creature
         var motion = _brain.Update(Position, Velocity, deltaTime, in context);
         Position = motion.Position;
         Velocity = motion.Velocity;
-        if (Velocity.LengthSquared() > 1) Rotation = MathF.Atan2(Velocity.Y, Velocity.X);
+        if (Velocity.LengthSquared() > 35 * 35 && float.IsFinite(deltaTime) && deltaTime > 0)
+        {
+            var heading = MathF.Atan2(Velocity.Y, Velocity.X);
+            var turn = MathF.IEEERemainder(heading - Rotation, MathF.Tau);
+            var maxTurn = 20 * MathF.Min(deltaTime, 0.05f);
+            Rotation += Math.Clamp(turn, -maxTurn, maxTurn);
+        }
         IsVisible = State != FlyState.Offscreen;
     }
 }

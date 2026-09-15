@@ -12,7 +12,12 @@ public sealed class FlyBrain(FlyOptions options)
 {
     private bool _initialized;
     private float _angle;
-    private float _noisePhase;
+    private bool _hasWaypoint;
+    private Vector2 _waypoint;
+    private Vector2 _cursorAnchor;
+    private float _hoverRemaining;
+    private float _dashRemaining;
+    private float _dashSpeed;
     private float _panicRemaining;
     private float _panicCooldown;
     private Vector2 _escapeDirection;
@@ -29,7 +34,7 @@ public sealed class FlyBrain(FlyOptions options)
         if (!_initialized)
         {
             _angle = context.Random.NextFloat(0, MathF.Tau);
-            _noisePhase = context.Random.NextFloat(0, MathF.Tau);
+
             _initialized = true;
         }
         var mouseOnScreen = (context.Layout?.Contains(context.Mouse.Position) ?? context.Bounds.ContainsScreenPoint(context.Mouse.Position));
@@ -86,6 +91,9 @@ public sealed class FlyBrain(FlyOptions options)
         }
 
         var distance = Vector2.Distance(position, context.Mouse.Position);
+        var onDesktop = context.Layout?.Contains(position) ?? context.Bounds.ContainsScreenPoint(position);
+        var visibleRoute = onDesktop && (context.Layout == null ||
+            Vector2.DistanceSquared(context.Layout.ConstrainMove(position, context.Mouse.Position), context.Mouse.Position) < 0.01f);
         if (!awakened && (State is FlyState.Approach or FlyState.Orbit) && active && context.Mouse.Speed > options.PanicMouseSpeed && distance < 240 && _panicCooldown <= 0)
         {
             State = FlyState.Panic;
@@ -115,19 +123,49 @@ public sealed class FlyBrain(FlyOptions options)
                 desired = VectorMath.NormalizeOrZero(_departTarget - position) * options.FollowSpeed;
                 break;
             default:
-                if (!awakened && State == FlyState.Approach && distance < 150) State = FlyState.Orbit;
-                if (State == FlyState.Orbit && distance > 260) State = FlyState.Approach;
-                _angle = (_angle + dt * 2.5f) % MathF.Tau;
-                var radius = (options.OrbitMinRadius + options.OrbitMaxRadius) / 2
-                    + MathF.Sin(context.TotalTime * 1.7f + _noisePhase) * (options.OrbitMaxRadius - options.OrbitMinRadius) * 0.28f;
-                var offset = new Vector2(MathF.Cos(_angle), MathF.Sin(_angle)) * radius;
-                var noise = new Vector2(MathF.Sin(context.TotalTime * 9 + _noisePhase), MathF.Cos(context.TotalTime * 7 + _noisePhase)) * 9;
-                var target = context.Mouse.Position + offset + noise;
-                var toTarget = target - position;
-                desired = VectorMath.NormalizeOrZero(toTarget) * MathF.Min(options.FollowSpeed, toTarget.Length() * 6);
-                break;
+                if (!awakened && State == FlyState.Approach && distance < 150 && visibleRoute) State = FlyState.Orbit;
+                if (State == FlyState.Orbit && (distance > 260 || !visibleRoute)) State = FlyState.Approach;
+                if (State == FlyState.Approach)
+                {
+                    _hasWaypoint = false;
+                    desired = VectorMath.NormalizeOrZero(context.Mouse.Position - position) *
+                        MathF.Min(options.FollowSpeed, MathF.Max(0, distance - (visibleRoute ? 70 : 0)) * 8);
+                    break;
+                }
+                // Each dart has a fixed destination. Cursor movement can interrupt a hover,
+                // but a stationary cursor never drives a continuously rotating target.
+                if (!_hasWaypoint || Vector2.DistanceSquared(_cursorAnchor, context.Mouse.Position) > 10000)
+                {
+                    _cursorAnchor = context.Mouse.Position;
+                    _angle = context.Random.NextFloat(0, MathF.Tau);
+                    var radius = context.Random.NextFloat(options.OrbitMinRadius, options.OrbitMaxRadius);
+                    var candidate = _cursorAnchor + new Vector2(MathF.Cos(_angle), MathF.Sin(_angle)) * radius;
+                    _waypoint = context.Layout?.Clamp(candidate) ?? ClampInside(candidate, context.Bounds);
+                    if (context.Layout is { } waypointLayout) _waypoint = waypointLayout.ConstrainMove(_cursorAnchor, _waypoint);
+                    _dashSpeed = options.FollowSpeed * context.Random.NextFloat(0.5f, 1);
+                    _dashRemaining = context.Random.NextFloat(0.4f, 0.7f);
+                    _hoverRemaining = 0;
+                    _hasWaypoint = true;
+                }
+                if (_hoverRemaining > 0)
+                {
+                    _hoverRemaining -= dt;
+                    desired = Vector2.Zero;
+                    if (_hoverRemaining <= 0) _hasWaypoint = false;
+                }
+                else
+                {
+                    _dashRemaining -= dt;
+                    var toTarget = _waypoint - position;
+                    desired = VectorMath.NormalizeOrZero(toTarget) * MathF.Min(_dashSpeed, toTarget.Length() * 18);
+                    if (toTarget.LengthSquared() < 36 || _dashRemaining <= 0)
+                    {
+                        _hoverRemaining = context.Random.NextFloat(0.16f, 0.4f);
+                        desired = Vector2.Zero;
+                    }
+                }                break;
         }
-        velocity = Vector2.Lerp(velocity, desired, 1 - MathF.Exp(-9 * dt));
+        velocity = Vector2.Lerp(velocity, desired, 1 - MathF.Exp(-(State == FlyState.Orbit ? 24 : 12) * dt));
         var next = position + velocity * dt;
         if (State == FlyState.Depart && context.Layout is { } layout && layout.Contains(position))
         {
@@ -140,8 +178,15 @@ public sealed class FlyBrain(FlyOptions options)
                 return new(edge.Point - edge.Inward * 0.01f, Vector2.Zero);
             }
         }
+        if (State == FlyState.Orbit)
+        {
+            var visible = context.Layout?.Clamp(next) ?? ClampInside(next, context.Bounds);
+            if (visible != next) { velocity = (visible - position) / dt; next = visible; _hasWaypoint = false; }
+        }
         return new(next, velocity);
     }
+
+    private static Vector2 ClampInside(Vector2 point, WorldBounds bounds) => new(Math.Clamp(point.X, bounds.Left + 1, bounds.Right - 1), Math.Clamp(point.Y, bounds.Top + 1, bounds.Bottom - 1));
 
     private static Vector2 ChooseExit(Vector2 position, WorldBounds bounds, IRandomSource random)
     {

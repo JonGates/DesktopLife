@@ -35,14 +35,14 @@ public class FlyTests
     }
 
     [Fact]
-    public void FlyApproachesThenOrbitsAwayFromCursorCenter()
+    public void FlyApproachesThenStaysNearCursorWithIntermittentMovement()
     {
         var fly = new FlyCreature(new(-90, 540));
         for (var i = 0; i < 600; i++) Step(fly);
         Assert.Equal(FlyState.Orbit, fly.State);
         Assert.InRange(Vector2.Distance(Cursor, fly.Position), 25, 150);
         var before = fly.Position;
-        for (var i = 0; i < 20; i++) Step(fly);
+        for (var i = 0; i < 120; i++) Step(fly);
         Assert.True(Vector2.Distance(before, fly.Position) > 10);
     }
 

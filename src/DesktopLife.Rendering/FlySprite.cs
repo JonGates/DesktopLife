@@ -28,11 +28,18 @@ internal static class FlySprite
             {
                 for (var side = -1; side <= 1; side += 2)
                 {
-                    dc.PushTransform(new RotateTransform(side * (Math.Sin(phase * Math.PI / 4) * 24), 440, side < 0 ? 420 : 595));
-                    dc.PushClip(new RectangleGeometry(new Rect(0, side < 0 ? 0 : 595, 440, side < 0 ? 420 : 429)));
-                    dc.DrawImage(frame, new Rect(0, 0, 768, 1024));
-                    dc.Pop(); dc.Pop();
-                }
+                    // Integrate several wing positions into each displayed frame, like a
+                    // camera exposure. No single rigid wing swings back and forth slowly.
+                    var hingeY = side < 0 ? 420 : 595;
+                    for (var exposure = -2; exposure <= 2; exposure++)
+                    {
+                        dc.PushOpacity(0.13 + 0.015 * Math.Sin(phase * Math.PI / 4 + exposure));
+                        dc.PushTransform(new ScaleTransform(1, 0.88 + 0.06 * Math.Sin(phase * Math.PI / 4), 440, hingeY));
+                        dc.PushTransform(new RotateTransform(side * exposure * 10, 440, hingeY));
+                        dc.PushClip(new RectangleGeometry(new Rect(0, side < 0 ? 0 : 595, 440, side < 0 ? 420 : 429)));
+                        dc.DrawImage(frame, new Rect(0, 0, 768, 1024));
+                        dc.Pop(); dc.Pop(); dc.Pop(); dc.Pop();
+                    }                }
             }
             // Exclude the original front feet so the articulated feet replace them.
             var body = new GeometryGroup();
