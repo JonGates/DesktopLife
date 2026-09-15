@@ -1,14 +1,23 @@
-# DesktopLife · Windows 桌面宠物与昆虫 | Desktop Pets
+# DesktopLife · Windows 昆虫屏保与桌面宠物 | Screensaver & Desktop Pets
 
 **简体中文** · [English](README.en.md) · [下载便携版 / Download](https://github.com/JonGates/DesktopLife/releases) · [反馈问题 / Report a bug](https://github.com/JonGates/DesktopLife/issues)
 
-DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍蝇跟随鼠标，蟑螂、蚂蚁和毛毛虫在桌面自由爬行，支持多显示器跨屏移动、自定义数量和全局快捷键。下载便携包，解压即可运行。
+DesktopLife 为 **Windows 10/11** 提供两种昆虫体验：电脑闲置时运行的 **屏幕保护程序（昆虫屏保）**，以及日常使用时陪伴鼠标的 **桌面宠物**。苍蝇、蟑螂、蚂蚁和毛毛虫支持多显示器活动，昆虫数量可配置，下载包自带运行环境。
 
-现在也提供 **Windows `.scr` 屏幕保护程序**：深色／浅色背景、自动游走、多屏显示及独立数量设置。[屏保使用说明](docs/SCREENSAVER.md)。
+**Windows `.scr` 屏保模式**支持深色／浅色背景和自动游走；**桌面宠物模式**支持鼠标互动和全局暂停／继续快捷键。[屏保使用说明](docs/SCREENSAVER.md)。
 
-**Windows desktop pets with interactive insects.** A mouse-following fly, roaming ants, cockroaches and caterpillars, multi-monitor movement, customizable populations, and global hotkeys. Built with C# / .NET 10 / WPF / Win32.
+**A Windows insect screensaver and desktop pet app.** Choose a native `.scr` screen saver with dark/light themes, or desktop companions with a mouse-following fly, ants, cockroaches and caterpillars. Both support multiple monitors and configurable populations. Built with C# / .NET 10 / WPF / Win32.
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面固定 1 只苍蝇，默认 20 只蟑螂、20 只蚂蚁、3 只毛毛虫。控制窗口可调整爬行昆虫总数，不随屏幕数倍增。
+
+## 选择并下载
+
+| 你想要的效果 | 下载 Windows x64 便携包 | 如何启动 |
+| --- | --- | --- |
+| 电脑闲置时自动显示昆虫，深色／浅色背景 | **[屏保版 v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** | 解压后运行 `Install-ScreenSaver.cmd`，在 Windows 中设置等待时间。 |
+| 工作时让昆虫在桌面活动，苍蝇跟随鼠标 | **[桌面宠物版 v0.1.0](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)** | 解压后运行 `Start-DesktopLife.cmd`。 |
+
+两个版本均为预览版，自带 .NET 运行环境；分别保存配置。[屏保使用说明](docs/SCREENSAVER.md) · [全部版本与校验文件](https://github.com/JonGates/DesktopLife/releases)
 
 ![DesktopLife Windows desktop pets：主屏实录，桌面昆虫自由爬行](docs/images/live-desktop.gif)
 
@@ -18,7 +27,7 @@ DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍�
 
 **[下载 v0.1.0 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.1.0) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
 
-当前 v0.1.0 为预览版（Pre-release）。
+桌面宠物版 v0.1.0 为预览版（Pre-release）。
 
 ### 屏保版 v0.2.0
 
@@ -26,23 +35,24 @@ DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍�
 
 完整解压后，运行 `Configure-ScreenSaver.cmd` 选择深色／浅色和昆虫数量；`Preview-FullScreen.cmd` 体验全屏效果；`Install-ScreenSaver.cmd` 打开 Windows 屏保设置，选择等待时间并应用。移动鼠标或按键退出屏保。屏保包也自带运行环境，安装后需保留解压文件夹。[详细步骤](docs/SCREENSAVER.md)。
 
-### 1. 在 GitHub 下载运行包
+### 桌面宠物版：1. 在 GitHub 下载运行包
 
 如果你打开的是 **Tags** 页面，请切换到旁边的 **Releases**，找到对应版本，展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.1.0.zip`。
 
 | 下载项 | 用途 |
 | --- | --- |
-| `DesktopLife-Portable-win-x64-v0.1.0.zip` | **普通用户下载这个**：包含可直接运行的程序和运行环境。 |
+| `DesktopLife-Portable-win-x64-v0.1.0.zip` | 桌面宠物模式，包含程序和运行环境。 |
+| `DesktopLife-ScreenSaver-win-x64-v0.2.0.zip` | Windows 屏保模式，包含 `.scr`、配置与安装入口和运行环境。 |
 | `DesktopLife-Portable-win-x64-v0.1.0.zip.sha256` | 可选的文件校验信息，无需运行。 |
 | Tags 页面里的 `zip` / `tar.gz`，或 Releases 的 `Source code` | 项目源码，供开发者使用，不能直接当作便携程序运行。 |
 
-### 2. 解压并启动
+### 桌面宠物版：2. 解压并启动
 
 1. 将下载的 ZIP **完整解压**到一个文件夹，再打开解压后的目录。
 2. 双击 **`Start-DesktopLife.cmd`**，启动程序并打开设置窗口。
 3. 也可以直接双击 **`DesktopLife.exe`** 启动；双击右下角系统托盘中的 DesktopLife 图标打开设置（图标可能收在 `^` 隐藏图标区域）。
 
-### 3. 开始使用
+### 桌面宠物版：3. 开始使用
 
 - **调整数量**：修改蟑螂、蚂蚁、毛毛虫数量，点击“保存数量”；设为 0 可关闭该物种。所有屏幕共享这些数量，苍蝇固定 1 只。
 - **与苍蝇互动**：移动鼠标让它跟随；单击左键指定落点，实际停落 3 秒后继续飞行。
@@ -51,7 +61,21 @@ DesktopLife 是一款 **Windows 10/11 桌面宠物与桌面昆虫应用**：苍�
 - **多屏**：自动识别 Windows 显示排列；相接的屏幕边缘可连续通行，无需按屏幕分别设置数量。
 - **退出**：关闭设置窗口后，昆虫仍会运行。右键托盘图标，选择“退出”才能结束程序。
 
-## 主屏实录
+## 常见问题：Windows 屏保与桌面宠物
+
+### 怎样在 Windows 11 或 Windows 10 设置自动屏保？
+
+下载屏保版并完整解压，运行 `Install-ScreenSaver.cmd` 打开系统“屏幕保护程序设置”，选择 DesktopLife、设置等待分钟数并应用。`Configure-ScreenSaver.cmd` 可切换深色／浅色背景及昆虫数量；安装后请保留文件夹位置。
+
+### 双屏、竖屏或上下排列可以使用吗？
+
+两种模式都读取 Windows 显示排列，并共享全桌面昆虫总数。相接的屏幕边缘可以通行；屏保模式遇到显示排列变化时退出本次运行，下次启动读取新排列。
+
+### 屏保和桌面宠物的鼠标行为有什么区别？
+
+桌面模式中，苍蝇跟随鼠标，点击后停落 3 秒。屏保模式中，苍蝇自动游走和停落，移动鼠标或按键会退出屏保。等待时间和恢复时登录选项由 Windows 管理。
+
+## 主屏实录（桌面宠物模式）
 
 顶部为主屏全景，下面为主屏局部特写。均录自正在运行的 DesktopLife；使用静态背景突出昆虫，保留实际运动速度。录制时使用的昆虫数量高于默认值。
 

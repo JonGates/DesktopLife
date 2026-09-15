@@ -1,12 +1,21 @@
-# DesktopLife · Windows Desktop Pets & Interactive Insects
+# DesktopLife · Windows Insect Screensaver & Desktop Pets
 
 [简体中文](README.md) · **English** · [Download for Windows](https://github.com/JonGates/DesktopLife/releases) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
 
-**Bring your Windows desktop to life with interactive insect companions.** DesktopLife adds a mouse-following fly and roaming ants, cockroaches and caterpillars to your desktop. Creatures move between adjacent monitors, with configurable populations and global pause/resume hotkeys.
+**An insect screensaver and desktop pet app for Windows 10 and Windows 11.** Run autonomous flies, ants, cockroaches and caterpillars while your computer is idle, or keep interactive insect companions on your desktop while you work. Both modes support multiple monitors and configurable populations.
 
 Built with **C# / .NET 10 / WPF / Win32** for **Windows 10/11 x64**. The portable download includes the runtime; extract it and run.
 
-Also available as a **Windows `.scr` screen saver** with dark/light backgrounds, autonomous insects, multi-monitor support and separate population settings.
+The native **Windows `.scr` screen saver** offers dark/light backgrounds and autonomous insects. Desktop pet mode offers mouse interaction and global pause/resume hotkeys.
+
+## Choose your download
+
+| Experience | Windows x64 portable download | Start here |
+| --- | --- | --- |
+| Native screen saver for an idle computer, with dark/light themes | **[Screensaver v0.2.0](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)** | Extract and run `Install-ScreenSaver.cmd`, then choose an idle timeout in Windows. |
+| Desktop companions, a mouse-following fly and roaming insects | **[Desktop pets v0.1.0](https://github.com/JonGates/DesktopLife/releases/download/v0.1.0/DesktopLife-Portable-win-x64-v0.1.0.zip)** | Extract and run `Start-DesktopLife.cmd`. |
+
+Both are preview releases with the .NET runtime included. Each mode keeps its own settings. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
 
 ![DesktopLife Windows desktop pets: insects roaming on the primary monitor](docs/images/live-desktop.gif)
 
@@ -43,7 +52,7 @@ No separate .NET runtime, SDK or Visual Studio installation is required for the 
 | System tray controls | Close settings to keep insects running. Right-click the tray icon and choose **Exit** to stop the app. |
 | Portable Windows app | A self-contained x64 ZIP with the runtime included. Preferences are stored in `%AppData%\DesktopLife`. |
 
-## Live recordings
+## Live recordings — desktop companion mode
 
 These GIFs were captured from the **primary monitor** while DesktopLife was running, against a static presentation background. The recordings use higher insect counts than the defaults. Close-ups are cropped and resized; motion plays at the captured speed.
 
@@ -56,6 +65,14 @@ These GIFs were captured from the **primary monitor** while DesktopLife was runn
 ![DesktopLife settings with live insects and Chinese-to-English language switching](docs/images/live-settings.gif)
 
 ## Frequently asked questions
+
+### How do I install a screensaver on Windows 11 or Windows 10?
+
+Download the screen saver ZIP, extract it into a permanent folder, and run `Install-ScreenSaver.cmd`. Select DesktopLife in Windows Screen Saver Settings, choose a wait time and click **Apply**. Use `Configure-ScreenSaver.cmd` for dark/light themes and insect counts. Keep the extracted folder in place.
+
+### Is the screensaver different from desktop pet mode?
+
+The `.scr` screen saver animates insects automatically when Windows starts it after the selected idle time. Mouse or keyboard input exits it. Desktop pet mode stays active while you work: its fly follows your cursor and lands for 3 seconds after a click. Global pause/resume hotkeys belong to desktop pet mode.
 
 ### Does adding a monitor add more insects?
 

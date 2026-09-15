@@ -1,4 +1,6 @@
-# DesktopLife 屏幕保护程序 / Windows Screen Saver
+# DesktopLife 昆虫屏保 · Windows 10/11 Insect Screensaver (.scr)
+
+[中文项目首页](https://github.com/JonGates/DesktopLife#readme) · [English guide](https://github.com/JonGates/DesktopLife/blob/main/README.en.md) · **[下载屏保 / Download screensaver](https://github.com/JonGates/DesktopLife/releases/download/v0.2.0/DesktopLife-ScreenSaver-win-x64-v0.2.0.zip)**
 
 Windows 10/11 x64 屏保，自带 .NET 运行环境。独立于桌面宠物模式，可切换深色／浅色背景，支持多显示器、昆虫总数量设置、自动飞行和停落。
 
