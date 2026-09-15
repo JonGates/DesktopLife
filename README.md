@@ -4,6 +4,8 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 当前交付：**可调数量 + 共享桌面跨屏移动**。全桌面固定 1 只苍蝇，默认 20 只蟑螂、20 只蚂蚁、3 只毛毛虫。控制窗口可调整爬行昆虫总数，不随屏幕数倍增。
 
+![DesktopLife 主屏实录：昆虫在桌面自由爬行](docs/images/live-desktop.gif)
+
 ## 下载与使用（无需开发环境）
 
 支持 **Windows 10/11 x64**。便携包自带运行环境，无需安装 .NET、SDK 或 Visual Studio。
@@ -37,25 +39,21 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 - **多屏**：自动识别 Windows 显示排列；相接的屏幕边缘可连续通行，无需按屏幕分别设置数量。
 - **退出**：关闭设置窗口后，昆虫仍会运行。右键托盘图标，选择“退出”才能结束程序。
 
-## 功能演示
+## 主屏实录
+
+顶部为主屏全景，下面为主屏局部特写。均录自正在运行的 DesktopLife；使用静态背景突出昆虫，保留实际运动速度。录制时使用的昆虫数量高于默认值。
 
 ### 苍蝇跟随鼠标，点击后停落 3 秒
 
-![苍蝇跟随鼠标、点击停落并恢复飞行](docs/images/demo-fly.gif)
+![主屏局部实录：苍蝇点击停落后恢复飞行](docs/images/live-fly.gif)
 
-### 昆虫从一个屏幕爬到另一个屏幕
-
-屏幕共享同一批昆虫，按 Windows 显示排列穿过相接边缘。
-
-![蟑螂、蚂蚁和毛毛虫连续跨屏移动](docs/images/demo-multiscreen.gif)
-
-### 调整数量，切换中英文
+### 设置窗口与中英文切换
 
 保存全桌面昆虫数量，实时切换语言，向下滚动可设置启动／恢复与暂停快捷键。
 
-![实际设置窗口的数量保存、中英文切换和快捷键区域](docs/images/demo-settings.gif)
+![主屏实录：昆虫在设置窗口上活动，中英文界面切换](docs/images/live-settings.gif)
 
-以上由实际引擎和设置控件生成；昆虫画面放大 2 倍、保持原速，便于观察动作。[动图生成方法](docs/images/README.md)。
+[录制与 GIF 导出方法](docs/images/README.md)。
 
 ## 苍蝇互动
 
@@ -79,8 +77,6 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 - 屏幕移除或移动后，仍在有效区域的生物保留状态；失去屏幕的生物移回最近的有效位置，保留身份与总数。
 - 关闭设置窗口后继续在托盘运行；“暂停全部 / 恢复全部”控制所有屏幕，暂停中修改数量和接入屏幕仍保持暂停。
 
-![数量设置窗口](docs/images/settings-window.png)
-
 ## 语言与快捷键
 
 - 右上角切换 **简体中文 / English**，窗口、提示、托盘立即更新，选择自动保存。
@@ -90,8 +86,6 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 - 快捷键只在 DesktopLife 进程运行期间有效；退出程序后请用启动脚本或 exe 启动。
 - 语言与快捷键保存在 `%AppData%\DesktopLife\settings.preferences.json`，与原数量配置分开保存。
 - 使用 Windows [RegisterHotKey](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerhotkey) 注册组合键，禁用或退出时释放。
-
-![英文快捷键设置](docs/images/shortcuts-english.png)
 
 完整步骤见 [开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)，包含单文件 EXE、便携 ZIP、环境准备与发布验证。
 
