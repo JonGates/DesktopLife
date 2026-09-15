@@ -85,6 +85,29 @@ internal static class StyleProbe
             var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
             using var stream = File.Create(Path.Combine(output, $"styles-{frame:00}.png")); encoder.Save(stream);
         }
+        var realistic = new DrawingVisual();
+        renderer.Style = CreatureStyle.Realistic;
+        using (var dc = realistic.RenderOpen())
+        {
+            dc.DrawRectangle(Brushes.WhiteSmoke, null, new Rect(0, 0, 800, 420));
+            Text(dc, "DesktopLife · Realistic insects", 24, 20, 23);
+            Text(dc, "Generated body textures + articulated legs · WPF render samples", 24, 57, 14);
+            for (var row = 0; row < 2; row++)
+            {
+                dc.DrawRectangle(row == 0 ? new SolidColorBrush(Color.FromRgb(29, 42, 49)) : new SolidColorBrush(Color.FromRgb(231, 240, 233)), null, new Rect(16, 88 + row * 155, 768, 145));
+                for (var k = 0; k < kinds.Length; k++)
+                {
+                    dc.PushTransform(new ScaleTransform(3, 3));
+                    renderer.Render(dc, [new Sample(kinds[k], new(48 + k * 59, 47 + row * 155 / 3f), 0.25f)], new(0, 0, 800, 420), 0, 1, 1);
+                    dc.Pop();
+                    renderer.Render(dc, [new Sample(kinds[k], new(144 + k * 177, 205 + row * 155), 0.25f)], new(0, 0, 800, 420), 0, 1, 1);
+                }
+            }
+        }
+        var sampleBitmap = new RenderTargetBitmap(800, 420, 96, 96, PixelFormats.Pbgra32);
+        sampleBitmap.Render(realistic);
+        var sampleEncoder = new PngBitmapEncoder(); sampleEncoder.Frames.Add(BitmapFrame.Create(sampleBitmap));
+        using (var sampleStream = File.Create(Path.Combine(output, "realistic-insects.png"))) sampleEncoder.Save(sampleStream);
         var walker = new Sample(CreatureKind.Ant, Vector2.Zero, 0.3f);
         if (WpfCreatureRenderer.Frame(walker) != 2) throw new Exception("Distance-based gait frame");
         Console.WriteLine("PASS: legacy settings, style persistence, invalid fallback, desktop UI switch preserves creatures; 24 WPF style frames rendered.");

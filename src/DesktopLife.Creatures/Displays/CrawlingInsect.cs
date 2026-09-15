@@ -8,6 +8,8 @@ public sealed class CrawlingInsect : Creature
     public override CreatureKind Kind { get; }
     private float _turnIn;
     private float _heading;
+    private float _pauseRemaining;
+    private bool _hasWandered;
     public CrawlingInsect(Vector2 position, CreatureKind kind)
     {
         if (kind is not (CreatureKind.Ant or CreatureKind.Caterpillar)) throw new ArgumentOutOfRangeException(nameof(kind));
@@ -19,15 +21,26 @@ public sealed class CrawlingInsect : Creature
         if (!float.IsFinite(deltaTime) || deltaTime <= 0) return;
         deltaTime = MathF.Min(deltaTime, 0.05f);
         var previous = Position;
+        var away = Position - context.Mouse.Position;
+        var threatened = Kind == CreatureKind.Ant && away.LengthSquared() is > 1 and < 6400;
+        if (threatened) _pauseRemaining = 0;
+        if (_pauseRemaining > 0)
+        {
+            _pauseRemaining -= deltaTime;
+            Velocity = Vector2.Zero;
+            return;
+        }
         _turnIn -= deltaTime;
         if (_turnIn <= 0)
         {
+            if (_hasWandered && Kind == CreatureKind.Ant && !threatened && context.Random.NextFloat(0, 1) < 0.22f)
+                _pauseRemaining = context.Random.NextFloat(0.12f, 0.35f);
+            _hasWandered = true;
             _heading = Rotation + context.Random.NextFloat(-0.9f, 0.9f);
             _turnIn = context.Random.NextFloat(0.6f, 2.5f);
         }
         var speed = Kind == CreatureKind.Ant ? 48f : 13f;
-        var away = Position - context.Mouse.Position;
-        if (Kind == CreatureKind.Ant && away.LengthSquared() is > 1 and < 6400)
+        if (threatened)
         {
             _heading = MathF.Atan2(away.Y, away.X);
             speed *= 1.8f;

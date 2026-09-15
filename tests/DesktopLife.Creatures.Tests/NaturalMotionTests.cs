@@ -9,6 +9,32 @@ namespace DesktopLife.Creatures.Tests;
 public class NaturalMotionTests
 {
     [Fact]
+    public void AntPausesToExploreButAThreatInterruptsThePause()
+    {
+        var ant = new CrawlingInsect(new(500, 500), CreatureKind.Ant);
+        var context = new CreatureContext(new(new(900, 900), Vector2.Zero, 0, false, TimeSpan.Zero), new(0, 0, 1000, 1000), 0, new MinimumRandom());
+        var paused = false;
+        for (var i = 0; i < 150; i++)
+        {
+            var phase = ant.AnimationPhase;
+            ant.Update(0.02f, context);
+            if (i > 0 && ant.Velocity == Vector2.Zero)
+            {
+                Assert.Equal(phase, ant.AnimationPhase);
+                paused = true; break;
+            }
+        }
+        Assert.True(paused);
+        var threat = new CreatureContext(new(ant.Position + new Vector2(20, 0), Vector2.Zero, 0, false, TimeSpan.Zero), context.Bounds, 0, new MinimumRandom());
+        ant.Update(0.02f, threat);
+        Assert.NotEqual(Vector2.Zero, ant.Velocity);
+    }
+    private sealed class MinimumRandom : IRandomSource
+    {
+        public float NextFloat(float min, float max) => min;
+    }
+
+    [Fact]
     public void FlyWingPhaseAdvancesAt53FramesPerSecond()
     {
         var fly = new FlyCreature(new(300, 300));

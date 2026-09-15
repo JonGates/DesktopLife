@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\insect-bodies.png" LogicalName="DesktopLife.Rendering.Assets.insect-bodies.png" />
     <EmbeddedResource Include="Assets\fly-atlas.png" LogicalName="DesktopLife.Rendering.Assets.fly-atlas.png" />
     <ProjectReference Include="..\DesktopLife.Engine\DesktopLife.Engine.csproj" />
   </ItemGroup>
