@@ -31,6 +31,7 @@ public sealed class DesktopHost : IDisposable
     public DisplaySimulation Simulation { get; } = new(Environment.TickCount);
     public IReadOnlyList<OverlayWindow> Overlays { get; private set; } = [];
     public bool IsPaused { get; private set; }
+    public event Action<System.Windows.Window>? WindowCreated;
     public event Action? LayoutChanged;
     public event Action? StateChanged;
     public event Action? ExitRequested;
@@ -77,6 +78,7 @@ public sealed class DesktopHost : IDisposable
                 {
                     window = new OverlayWindow(session);
                     window.Closed += OnWindowClosed;
+                    WindowCreated?.Invoke(window);
                 }
                 next.Add(window);
             }

@@ -1,7 +1,7 @@
 <Window x:Class="DesktopLife.App.Settings.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="{DynamicResource Title}" Width="540" Height="760" MinWidth="470" MinHeight="600"
+    Icon="/DesktopLife;component/Assets/DesktopLife.ico" Title="{DynamicResource Title}" Width="540" Height="760" MinWidth="470" MinHeight="600"
     WindowStartupLocation="CenterScreen" Background="#F3F6FA" Foreground="#17324D"
     FontFamily="Microsoft YaHei UI" FontSize="14">
     <Window.Resources>
@@ -76,6 +76,10 @@
 <Label Content="{DynamicResource Stop}" Target="{Binding ElementName=PauseKey}" VerticalAlignment="Center"/>
 <TextBox x:Name="PauseKey" Grid.Column="1" FontSize="16" IsReadOnly="True" PreviewKeyDown="CaptureKey" GotKeyboardFocus="KeyFocus" LostKeyboardFocus="KeyBlur" AutomationProperties.Name="{DynamicResource Stop}"/></Grid>
 <Button x:Name="SaveKeysButton" Content="{DynamicResource SaveKeys}" Click="SaveKeysClicked" HorizontalAlignment="Right"/>
+</StackPanel></Border>
+<Border Background="White" BorderBrush="#D6E0EA" BorderThickness="1" CornerRadius="10" Padding="16" Margin="0,16,0,0"><StackPanel>
+<CheckBox x:Name="CaptureToggle" Checked="CaptureChanged" Unchecked="CaptureChanged"><TextBlock Text="{DynamicResource CaptureToggle}" TextWrapping="Wrap"/></CheckBox>
+<TextBlock Text="{DynamicResource CaptureHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#596B7D" Margin="0,8,0,0"/>
 </StackPanel></Border>
 <TextBlock x:Name="Status" Text="{DynamicResource Hint}" TextWrapping="Wrap" Foreground="#596B7D" Margin="0,14,0,14" FontSize="12" MinHeight="32" AutomationProperties.LiveSetting="Polite"/>
     </StackPanel>

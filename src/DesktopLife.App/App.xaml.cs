@@ -42,6 +42,7 @@ public partial class App : Application
         }, null, Timeout.Infinite, executeOnlyOnce: false);
         Desktop = new DesktopHost(Dispatcher);
         _preferences = new PreferencesController(Desktop, _settingsStore);
+        _preferences.CaptureFailed += () => Dispatcher.BeginInvoke(new Action(ShowSettings));
         _tray = new TrayService(ShowSettings, Desktop.TogglePause, () => Shutdown());
         Desktop.ExitRequested += () => Shutdown();
         void RefreshTray()

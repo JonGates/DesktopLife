@@ -6,6 +6,10 @@ public static class LanguageService
     public static event Action? Changed;
     private static readonly Dictionary<string, (string Zh, string En)> Texts = new()
     {
+        ["CaptureToggle"] = ("从录屏中隐藏昆虫和设置窗口", "Exclude creatures and settings from screen capture"),
+        ["CaptureHelp"] = ("本机仍可见。需 Windows 10 2004 或更新版本；仅对支持此机制的录屏工具有效，不能保证所有监控软件均无法录制。", "Still visible on your display. Requires Windows 10 2004 or later. Only compatible capture tools honor this setting; it cannot block every monitoring tool."),
+        ["CaptureSaved"] = ("录屏显示设置已保存。", "Capture preference saved."),
+        ["CaptureFailed"] = ("Windows 未能对所有窗口应用录屏排除。请勿依赖此功能隐藏内容。", "Windows could not apply capture exclusion to every window. Do not rely on it to hide content."),
         ["Title"] = ("DesktopLife · 数量设置", "DesktopLife · Settings"),
         ["Subtitle"] = ("让生物在整个桌面自由活动", "Let creatures roam across your desktop"),
         ["Apply"] = ("保存数量", "Save population"),

@@ -4,6 +4,7 @@ namespace DesktopLife.App.Tray;
 public sealed class TrayService : IDisposable
 {
     private readonly Forms.NotifyIcon _icon;
+    private readonly System.Drawing.Icon _art;
     private readonly Forms.ContextMenuStrip _menu = new();
     private readonly Forms.ToolStripMenuItem _pause;
     private readonly Forms.ToolStripItem _summary;
@@ -13,6 +14,8 @@ public sealed class TrayService : IDisposable
 
     public TrayService(Action showSettings, Action togglePause, Action exit)
     {
+        using (var stream = System.Windows.Application.GetResourceStream(new Uri("pack://application:,,,/DesktopLife;component/Assets/DesktopLife.ico")).Stream)
+            _art = new System.Drawing.Icon(stream, 32, 32);
         _summary = _menu.Items.Add("DesktopLife · 桌面生物");
         _summary.Enabled = false;
         _menu.Items.Add(new Forms.ToolStripSeparator());
@@ -24,7 +27,7 @@ public sealed class TrayService : IDisposable
         _icon = new Forms.NotifyIcon
         {
             Text = "DesktopLife — 苍蝇与蟑螂",
-            Icon = System.Drawing.SystemIcons.Application,
+            Icon = _art,
             ContextMenuStrip = _menu,
             Visible = true
         };
@@ -53,6 +56,7 @@ public sealed class TrayService : IDisposable
         LanguageService.Changed -= Translate;
         _icon.Visible = false;
         _icon.Dispose();
+        _art.Dispose();
         _menu.Dispose();
     }
 }

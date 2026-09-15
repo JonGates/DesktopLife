@@ -56,6 +56,20 @@ internal static class PreferencesProbe
                 Dispatch(preferences.Hotkeys, "Ctrl+Shift+F9"); Require(host.IsPaused, "Repeated pause toggled state");
                 Dispatch(preferences.Hotkeys, "Ctrl+Shift+F8"); Require(!host.IsPaused, "Start did not resume");
                 Dispatch(preferences.Hotkeys, "Ctrl+Shift+F8"); Require(!host.IsPaused, "Repeated start toggled state");
+                Require(window.Icon != null, "Settings icon missing");
+                using (var executableIcon = System.Drawing.Icon.ExtractAssociatedIcon(typeof(DesktopLife.App.App).Assembly.Location))
+                    Require(executableIcon != null, "Application icon missing");
+                var captureToggle = (CheckBox)window.FindName("CaptureToggle");
+                captureToggle.IsChecked = true;
+                Require(preferences.Current.ExcludeFromCapture && store.LoadPreferences(out _).ExcludeFromCapture, "Capture preference was not saved");
+                foreach (var target in host.Overlays.Cast<Window>().Append(window)) Require(Affinity(target) == 0x11, "Capture exclusion not set on every window");
+                try { preferences.Capture.Configure(false, () => throw new IOException("injected")); throw new Exception("Failure did not propagate"); } catch (IOException) { }
+                Require(Affinity(window) == 0x11 && preferences.Capture.Enabled, "Capture rollback failed");
+                var added = new Window { Width = 100, Height = 100, ShowInTaskbar = false, ShowActivated = false };
+                preferences.Capture.Track(added); added.Show();
+                Require(Affinity(added) == 0x11, "New window lost capture preference"); added.Close();
+                captureToggle.IsChecked = false;
+                foreach (var target in host.Overlays.Cast<Window>().Append(window)) Require(Affinity(target) == 0, "Disabling capture exclusion failed");
                 Capture(window, Path.Combine(output, "settings-english.png"));
                 FindScroll(window)?.ScrollToEnd(); window.UpdateLayout();
                 Capture(window, Path.Combine(output, "shortcuts-english.png"));
@@ -130,5 +144,11 @@ internal static class PreferencesProbe
         var encoder = new PngBitmapEncoder(); encoder.Frames.Add(BitmapFrame.Create(bitmap));
         using var file = File.Create(path); encoder.Save(file);
     }
+    private static uint Affinity(Window window)
+    {
+        if (!GetWindowDisplayAffinity(new WindowInteropHelper(window).Handle, out var affinity)) throw new Exception("Cannot query capture affinity");
+        return affinity;
+    }
+    [DllImport("user32.dll")] [return: MarshalAs(UnmanagedType.Bool)] private static extern bool GetWindowDisplayAffinity(IntPtr hwnd, out uint affinity);
     [DllImport("user32.dll")] private static extern IntPtr SendMessage(IntPtr hwnd, uint message, IntPtr wParam, IntPtr lParam);
 }

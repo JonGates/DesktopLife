@@ -28,6 +28,10 @@ public partial class SettingsWindow : Window
         _preferences.Hotkeys.Captured += CapturedHotkey;
         Deactivated += (_, _) => _preferences.Hotkeys.IsCapturing = false;
         Activated += (_, _) => _preferences.Hotkeys.IsCapturing = StartKey.IsKeyboardFocusWithin || PauseKey.IsKeyboardFocusWithin;
+        CaptureToggle.IsChecked = _preferences.Current.ExcludeFromCapture;
+        _preferences.Capture.Track(this);
+        _preferences.CaptureFailed += CaptureError;
+        Closed += (_, _) => _preferences.CaptureFailed -= CaptureError;
         _ready = true;
         Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
@@ -48,6 +52,17 @@ public partial class SettingsWindow : Window
         if (_preferences.WarningKey != null) SetStatus(_preferences.WarningKey);
     }
 
+    private void CaptureError() => SetStatus("CaptureFailed");
+    private void CaptureChanged(object sender, RoutedEventArgs e)
+    {
+        if (!_ready) return;
+        if (_preferences.SaveCapture(CaptureToggle.IsChecked == true, out var error)) SetStatus("CaptureSaved");
+        else
+        {
+            _ready = false; CaptureToggle.IsChecked = _preferences.Current.ExcludeFromCapture; _ready = true;
+            SetStatus(error);
+        }
+    }
     private void SetStatus(string key) { _statusKey = key; Status.Text = LanguageService.Get(key); }
     private void Translate() { RefreshState(); RefreshLayout(); SetStatus(_statusKey); }
     private void LanguageChanged(object sender, SelectionChangedEventArgs e)

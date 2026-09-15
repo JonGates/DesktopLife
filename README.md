@@ -42,6 +42,14 @@ Windows 10/11 桌面生物原型，C# / .NET 10 / WPF / Win32。
 
 完整步骤见 [开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)，包含单文件 EXE、便携 ZIP、环境准备与发布验证。
 
+## 图标与录屏显示
+
+EXE、设置窗口、任务栏及托盘使用统一昆虫图标。资源位于 `src/DesktopLife.App/Assets`，可通过 `scripts/Generate-Icon.ps1` 重建 16–256 像素 ICO。
+
+设置底部可启用“从录屏中隐藏昆虫和设置窗口”，默认关闭，切换后立即保存。程序在自己的屏幕上仍然可见，新增屏幕的昆虫窗口也继承该选项。
+
+此功能调用 Windows `WDA_EXCLUDEFROMCAPTURE`，要求 Windows 10 2004 或更新版本。只对支持该机制的截图、录屏和共享工具有效，不能保证所有监控软件无法录制，也不会隐藏任务栏/托盘图标或进程。Windows 拒绝应用时会提示失败。具体限制见 [Microsoft 文档](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowdisplayaffinity)。
+
 ## 给朋友分享（自带运行环境）
 
 运行下面的命令生成 Windows x64 便携 ZIP：
