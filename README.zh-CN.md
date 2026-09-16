@@ -6,29 +6,29 @@
 
 苍蝇追随鼠标，蟑螂受惊四散，蚂蚁能跨屏爬行；电脑闲置时，同一群昆虫还可以变成原生 Windows 屏幕保护程序。
 
-[**下载桌面宠物 v0.4.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip) · [**下载屏保版 v0.4.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip) · [全部版本](https://github.com/JonGates/DesktopLife/releases)
+[**下载桌面宠物 v0.4.2**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-Portable-win-x64-v0.4.2.zip) · [**下载屏保版 v0.4.2**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-ScreenSaver-win-x64-v0.4.2.zip) · [全部版本](https://github.com/JonGates/DesktopLife/releases)
 
-Windows 10/11 x64 · 12 种昆虫 · 写实/可爱风格 · 多显示器 · 自带运行环境
+Windows 10/11 x64 · 13 种生物 · 写实/可爱风格 · 多显示器 · 自带运行环境
 
-> **开发预览：** 当前源码及本地 `0.4.2-preview.2` 新增蜘蛛，支持八足爬行、写实/可爱外观，以及桌面和屏保的数量、尺寸配置。上方 v0.4.1 下载包尚不包含蜘蛛。[生物与比例说明](docs/INSECTS.md)。
+> **v0.4.2 新增：** 八足蜘蛛、更远且随体型变化的跳跃，以及更自然的瓢虫翅膀。桌面和屏保下载包均已包含。[生物与比例说明](docs/INSECTS.md)。
 
 ![DesktopLife Windows 桌面宠物实录：昆虫在桌面自由活动](docs/images/live-desktop.gif)
 
-> 当前 v0.4.1 为预览版。如果它让你的桌面更有生命力——或者变得更糟了一点——欢迎点亮 ⭐，并在 [Issues](https://github.com/JonGates/DesktopLife/issues) 告诉我们下一种该加入什么生物。
+> 当前 v0.4.2 为预览版。如果它让你的桌面更有生命力——或者变得更糟了一点——欢迎点亮 ⭐，并在 [Issues](https://github.com/JonGates/DesktopLife/issues) 告诉我们下一种该加入什么生物。
 
-## 共 12 种昆虫
+## 共 13 种生物
 
-新增 **瓢虫、步甲、蠼螋、衣鱼、蟋蟀、蚱蜢、螳螂、竹节虫**。设置中的“昆虫配置”可分别设置数量与最小／最大尺寸；新增种类默认关闭，尺寸默认 80%～120%。桌面和屏保均支持。
+新增 **瓢虫、步甲、蠼螋、衣鱼、蟋蟀、蚱蜢、螳螂、竹节虫、蜘蛛**。设置中的“生物配置”可分别设置数量与最小／最大尺寸；新增种类默认关闭，尺寸默认 80%～120%。桌面和屏保均支持。
 
 每种使用独立身体纹理和对应的足部、触角或尾部结构，体型从小瓢虫到细长竹节虫有明显差异。大小是参考常见体型关系的视觉比例，并非屏幕上的真实毫米。全部支持写实与可爱外观；蟋蟀和蚱蜢支持跳跃，瓢虫支持起飞与降落。暂不模拟捕食或蚱蜢飞行。[物种与比例说明](docs/INSECTS.md)。
 
-![12 种昆虫的三倍细节与原尺寸，WPF 渲染示意而非录像](docs/images/insect-catalog.png)
+![13 种生物的三倍细节与原尺寸，WPF 渲染示意而非录像](docs/images/insect-catalog.png)
 
-## v0.4.1：可爱风格、跳跃与飞行
+## v0.4.2：可爱风格、跳跃与飞行
 
-v0.4.1 已补齐新增 8 种的可爱外观，桌面和屏保均可切换。切换保留数量、尺寸与位置。蟋蟀和蚱蜢现在会蓄力跳跃、收腿腾空与缓冲落地；瓢虫会展翅起飞、飞行、降落收翅。鼠标靠近可触发有冷却间隔的跳跃，暂停会冻结全部动作。[动作说明](docs/LOCOMOTION.md)。桌面与屏保下载包均已包含这些更新。
+v0.4.2 已补齐新增 8 种的可爱外观，桌面和屏保均可切换。切换保留数量、尺寸与位置。蟋蟀和蚱蜢现在会蓄力跳跃、收腿腾空与缓冲落地；瓢虫会展翅起飞、飞行、降落收翅。鼠标靠近可触发有冷却间隔的跳跃，暂停会冻结全部动作。[动作说明](docs/LOCOMOTION.md)。桌面与屏保下载包均已包含这些更新。
 
-![12 种可爱昆虫，WPF 渲染示意而非录像](docs/images/cute-insect-catalog.png)
+![13 种可爱生物，WPF 渲染示意而非录像](docs/images/cute-insect-catalog.png)
 
 ## 写实昆虫：身体纹理与足部动作
 
@@ -48,35 +48,35 @@ v0.4.1 已补齐新增 8 种的可爱外观，桌面和屏保均可切换。切�
 
 | 你想要的效果 | 下载 Windows x64 便携包 | 如何启动 |
 | --- | --- | --- |
-| 电脑闲置时自动显示昆虫，深色／浅色背景 | **[屏保版 v0.4.1](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip)** | 解压后运行 `Install-ScreenSaver.cmd`，在 Windows 中设置等待时间。 |
-| 工作时让昆虫在桌面活动，苍蝇跟随鼠标 | **[桌面宠物版 v0.4.1](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip)** | 解压后运行 `Start-DesktopLife.cmd`。 |
+| 电脑闲置时自动显示昆虫，深色／浅色背景 | **[屏保版 v0.4.2](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-ScreenSaver-win-x64-v0.4.2.zip)** | 解压后运行 `Install-ScreenSaver.cmd`，在 Windows 中设置等待时间。 |
+| 工作时让昆虫在桌面活动，苍蝇跟随鼠标 | **[桌面宠物版 v0.4.2](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-Portable-win-x64-v0.4.2.zip)** | 解压后运行 `Start-DesktopLife.cmd`。 |
 
-DesktopLife v0.4.1 为预览版，同一版本提供桌面应用与屏保两个子程序；均自带 .NET 运行环境，分别保存配置。[屏保使用说明](docs/SCREENSAVER.md) · [全部版本与校验文件](https://github.com/JonGates/DesktopLife/releases)
+DesktopLife v0.4.2 为预览版，同一版本提供桌面应用与屏保两个子程序；均自带 .NET 运行环境，分别保存配置。[屏保使用说明](docs/SCREENSAVER.md) · [全部版本与校验文件](https://github.com/JonGates/DesktopLife/releases)
 
 
 ## 下载与使用（无需开发环境）
 
 支持 **Windows 10/11 x64**。便携包自带运行环境，无需安装 .NET、SDK 或 Visual Studio。
 
-**[下载 v0.4.1 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.1) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
+**[下载 v0.4.2 便携包 ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-Portable-win-x64-v0.4.2.zip)** · [查看发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.2) · [所有版本](https://github.com/JonGates/DesktopLife/releases)
 
-桌面宠物版 v0.4.1 为预览版（Pre-release）。
+桌面宠物版 v0.4.2 为预览版（Pre-release）。
 
-### 屏保版 v0.4.1
+### 屏保版 v0.4.2
 
-**[下载屏保便携包](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip)** · [屏保发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.1)
+**[下载屏保便携包](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-ScreenSaver-win-x64-v0.4.2.zip)** · [屏保发布页](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.2)
 
 完整解压后，运行 `Configure-ScreenSaver.cmd` 选择深色／浅色和昆虫数量；`Preview-FullScreen.cmd` 体验全屏效果；`Install-ScreenSaver.cmd` 打开 Windows 屏保设置，选择等待时间并应用。移动鼠标或按键退出屏保。屏保包也自带运行环境，安装后需保留解压文件夹。[详细步骤](docs/SCREENSAVER.md)。
 
 ### 桌面宠物版：1. 在 GitHub 下载运行包
 
-如果你打开的是 **Tags** 页面，请切换到旁边的 **Releases**，找到对应版本，展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.4.1.zip`。
+如果你打开的是 **Tags** 页面，请切换到旁边的 **Releases**，找到对应版本，展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.4.2.zip`。
 
 | 下载项 | 用途 |
 | --- | --- |
-| `DesktopLife-Portable-win-x64-v0.4.1.zip` | 桌面宠物模式，包含程序和运行环境。 |
-| `DesktopLife-ScreenSaver-win-x64-v0.4.1.zip` | Windows 屏保模式，包含 `.scr`、配置与安装入口和运行环境。 |
-| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/SHA256SUMS.txt) | 两个 ZIP 共用的 SHA256 清单，每个文件各有一行校验值，无需运行。 |
+| `DesktopLife-Portable-win-x64-v0.4.2.zip` | 桌面宠物模式，包含程序和运行环境。 |
+| `DesktopLife-ScreenSaver-win-x64-v0.4.2.zip` | Windows 屏保模式，包含 `.scr`、配置与安装入口和运行环境。 |
+| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/SHA256SUMS.txt) | 两个 ZIP 共用的 SHA256 清单，每个文件各有一行校验值，无需运行。 |
 | Tags 页面里的 `zip` / `tar.gz`，或 Releases 的 `Source code` | 项目源码，供开发者使用，不能直接当作便携程序运行。 |
 
 ### 桌面宠物版：2. 解压并启动
@@ -87,7 +87,7 @@ DesktopLife v0.4.1 为预览版，同一版本提供桌面应用与屏保两个�
 
 ### 桌面宠物版：3. 开始使用
 
-- **调整数量**：修改昆虫数量（统一在“昆虫配置”中），点击“保存数量与尺寸”；设为 0 可关闭该物种。所有屏幕共享这些数量，苍蝇固定 1 只。
+- **调整数量**：修改昆虫数量（统一在“生物配置”中），点击“保存数量与尺寸”；设为 0 可关闭该物种。所有屏幕共享这些数量，苍蝇固定 1 只。
 - **与苍蝇互动**：移动鼠标让它跟随；单击左键指定落点，实际停落 3 秒后继续飞行。
 - **暂停／恢复**：默认 `Ctrl+Alt+P` 暂停，`Ctrl+Alt+S` 恢复；也可在设置中操作或修改快捷键。快捷键在程序运行时有效。
 - **语言**：设置窗口右上角切换简体中文或 English。
@@ -173,10 +173,10 @@ EXE、设置窗口、任务栏及托盘使用统一昆虫图标。资源位于 `
 运行下面的命令生成 Windows x64 便携 ZIP：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.4.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.4.2
 ```
 
-输出为 `artifacts/DesktopLife-Portable-win-x64-v0.4.1.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
+输出为 `artifacts/DesktopLife-Portable-win-x64-v0.4.2.zip`，附带 SHA256 校验文件。将 ZIP 发给朋友，完整解压后双击 `Start-DesktopLife.cmd` 即可打开设置，无需安装 .NET 或开发工具。运行环境的版本由脚本参数 `-RuntimeVersion` 指定。
 
 便携版支持 Windows 10/11 x64，包含中文/英文、全局快捷键和全部现有昆虫。用户配置仍保存在 `%AppData%\DesktopLife`，不会把开发者的个人配置打包分享。程序退出时释放快捷键；首次启动可能需要片刻解包运行环境。
 
@@ -268,12 +268,12 @@ Overlay 在显示前配置 `WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE
 ## 范围与限制
 
 - 支持 Windows 10/11 x64 多显示器。写实模式使用生成的身体纹理，配合程序驱动的足部、触角与翅膀；素材是插画资源，并非实拍照片。
-- 已通过 Debug / Release 构建、自动化测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。当前结果见 [v0.4.1 发布说明](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.1)；旧版本验证记录作为历史保留。
+- 已通过 Debug / Release 构建、自动化测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。当前结果见 [v0.4.2 发布说明](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.2)；旧版本验证记录作为历史保留。
 - 尚未完成稳定 60 FPS 和 500 只群体的性能验收；数量上限是输入约束，不代表任何设备均能流畅运行上限数量。
 - 125% / 150% 已通过离屏渲染检查，插拔与拓扑变化已通过模拟布局的真实窗口检查；实际混合系统缩放、物理拔插、浏览器点击体验和不同 GPU 尚未完整验收。
 - 暂未提供开机自启和传统安装器；桌面宠物与屏保均以便携 ZIP 提供。
 - 数量配置保存在 `%AppData%\DesktopLife\settings.json`；每次保存立即应用，下次启动自动读取。文件损坏或数量无效时使用默认值，并在设置窗口提示；保存失败时保留原数量。
 - 异常日志：`%LocalAppData%\DesktopLife\logs\yyyy-MM-dd.log`。
-- v0.4.1 的桌面宠物与屏保便携包均自带 .NET 运行环境，无需另外安装 .NET、SDK 或 Visual Studio。
+- v0.4.2 的桌面宠物与屏保便携包均自带 .NET 运行环境，无需另外安装 .NET、SDK 或 Visual Studio。
 
 完整产品规格：`docs/DesktopLife_Codex_Development_Spec.md`；当前计划：`docs/superpowers/plans/2026-09-15-shared-desktop-controls.md`。本次用户要求已取代此前“每屏固定 1/20”的规则。

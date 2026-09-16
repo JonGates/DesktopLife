@@ -6,13 +6,13 @@
 
 Flies chase your cursor. Cockroaches scatter. Ants cross monitor boundaries. When your PC goes idle, the same creatures can take over as a native Windows screen saver.
 
-[**Download Desktop Pets v0.4.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip) · [**Download Screen Saver v0.4.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
+[**Download Desktop Pets v0.4.2**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-Portable-win-x64-v0.4.2.zip) · [**Download Screen Saver v0.4.2**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-ScreenSaver-win-x64-v0.4.2.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
 
-Windows 10/11 x64 · 12 insect species · Realistic and cute styles · Multi-monitor · Portable
+Windows 10/11 x64 · 13 creature types · Realistic and cute styles · Multi-monitor · Portable
 
 </div>
 
-> **In development:** the current source and local `0.4.2-preview.2` build add a spider with eight animated legs, realistic/cute appearances, and population/size controls in both desktop and screen saver modes. The linked v0.4.1 release does not include it yet. [Creature details](docs/INSECTS.md).
+> **New in v0.4.2:** eight-legged spiders, longer size-scaled jumps and refined ladybug wings. Both desktop and screen saver packages include these changes. [Creature details](docs/INSECTS.md).
 
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
@@ -22,7 +22,7 @@ Windows 10/11 x64 · 12 insect species · Realistic and cute styles · Multi-mon
 
 DesktopLife is both a **Windows desktop pet app** and a native **`.scr` screen saver**. Choose realistic insects, cute companions, or a mix of both:
 
-**Fly · Cockroach · Ant · Caterpillar · Ladybug · Ground beetle · Earwig · Silverfish · Cricket · Grasshopper · Mantis · Stick insect**
+**Fly · Cockroach · Ant · Caterpillar · Ladybug · Ground beetle · Earwig · Silverfish · Cricket · Grasshopper · Mantis · Stick insect · Spider**
 
 | Feature | What happens |
 | --- | --- |
@@ -31,7 +31,7 @@ DesktopLife is both a **Windows desktop pet app** and a native **`.scr` screen s
 | Species-specific motion | Crickets and grasshoppers jump. Ladybugs open their wings, take off and land. |
 | Realistic or cute | Switch the visual style without resetting populations, sizes or positions. |
 | True multi-monitor movement | Creatures cross the edges where monitors touch, including stacked, offset and negative-coordinate layouts. |
-| Per-species controls | Configure population and size ranges for the 11 non-fly species; set any of them to zero to hide it. The fly remains fixed at one. |
+| Per-species controls | Configure population and size ranges for the 12 non-fly species; set any of them to zero to hide it. The fly remains fixed at one. |
 
 ## Choose your mode
 
@@ -40,7 +40,7 @@ DesktopLife is both a **Windows desktop pet app** and a native **`.scr` screen s
 | Best for | Insects that stay with you while you work | An animated ecosystem while the PC is idle |
 | Interaction | Mouse-following fly, cursor reactions, pause/resume hotkeys | Autonomous movement; mouse or keyboard exits |
 | Display | Transparent overlay across your desktop | Native Windows `.scr` with dark or light background |
-| Download | **[DesktopLife-Portable-win-x64-v0.4.1.zip](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip)** | **[DesktopLife-ScreenSaver-win-x64-v0.4.1.zip](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip)** |
+| Download | **[DesktopLife-Portable-win-x64-v0.4.2.zip](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-Portable-win-x64-v0.4.2.zip)** | **[DesktopLife-ScreenSaver-win-x64-v0.4.2.zip](https://github.com/JonGates/DesktopLife/releases/download/v0.4.2/DesktopLife-ScreenSaver-win-x64-v0.4.2.zip)** |
 
 Both packages support **Windows 10/11 x64**, include the .NET runtime, and keep their settings separate. No SDK, Visual Studio or separate .NET installation is required.
 
@@ -70,7 +70,7 @@ Keep the extracted screen saver folder in place after installation. See the [ful
 
 | Realistic insects | Cute insects |
 | --- | --- |
-| ![Realistic insects on dark and light backgrounds](docs/images/realistic-insects.png) | ![All 12 insects in cute style](docs/images/cute-insect-catalog.png) |
+| ![Realistic insects on dark and light backgrounds](docs/images/realistic-insects.png) | ![All 13 creatures in cute style](docs/images/cute-insect-catalog.png) |
 
 Realistic mode combines generated macro-style body textures with program-driven legs, antennae and wings. The assets are illustrations, not documentary photographs. Cute mode gives every species a distinct simplified appearance. Both styles are available in desktop and screen saver modes.
 
@@ -111,7 +111,7 @@ Desktop settings are stored under **`%AppData%\DesktopLife`**. The desktop app a
 
 ### Is this a finished release?
 
-Not yet. **v0.4.1 is a preview release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
+Not yet. **v0.4.2 is a preview release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
 
 ## Build from source
 
@@ -128,7 +128,7 @@ dotnet run --project src/DesktopLife.App -- --settings
 Create a self-contained Windows x64 package:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.4.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.4.2
 ```
 
 For implementation details, packaging commands and diagnostics, see the [development and packaging guide](docs/DEVELOPMENT_AND_PACKAGING.md). Motion and size behavior are documented in [locomotion](docs/LOCOMOTION.md) and [species and proportions](docs/INSECTS.md).
@@ -150,6 +150,6 @@ When reporting a problem, include:
 
 **If DesktopLife earned a permanent place on your desktop, consider giving it a ⭐.**
 
-[Download v0.4.1](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.1) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
+[Download v0.4.2](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.2) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
 
 </div>
