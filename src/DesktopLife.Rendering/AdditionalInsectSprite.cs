@@ -39,29 +39,26 @@ internal static class AdditionalInsectSprite
                 {
                     var phase = (frame / 8.0 + pair * 0.5 + (side > 0 ? 0.5 : 0)) % 1;
                     var stroke = phase < 0.65 ? 1 - 2 * phase / 0.65 : -Math.Cos((phase - 0.65) / 0.35 * Math.PI);
+                    if (kind == CreatureKind.Mantis)
+                    {
+                        DrawMantisLeg(dc, pen.Brush, pair, side, stroke, length, width);
+                        continue;
+                    }
                     var stride = insect.Stride * 0.325;
                     var rootX = length * (0.25 - pair * 0.085);
                     var reach = length * (0.22 - pair * 0.2);
                     var span = Math.Max(width * 0.9, length * 0.24);
                     if (kind == CreatureKind.StickInsect) { rootX = length * (0.34 - pair * 0.12); span = length * 0.28; }
-                    if (kind == CreatureKind.Mantis) { rootX = pair == 0 ? length * 0.34 : length * (0.05 - (pair - 1) * 0.14); span = length * 0.26; }
+                    if (kind == CreatureKind.Ladybug)
+                    {
+                        // Coxae stay beneath the thorax; only short knees and tarsi peek past the elytra.
+                        rootX = length * (0.22 - pair * 0.12);
+                        reach = length * (0.12 - pair * 0.12);
+                        span = width * (pair == 1 ? 0.58 : 0.51);
+                    }
                     var root = new Point(rootX, side * width * 0.2);
                     var knee = new Point(rootX + reach * 0.6 + stroke * stride * 0.35, side * span * 0.6);
                     var foot = new Point(rootX + reach + stroke * stride, side * span);
-                    if (kind == CreatureKind.Mantis && pair == 0)
-                    {
-                        // Forelegs remain folded in the characteristic prey-catching posture.
-                        knee = new(rootX + length * 0.13, side * width * 1.05);
-                        foot = new(rootX - length * 0.03 + stroke * 0.4, side * width * 0.68);
-                        dc.DrawLine(new Pen(pen.Brush, 1.4), root, knee);
-                        dc.DrawLine(pen, knee, foot);
-                        for (var tooth = 1; tooth <= 4; tooth++)
-                        {
-                            var p = Lerp(knee, foot, tooth / 5.0);
-                            dc.DrawLine(fine, p, new(p.X - 0.4, p.Y - side * 0.9));
-                        }
-                        continue;
-                    }
                     if (pair == 2 && kind is CreatureKind.Cricket or CreatureKind.Grasshopper)
                     {
                         // Enlarged femur folds back, followed by a thin, spiny tibia.
@@ -88,7 +85,14 @@ internal static class AdditionalInsectSprite
                     _ => 0.42
                 });
                 var sweep = Math.Sin(frame * Math.PI / 4 + side * 0.5) * 0.7;
-                Curve(dc, fine, new(length * 0.43, side * width * 0.16),
+                if (kind == CreatureKind.Ladybug)
+                {
+                    // Short clubbed antennae, separate from the six walking legs.
+                    var tip = new Point(length * 0.56, side * (width * 0.23 + sweep * 0.18));
+                    Curve(dc, fine, new(length * 0.43, side * width * 0.12), new(length * 0.55, side * width * 0.16), tip);
+                    dc.DrawEllipse(pen.Brush, null, tip, 0.24, 0.19);
+                }
+                else Curve(dc, fine, new(length * 0.43, side * width * 0.16),
                     new(length * 0.52 + antennaLength * 0.5, side * (width * 0.55 + sweep)),
                     new(length * 0.48 + antennaLength, side * (width * 0.9 + sweep)));
                 if (kind == CreatureKind.Earwig)
@@ -102,6 +106,38 @@ internal static class AdditionalInsectSprite
         }
         group.Freeze();
         return group;
+    }
+
+    private static void DrawMantisLeg(DrawingContext dc, Brush brush, int pair, int side, double stroke, double length, double width)
+    {
+        Pen Line(double thickness) => new(brush, thickness) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+        if (pair == 0)
+        {
+            // Coxa leads back from the prothorax; femur extends forward and tibia folds against it.
+            var root = new Point(length * 0.32, side * width * 0.12);
+            var hip = new Point(length * 0.22, side * width * 0.46);
+            var knee = new Point(length * 0.39 + stroke * 0.25, side * width * 0.88);
+            var folded = new Point(length * 0.27, side * width * 0.63);
+            dc.DrawLine(Line(0.58), root, hip);
+            dc.DrawLine(Line(1.0), hip, knee);
+            dc.DrawLine(Line(0.62), knee, folded);
+            dc.DrawLine(Line(0.28), folded, new(folded.X + length * 0.035, folded.Y - side * 0.35));
+            for (var tooth = 1; tooth <= 5; tooth++)
+            {
+                var p = Lerp(hip, knee, tooth / 6.0);
+                dc.DrawLine(Line(0.23), p, new(p.X + 0.25, p.Y + side * 0.48));
+            }
+            return;
+        }
+        var rootX = length * (pair == 1 ? 0.06 : -0.02);
+        var rootPoint = new Point(rootX, side * width * 0.18);
+        var hipPoint = new Point(rootX + (pair == 1 ? 0.9 : -1), side * width * 0.42);
+        var kneePoint = new Point(rootX + length * (pair == 1 ? 0.09 : -0.14) + stroke * 0.7, side * length * 0.14);
+        var ankle = new Point(rootX + length * (pair == 1 ? 0.14 : -0.23) + stroke * 4.55, side * length * (pair == 1 ? 0.23 : 0.25));
+        dc.DrawLine(Line(0.6), rootPoint, hipPoint);
+        dc.DrawLine(Line(0.65), hipPoint, kneePoint);
+        dc.DrawLine(Line(0.42), kneePoint, ankle);
+        dc.DrawLine(Line(0.25), ankle, new(ankle.X - 1.6, ankle.Y + side * 0.4));
     }
 
     private static Point Lerp(Point a, Point b, double t) => new(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);

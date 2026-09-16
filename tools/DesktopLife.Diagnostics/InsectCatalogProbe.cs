@@ -26,6 +26,11 @@ internal static class InsectCatalogProbe
                 var pixels = new byte[256 * 256 * 4]; bitmap.CopyPixels(pixels, 1024, 0);
                 if (pixels[3] != 0 || pixels[(128 * 256 + 128) * 4 + 3] == 0) throw new Exception("Body/alpha failure: " + insect.Kind);
                 if (previous != null && previous.SequenceEqual(pixels)) throw new Exception("No animated appendages: " + insect.Kind);
+                if (insect.Kind == CreatureKind.Ladybug)
+                    for (var y = 0; y < 256; y++)
+                    for (var x = 0; x < 256; x++)
+                        if ((y < 122 || y > 133) && pixels[(y * 256 + x) * 4 + 3] > 32)
+                            throw new Exception("Ladybug appendages extend too far beyond its compact body");
                 previous = pixels;
             }
             // Pausing walkers must retain their gait pose instead of using fly grooming frames.
