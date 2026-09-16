@@ -88,7 +88,7 @@ public class OceanTests
     }
 
     [Fact]
-    public void TurtleSwimsToClickDwellsThreeSecondsThenResumesFollowing()
+    public void TurtleRetractsImmediatelyForThreeSecondsThenResumesFollowing()
     {
         var turtle = new SwimmingCreature(new(100, 400), CreatureKind.GreenTurtle);
         var random = new RandomSource(1);
@@ -98,7 +98,7 @@ public class OceanTests
         Assert.InRange(turtle.Position.X, 100, 102);
         for (var i = 0; i < 1000 && !turtle.IsResting; i++) turtle.Update(.02f, Context());
         Assert.True(turtle.IsResting);
-        Assert.InRange(Vector2.Distance(turtle.Position, click.Position), 0, 2);
+        Assert.Equal(new Vector2(100, 400), turtle.Position);
         var arrived = turtle.Position;
         for (var i = 0; i < 145; i++) turtle.Update(.02f, Context());
         Assert.Equal(arrived, turtle.Position);
@@ -108,14 +108,14 @@ public class OceanTests
     }
 
     [Fact]
-    public void UnreachableClickStopsBlockingCursorFollowWithoutCrossingGap()
+    public void ClickOnDisconnectedDisplayRestsInPlaceThenResumesWithoutCrossingGap()
     {
         var layout = new DesktopLayout([new("a", new(0, 0, 1000, 800)), new("b", new(1020, 0, 1000, 800))]);
         var turtle = new SwimmingCreature(new(990, 400), CreatureKind.GreenTurtle);
         var random = new RandomSource(1);
         var click = new MouseClick(1, new(1200, 400));
         var context = new CreatureContext(new(new(700, 400), Vector2.Zero, 0, false, TimeSpan.Zero, click), layout.Bounds, 0, random, Layout: layout);
-        for (var i = 0; i < 200; i++)
+        for (var i = 0; i < 300; i++)
         {
             var previous = turtle.Position;
             turtle.Update(.02f, context);
@@ -123,7 +123,7 @@ public class OceanTests
             Assert.True(turtle.Position.X < 1000);
             Assert.True(layout.Contains(turtle.Position));
         }
-        Assert.True(turtle.Position.X < 940, "An unreachable click should release the turtle to follow the cursor again.");
+        Assert.True(turtle.Position.X < 940, "After resting the turtle should follow the cursor again.");
     }
 
     [Theory]
@@ -179,6 +179,19 @@ public class OceanTests
         public float NextFloat(float min, float max) => (min + max) / 2;
     }
 
+    [Theory]
+    [InlineData(.01f)]
+    [InlineData(.02f)]
+    public void FishCompletesTurnWhileHeadTracksVelocity(float dt)
+    {
+        var fish = new SwimmingCreature(new(500, 400), CreatureKind.Clownfish);
+        var context = new CreatureContext(default, new(0, 0, 1000, 800), 0, new MaximumRandom());
+        for (var t = 0f; t < 3; t += dt) fish.Update(dt, context);
+        var expected = new Vector2(MathF.Cos(MathF.PI + .8f), MathF.Sin(MathF.PI + .8f));
+        Assert.True(Vector2.Dot(Vector2.Normalize(fish.Velocity), expected) > .98f);
+    }
+    private sealed class MaximumRandom : IRandomSource { public float NextFloat(float min, float max) => max; }
+
     [Fact]
     public void FishMotionIsContinuousAndInvalidTimeDoesNothing()
     {
@@ -196,6 +209,8 @@ public class OceanTests
                 var phase = fish.AnimationPhase;
                 fish.Update(.02f, context);
                 var step = Vector2.Distance(previous, fish.Position);
+                if (step > .001f)
+                    Assert.True(Vector2.Dot(Vector2.Normalize(fish.Position - previous), new(MathF.Cos(fish.Rotation), MathF.Sin(fish.Rotation))) > .9999f, "Fish head must follow actual displacement.");
                 Assert.InRange(step, 0, definition.Speed * .0201f);
                 Assert.InRange((fish.AnimationPhase - phase + 1) % 1, 0, .2f);
                 distance += step;

@@ -19,6 +19,19 @@ internal static class OceanRenderProbe
         foreach (var style in new[] { CreatureStyle.Realistic, CreatureStyle.Cute })
         {
             renderer.Style = style;
+            byte[] TurtlePixels(bool resting)
+            {
+                var v = new DrawingVisual();
+                using (var dc = v.RenderOpen()) renderer.Render(dc, [new Sample(CreatureKind.GreenTurtle, new(100, 100), .25f, resting: resting)], new(0, 0, 200, 200), 0, 1, 1);
+                var bmp = new RenderTargetBitmap(200, 200, 96, 96, PixelFormats.Pbgra32); bmp.Render(v);
+                var bytes = new byte[160000]; bmp.CopyPixels(bytes, 800, 0); return bytes;
+            }
+            var shellPixels = TurtlePixels(true); var swimmingPixels = TurtlePixels(false);
+            var shellArea = shellPixels.Where((_, i) => i % 4 == 3).Count(a => a > 0);
+            var swimmingArea = swimmingPixels.Where((_, i) => i % 4 == 3).Count(a => a > 0);
+            if (shellArea == 0 || shellArea >= swimmingArea * .85 || shellPixels[(100 * 200 + 112) * 4 + 3] != 0)
+                throw new Exception($"Turtle did not retract its head and limbs: {style}");
+            if (!shellPixels.SequenceEqual(TurtlePixels(true))) throw new Exception("Resting turtle changed between renders");
             foreach (var d in definitions)
             foreach (var dpi in new[] { 1d, 1.25, 1.5 })
             {
@@ -45,7 +58,7 @@ internal static class OceanRenderProbe
                     for (var i = 0; i < definitions.Length; i++)
                     {
                         var x = 125 + i % 4 * 250; var y = 100 + i / 4 * 200;
-                        renderer.Render(dc, [new Sample(definitions[i].Kind, new(x, y), frame / 8f, 3, frame >= 4 ? MathF.PI - .3f : 0)], new(0, 0, 1000, 850), 0, 1, 1);
+                        renderer.Render(dc, [new Sample(definitions[i].Kind, new(x, y), frame / 8f, 3, frame >= 4 ? 2.0f : 0, frame >= 4 && i == 0)], new(0, 0, 1000, 850), 0, 1, 1);
                         dc.DrawText(new FormattedText(definitions[i].EnglishName, CultureInfo.InvariantCulture, FlowDirection.LeftToRight, new Typeface("Segoe UI"), 15, Brushes.White, 1), new Point(x - 80, y + 70));
                     }
                 }
@@ -59,7 +72,8 @@ internal static class OceanRenderProbe
     private sealed class Sample : Creature
     {
         public override CreatureKind Kind { get; }
-        public Sample(CreatureKind kind, Vector2 position, float phase, float scale = 1, float rotation = 0) { Kind = kind; Position = position; AnimationPhase = phase; Scale = scale; Rotation = rotation; }
+        public override bool IsResting { get; }
+        public Sample(CreatureKind kind, Vector2 position, float phase, float scale = 1, float rotation = 0, bool resting = false) { Kind = kind; Position = position; AnimationPhase = phase; Scale = scale; Rotation = rotation; IsResting = resting; }
         public override void Update(float deltaTime, in CreatureContext context) { }
     }
 }

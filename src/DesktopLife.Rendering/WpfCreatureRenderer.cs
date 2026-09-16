@@ -24,6 +24,7 @@ public sealed class WpfCreatureRenderer : IRenderer
     private static readonly DrawingGroup[][] LadybugAir = new[] { false, true }.Select(cute => Enumerable.Range(0, 64)
         .Select(index => AdditionalInsectSprite.Create(InsectCatalog.Get(CreatureKind.Ladybug), index % 8, cute, LocomotionState.TakingOff, index / 8 / 7f)).ToArray()).ToArray();
     private static readonly Brush AirShadow = FrozenShadow();
+    private static readonly DrawingGroup[] TurtleShell = new[] { false, true }.Select(OceanSprite.CreateTurtleShell).ToArray();
     private static readonly DrawingGroup[] PulledSpiders = new[] { false, true }
         .Select(cute => SpiderSprite.Create(InsectCatalog.Get(CreatureKind.Spider), 0, cute, tuck: 0.8)).ToArray();
     private static readonly Dictionary<CreatureKind, DrawingGroup[][]> Ocean = OceanCatalog.Fish.Prepend(OceanCatalog.Turtle)
@@ -66,11 +67,9 @@ public sealed class WpfCreatureRenderer : IRenderer
             matrix.Scale(creature.Scale, creature.Scale);
             if (OceanCatalog.IsOcean(creature.Kind) && creature.Kind != CreatureKind.GreenTurtle)
             {
-                // Side-view fish turn left/right without rolling upside down; seahorses stay upright.
-                var left = MathF.Cos(creature.Rotation) < 0;
-                if (left) matrix.Scale(-1, 1);
-                var bank = creature.Kind == CreatureKind.Seahorse ? 0 : Math.Clamp(Math.Atan2(Math.Sin(creature.Rotation), Math.Abs(Math.Cos(creature.Rotation))), -0.55, 0.55);
-                matrix.Rotate((left ? -bank : bank) * 180 / Math.PI);
+                // Every texture faces +X. Flip its belly, not its head axis, when moving left.
+                if (MathF.Cos(creature.Rotation) < 0) matrix.Scale(1, -1);
+                matrix.Rotate(creature.Rotation * 180 / Math.PI);
             }
             else matrix.Rotate(creature.Rotation * 180 / Math.PI);
             matrix.Scale(1 / scaleX, 1 / scaleY);
@@ -88,7 +87,9 @@ public sealed class WpfCreatureRenderer : IRenderer
             transform.Freeze();
             dc.PushTransform(transform);
             var frame = Frame(creature);
-            if (Ocean.TryGetValue(creature.Kind, out var ocean))
+            if (creature.Kind == CreatureKind.GreenTurtle && creature.IsResting)
+                dc.DrawDrawing(TurtleShell[Style == CreatureStyle.Cute ? 1 : 0]);
+            else if (Ocean.TryGetValue(creature.Kind, out var ocean))
                 dc.DrawDrawing(ocean[Style == CreatureStyle.Cute ? 1 : 0][frame]);
             else if (creature.Kind == CreatureKind.Spider && creature.MotionState == LocomotionState.SilkPulling)
                 dc.DrawDrawing(PulledSpiders[Style == CreatureStyle.Cute ? 1 : 0]);

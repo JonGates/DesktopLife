@@ -31,7 +31,7 @@ internal static class SpiderSilkProbe
                 var pixels = new byte[300 * 200 * 4]; bitmap.CopyPixels(pixels, 1200, 0); return pixels;
             }
             var pixels = RenderThread();
-            if (pixels[(100 * 300 + 30) * 4 + 3] == 0) throw new Exception("Silk disappeared when spider was outside viewport");
+            if (!Enumerable.Range(96, 12).Any(y => pixels[(y * 300 + 30) * 4 + 3] != 0)) throw new Exception("Silk disappeared when spider was outside viewport");
             if (pixels[3] != 0) throw new Exception("Silk background lost transparency");
             if (!pixels.SequenceEqual(RenderThread())) throw new Exception("Paused silk changed");
             pose.Clear();

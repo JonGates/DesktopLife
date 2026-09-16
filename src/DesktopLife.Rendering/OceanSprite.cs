@@ -12,6 +12,30 @@ internal static class OceanSprite
         .Concat(LoadBodies("ocean-fish-b.png", 4)).Concat(LoadBodies("ocean-fish-c.png", 4)).ToArray();
     private static readonly BitmapSource Turtle = LoadBodies("ocean-turtle.png", 1)[0];
 
+    public static DrawingGroup CreateTurtleShell(bool cute)
+    {
+        var group = new DrawingGroup();
+        using (var dc = group.Open())
+        {
+            // Keep the shell at the same body location while head, tail and flippers retract.
+            var shell = new EllipseGeometry(new Point(-4, 0), 10.4, 9.6);
+            dc.PushClip(shell);
+            if (!cute) dc.DrawImage(Turtle, new Rect(-15, -10, 30, 20));
+            else
+            {
+                dc.DrawGeometry(new SolidColorBrush(Color.FromRgb(103, 164, 113)), new Pen(Brushes.DarkOliveGreen, .5), shell);
+                dc.DrawEllipse(new SolidColorBrush(Color.FromRgb(162, 209, 127)), new Pen(Brushes.DarkOliveGreen, .5), new(-4, 0), 5, 5);
+                for (var i = 0; i < 6; i++)
+                {
+                    var a = i * Math.PI / 3;
+                    dc.DrawLine(new Pen(Brushes.DarkOliveGreen, .5), new(-4 + Math.Cos(a) * 5, Math.Sin(a) * 5), new(-4 + Math.Cos(a) * 10.5, Math.Sin(a) * 10));
+                }
+            }
+            dc.Pop();
+        }
+        group.Freeze(); return group;
+    }
+
     public static DrawingGroup Create(InsectDefinition definition, int frame, bool cute)
     {
         var result = new DrawingGroup();
