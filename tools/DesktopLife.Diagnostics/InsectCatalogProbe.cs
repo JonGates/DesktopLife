@@ -49,7 +49,8 @@ internal static class InsectCatalogProbe
                     var x = 180 + i % 4 * 360;
                     var y = 155 + i / 4 * 218;
                     dc.PushTransform(new ScaleTransform(3, 3));
-                    renderer.Render(dc, [new Pose(kinds[i], new(x / 3f, y / 3f), 0.25f)], new(0, 0, 1440, 800), 0, 1, 1);
+                    var detailX = kinds[i] == CreatureKind.StickInsect ? x - 60 : x;
+                    renderer.Render(dc, [new Pose(kinds[i], new(detailX / 3f, y / 3f), 0.25f)], new(0, 0, 1440, 800), 0, 1, 1);
                     dc.Pop();
                     renderer.Render(dc, [new Pose(kinds[i], new(x, y + 77), 0.25f)], new(0, 0, 1440, 800), 0, 1, 1);
                     Text(dc, names[i], x - 100, y + 100, 14, foreground);
