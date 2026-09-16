@@ -73,54 +73,41 @@
         <TextBlock Text="{DynamicResource CountHelp}" TextWrapping="Wrap" Foreground="#63776C" FontSize="12" Margin="0,0,0,12"/>
         <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10">
             <StackPanel>
-                <TextBlock Text="{DynamicResource Fly}" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource FlyHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#63776C" Margin="0,4,0,8"/>                <Border Height="1" Background="#E5ECE7" Margin="0,9,0,6"/>
-                <Grid Margin="0,4,0,0">
-                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="{DynamicResource Roach}" Target="{Binding ElementName=RoachCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource RoachHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#63776C"/></StackPanel>
-                    <TextBox x:Name="RoachCount" Grid.Column="1" MaxLength="6" Text="20" AutomationProperties.Name="{DynamicResource RoachCountName}"/>
-                    <TextBlock Grid.Column="2" Text="{DynamicResource Unit}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                </Grid>
-                <Slider x:Name="RoachSlider" Minimum="0" Maximum="500" Value="20" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,6,0,0" ValueChanged="RoachSliderChanged" AutomationProperties.Name="{DynamicResource RoachSliderName}"/>
-                <StackPanel Orientation="Horizontal" Margin="0,4,0,2">
-                    <TextBlock Text="{DynamicResource MinSize}" VerticalAlignment="Center"/>
-                    <TextBox x:Name="RoachMin" Width="52" MaxLength="3" Margin="6,0,12,0" AutomationProperties.Name="{DynamicResource MinSize}"/>
-                    <TextBlock Text="{DynamicResource MaxSize}" VerticalAlignment="Center"/>
-                    <TextBox x:Name="RoachMax" Width="52" MaxLength="3" Margin="6,0,0,0" AutomationProperties.Name="{DynamicResource MaxSize}"/>
-                </StackPanel>
-                <Border Height="1" Background="#E5ECE7" Margin="0,9,0,6"/>
-                <Grid Margin="0,4,0,0">
-                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="{DynamicResource Ant}" Target="{Binding ElementName=AntCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource AntHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#63776C"/></StackPanel>
-                    <TextBox x:Name="AntCount" Grid.Column="1" MaxLength="6" Text="20" AutomationProperties.Name="{DynamicResource AntCountName}"/>
-                    <TextBlock Grid.Column="2" Text="{DynamicResource Unit}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                </Grid>
-                <Slider x:Name="AntSlider" Minimum="0" Maximum="500" Value="20" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,6,0,0" ValueChanged="AntSliderChanged" AutomationProperties.Name="{DynamicResource AntSliderName}"/>
-                <StackPanel Orientation="Horizontal" Margin="0,4,0,2">
-                    <TextBlock Text="{DynamicResource MinSize}" VerticalAlignment="Center"/>
-                    <TextBox x:Name="AntMin" Width="52" MaxLength="3" Margin="6,0,12,0" AutomationProperties.Name="{DynamicResource MinSize}"/>
-                    <TextBlock Text="{DynamicResource MaxSize}" VerticalAlignment="Center"/>
-                    <TextBox x:Name="AntMax" Width="52" MaxLength="3" Margin="6,0,0,0" AutomationProperties.Name="{DynamicResource MaxSize}"/>
-                </StackPanel>
-                <Border Height="1" Background="#E5ECE7" Margin="0,9,0,6"/>
-                <Grid Margin="0,4,0,0">
-                    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="84"/><ColumnDefinition Width="24"/></Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center"><Label Content="{DynamicResource Caterpillar}" Target="{Binding ElementName=CaterpillarCount}" Padding="0" FontWeight="SemiBold"/><TextBlock Text="{DynamicResource CaterpillarHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#63776C"/></StackPanel>
-                    <TextBox x:Name="CaterpillarCount" Grid.Column="1" MaxLength="6" Text="3" AutomationProperties.Name="{DynamicResource CaterpillarCountName}"/>
-                    <TextBlock Grid.Column="2" Text="{DynamicResource Unit}" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                </Grid>
-                <Slider x:Name="CaterpillarSlider" Minimum="0" Maximum="100" Value="3" TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,6,0,0" ValueChanged="CaterpillarSliderChanged" AutomationProperties.Name="{DynamicResource CaterpillarSliderName}"/>
-                <StackPanel Orientation="Horizontal" Margin="0,4,0,2">
-                    <TextBlock Text="{DynamicResource MinSize}" VerticalAlignment="Center"/>
-                    <TextBox x:Name="CaterpillarMin" Width="52" MaxLength="3" Margin="6,0,12,0" AutomationProperties.Name="{DynamicResource MinSize}"/>
-                    <TextBlock Text="{DynamicResource MaxSize}" VerticalAlignment="Center"/>
-                    <TextBox x:Name="CaterpillarMax" Width="52" MaxLength="3" Margin="6,0,0,0" AutomationProperties.Name="{DynamicResource MaxSize}"/>
-                </StackPanel>
+                <TextBlock Text="{DynamicResource Fly}" FontWeight="SemiBold"/>
+                <TextBlock Text="{DynamicResource FlyHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#63776C" Margin="0,4,0,0"/>
             </StackPanel>
         </Border>
         <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
             <Expander x:Name="AdditionalSpeciesExpander" Header="{DynamicResource AdditionalSpecies}" IsExpanded="True">
                 <StackPanel>
                     <TextBlock Text="{DynamicResource AdditionalHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,6,0,10"/>
+                    <Grid Margin="0,3,0,3">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/></Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="1" Text="{DynamicResource CountColumn}" HorizontalAlignment="Center" Foreground="#63776C"/>
+                        <TextBlock Grid.Column="2" Text="{DynamicResource MinColumn}" HorizontalAlignment="Center" Foreground="#63776C"/>
+                        <TextBlock Grid.Column="3" Text="{DynamicResource MaxColumn}" HorizontalAlignment="Center" Foreground="#63776C"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,3">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="{DynamicResource Roach}" ToolTip="{DynamicResource RoachHelp}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,6,0"/>
+                        <TextBox x:Name="RoachCount" Grid.Column="1" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource RoachCountName}"/>
+                        <TextBox x:Name="RoachMin" Grid.Column="2" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource MinSize}"/>
+                        <TextBox x:Name="RoachMax" Grid.Column="3" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource MaxSize}"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,3">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="{DynamicResource Ant}" ToolTip="{DynamicResource AntHelp}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,6,0"/>
+                        <TextBox x:Name="AntCount" Grid.Column="1" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource AntCountName}"/>
+                        <TextBox x:Name="AntMin" Grid.Column="2" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource MinSize}"/>
+                        <TextBox x:Name="AntMax" Grid.Column="3" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource MaxSize}"/>
+                    </Grid>
+                    <Grid Margin="0,3,0,3">
+                        <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/></Grid.ColumnDefinitions>
+                        <TextBlock Text="{DynamicResource Caterpillar}" ToolTip="{DynamicResource CaterpillarHelp}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,6,0"/>
+                        <TextBox x:Name="CaterpillarCount" Grid.Column="1" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource CaterpillarCountName}"/>
+                        <TextBox x:Name="CaterpillarMin" Grid.Column="2" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource MinSize}"/>
+                        <TextBox x:Name="CaterpillarMax" Grid.Column="3" MaxLength="3" FontSize="13" MinHeight="29" Margin="4,0,0,0" AutomationProperties.Name="{DynamicResource MaxSize}"/>
+                    </Grid>
                     <StackPanel x:Name="AdditionalSpeciesPanel"/>
                 </StackPanel>
             </Expander>

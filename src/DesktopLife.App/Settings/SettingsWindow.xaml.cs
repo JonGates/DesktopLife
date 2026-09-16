@@ -44,14 +44,8 @@ public partial class SettingsWindow : Window
         _ready = true;
         Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
-        RoachSlider.Value = host.Simulation.TotalCockroachCount;
-        RoachCount.LostFocus += (_, _) => SyncSlider(RoachCount, RoachSlider);
         AntCount.Text = host.Simulation.TotalAntCount.ToString(CultureInfo.InvariantCulture);
         CaterpillarCount.Text = host.Simulation.TotalCaterpillarCount.ToString(CultureInfo.InvariantCulture);
-        AntSlider.Value = host.Simulation.TotalAntCount;
-        CaterpillarSlider.Value = host.Simulation.TotalCaterpillarCount;
-        AntCount.LostFocus += (_, _) => SyncSlider(AntCount, AntSlider);
-        CaterpillarCount.LostFocus += (_, _) => SyncSlider(CaterpillarCount, CaterpillarSlider);
         _host.LayoutChanged += RefreshLayout;
         _host.StateChanged += RefreshState;
         Closed += (_, _) => { _host.LayoutChanged -= RefreshLayout; _host.StateChanged -= RefreshState; };
@@ -93,14 +87,6 @@ public partial class SettingsWindow : Window
             for (var i = 0; i < 3; i++) row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(66) });
             AdditionalSpeciesPanel.Children.Add(row);
             return row;
-        }
-        var header = Row();
-        var keys = new[] { "CountColumn", "MinColumn", "MaxColumn" };
-        for (var i = 0; i < keys.Length; i++)
-        {
-            var label = new TextBlock { HorizontalAlignment = HorizontalAlignment.Center, Foreground = new SolidColorBrush(Color.FromRgb(99, 119, 108)) };
-            label.SetResourceReference(TextBlock.TextProperty, keys[i]);
-            Grid.SetColumn(label, i + 1); header.Children.Add(label);
         }
         foreach (var definition in InsectCatalog.Additional)
         {
@@ -160,22 +146,6 @@ public partial class SettingsWindow : Window
         if (modifiers.HasFlag(ModifierKeys.Windows) || !Hotkey.TryParse(text, out _)) { SetStatus("InvalidHotkey"); return; }
         input.Text = text;
     }
-    private static void SyncSlider(TextBox input, Slider slider)
-    {
-        if (int.TryParse(input.Text, out var count) && count >= slider.Minimum && count <= slider.Maximum) slider.Value = count;
-    }
-    private void AntSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (AntCount != null) AntCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
-    }
-    private void RoachSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (RoachCount != null) RoachCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
-    }
-    private void CaterpillarSliderChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-    {
-        if (CaterpillarCount != null) CaterpillarCount.Text = ((int)e.NewValue).ToString(CultureInfo.InvariantCulture);
-    }
     private void ApplyClicked(object sender, RoutedEventArgs e)
     {
         if (!int.TryParse(RoachCount.Text, out var roaches) || roaches < 0 || roaches > PopulationSettings.MaxCockroaches ||
@@ -205,9 +175,6 @@ public partial class SettingsWindow : Window
             try { settings.Validate(); } catch (ArgumentOutOfRangeException) { SetStatus("InvalidSizes"); return; }
             _store.Save(settings);
             _host.SetPopulation(settings);
-            RoachSlider.Value = roaches;
-            AntSlider.Value = ants;
-            CaterpillarSlider.Value = caterpillars;
             SetStatus("Saved");
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
