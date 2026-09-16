@@ -17,6 +17,7 @@ public abstract class Creature : ICreature
     /// <summary>Height in logical pixels; renderers apply Scale once.</summary>
     public virtual float Elevation { get; protected set; }
     public virtual float WingSpread { get; protected set; }
+    public virtual Vector2? SilkAnchor { get; protected set; }
     protected void AdvanceGait(Vector2 previous, float stride) =>
         AnimationPhase = (AnimationPhase + Vector2.Distance(previous, Position) / stride) % 1;
     public void SetScale(float scale)

@@ -13,6 +13,7 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--spider-silk") { SpiderSilkProbe.Run(args.Length > 1 ? args[1] : "artifacts/spider-silk"); return; }
         if (args.Length > 0 && args[0] == "--locomotion") { LocomotionProbe.Run(args.Length > 1 ? args[1] : "artifacts/locomotion"); return; }
         if (args.Length > 0 && args[0] == "--insect-catalog") { InsectCatalogProbe.Run(args.Length > 1 ? args[1] : "artifacts/insect-catalog"); return; }
         if (args.Length > 0 && args[0] == "--additional-settings") { AdditionalSettingsProbe.Run(args.Length > 1 ? args[1] : "artifacts/additional-settings"); return; }

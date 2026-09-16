@@ -3,7 +3,7 @@ using DesktopLife.Engine.Creatures;
 namespace DesktopLife.Creatures.Displays;
 
 /// <summary>Insect locomotion shares desktop boundaries; touching screen edges are traversable.</summary>
-public sealed class CrawlingInsect : Creature
+public sealed partial class CrawlingInsect : Creature
 {
     public override CreatureKind Kind { get; }
     private float _turnIn;
@@ -60,6 +60,13 @@ public sealed class CrawlingInsect : Creature
         var previous = Position;
         var away = Position - context.Mouse.Position;
         var threatened = _flees && away.LengthSquared() is > 1 and < 6400;
+        if (Kind == CreatureKind.Spider)
+        {
+            if (SilkAnchor != null) { UpdateSilkEscape(deltaTime, context); return; }
+            _silkCooldown = MathF.Max(0, _silkCooldown - deltaTime);
+            if (threatened && _silkCooldown <= 0 && TryBeginSilkEscape(away, context))
+            { UpdateSilkEscape(deltaTime, context); return; }
+        }
         if (CanJump || Kind == CreatureKind.Ladybug)
         {
             if (_motionIn < 0) ScheduleMotion(context);
@@ -250,6 +257,7 @@ public sealed class CrawlingInsect : Creature
     public override void Relocate(Vector2 position)
     {
         base.Relocate(position);
+        if (Kind == CreatureKind.Spider) { EndSilkEscape(); return; }
         if (!CanJump && Kind != CreatureKind.Ladybug) return;
         MotionState = LocomotionState.Walking;
         MotionProgress = Elevation = WingSpread = RestingSeconds = 0;

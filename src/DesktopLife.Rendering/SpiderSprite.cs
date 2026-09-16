@@ -10,7 +10,7 @@ internal static class SpiderSprite
 {
     private static readonly BitmapSource Body = LoadBody();
 
-    public static DrawingGroup Create(InsectDefinition definition, int frame, bool cute)
+    public static DrawingGroup Create(InsectDefinition definition, int frame, bool cute, double tuck = 0)
     {
         double length = definition.BodyLength, width = definition.BodyWidth;
         var drawing = new DrawingGroup();
@@ -32,6 +32,9 @@ internal static class SpiderSprite
                 var knee = new Point(root.X * 0.35 + reach * 0.65 + stroke * 0.65, side * span * 0.6);
                 var ankle = new Point(reach + stroke * 1.8, side * (span * 0.9 - lift * length * 0.065));
                 var toe = new Point(ankle.X - length * 0.06, ankle.Y + side * length * 0.09);
+                // Hold the legs close to the body while being pulled by silk instead of walking in mid-pull.
+                Point Fold(Point p) => new(root.X + (p.X - root.X) * (1 - tuck * 0.45), root.Y + (p.Y - root.Y) * (1 - tuck * 0.55));
+                knee = Fold(knee); ankle = Fold(ankle); toe = Fold(toe);
                 dc.DrawLine(Stroke(cute ? 1.15 : 0.95), root, knee);
                 dc.DrawLine(Stroke(cute ? 0.85 : 0.65), knee, ankle);
                 dc.DrawLine(Stroke(0.38), ankle, toe);

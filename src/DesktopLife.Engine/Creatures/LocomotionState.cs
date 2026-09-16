@@ -8,5 +8,8 @@ public enum LocomotionState
     JumpLanding,
     TakingOff,
     Flying,
-    Landing
+    Landing,
+    SilkCasting,
+    SilkPulling,
+    SilkSettling
 }

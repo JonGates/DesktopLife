@@ -24,6 +24,8 @@ public sealed class WpfCreatureRenderer : IRenderer
     private static readonly DrawingGroup[][] LadybugAir = new[] { false, true }.Select(cute => Enumerable.Range(0, 64)
         .Select(index => AdditionalInsectSprite.Create(InsectCatalog.Get(CreatureKind.Ladybug), index % 8, cute, LocomotionState.TakingOff, index / 8 / 7f)).ToArray()).ToArray();
     private static readonly Brush AirShadow = FrozenShadow();
+    private static readonly DrawingGroup[] PulledSpiders = new[] { false, true }
+        .Select(cute => SpiderSprite.Create(InsectCatalog.Get(CreatureKind.Spider), 0, cute, tuck: 0.8)).ToArray();
     private static Brush FrozenShadow()
     {
         var brush = new SolidColorBrush(Color.FromArgb(42, 28, 38, 30)); brush.Freeze(); return brush;
@@ -53,7 +55,10 @@ public sealed class WpfCreatureRenderer : IRenderer
         for (var i = 0; i < creatures.Count; i++)
         {
             var creature = creatures[i];
-            if (!creature.IsVisible || !bounds.Contains(creature.Position, 100 * creature.Scale)) continue;
+            if (!creature.IsVisible) continue;
+            // A thread can cross this viewport even when the spider itself is on another monitor.
+            SpiderSilkEffect.Draw(dc, creature, bounds, scaleX, scaleY);
+            if (!bounds.Contains(creature.Position, 100 * creature.Scale)) continue;
             var p = ScreenCoordinates.ToLocal(creature.Position, new Vector2(bounds.Left, bounds.Top), (float)scaleX, (float)scaleY);
             var matrix = Matrix.Identity;
             matrix.Scale(creature.Scale, creature.Scale);
@@ -73,7 +78,9 @@ public sealed class WpfCreatureRenderer : IRenderer
             transform.Freeze();
             dc.PushTransform(transform);
             var frame = Frame(creature);
-            if (creature.Kind == CreatureKind.Ladybug && creature.MotionState is LocomotionState.TakingOff or LocomotionState.Flying or LocomotionState.Landing)
+            if (creature.Kind == CreatureKind.Spider && creature.MotionState == LocomotionState.SilkPulling)
+                dc.DrawDrawing(PulledSpiders[Style == CreatureStyle.Cute ? 1 : 0]);
+            else if (creature.Kind == CreatureKind.Ladybug && creature.MotionState is LocomotionState.TakingOff or LocomotionState.Flying or LocomotionState.Landing)
             {
                 var spreadFrame = Math.Clamp((int)Math.Round(creature.WingSpread * 7), 0, 7);
                 dc.DrawDrawing(LadybugAir[Style == CreatureStyle.Cute ? 1 : 0][spreadFrame * 8 + ((int)(time * 42) & 7)]);

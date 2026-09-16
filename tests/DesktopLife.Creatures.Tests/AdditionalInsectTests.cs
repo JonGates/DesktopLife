@@ -34,7 +34,7 @@ public class AdditionalInsectTests
         {
             var mouse = spider.Position - new Vector2(25, 0);
             spider.Update(0.02f, new(new(mouse, Vector2.Zero, 0, false, TimeSpan.Zero), new(0, 0, 1000, 800), i * 0.02f, random));
-            Assert.Equal(LocomotionState.Walking, spider.MotionState);
+            Assert.Contains(spider.MotionState, new[] { LocomotionState.Walking, LocomotionState.SilkCasting, LocomotionState.SilkPulling, LocomotionState.SilkSettling });
             Assert.Equal(0, spider.Elevation);
             Assert.Equal(0, spider.WingSpread);
         }

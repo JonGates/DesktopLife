@@ -16,5 +16,6 @@ public interface ICreature
     float MotionProgress => 0f;
     float Elevation => 0f;
     float WingSpread => 0f;
+    Vector2? SilkAnchor => null;
     void Update(float deltaTime, in CreatureContext context);
 }
