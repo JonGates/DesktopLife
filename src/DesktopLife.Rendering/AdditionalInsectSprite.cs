@@ -11,7 +11,8 @@ internal static class AdditionalInsectSprite
     private static readonly BitmapSource[] Bodies = LoadAtlas("small-insect-bodies.png")
         .Concat(LoadAtlas("long-insect-bodies.png")).ToArray();
 
-    public static DrawingGroup Create(InsectDefinition insect, int frame, bool cute = false)
+    public static DrawingGroup Create(InsectDefinition insect, int frame, bool cute = false,
+        LocomotionState motion = LocomotionState.Walking, float progress = 0)
     {
         var kind = insect.Kind;
         var index = InsectCatalog.Additional.ToList().FindIndex(x => x.Kind == kind);
@@ -20,6 +21,9 @@ internal static class AdditionalInsectSprite
         var group = new DrawingGroup();
         using (var dc = group.Open())
         {
+            var jumping = motion is LocomotionState.JumpPreparing or LocomotionState.Jumping or LocomotionState.JumpLanding;
+            var compression = motion == LocomotionState.JumpPreparing ? progress * 0.12 : motion == LocomotionState.JumpLanding ? Math.Sin(progress * Math.PI) * 0.14 : 0;
+            dc.PushTransform(new ScaleTransform(1 + compression * 0.25, 1 - compression));
             var color = kind switch
             {
                 CreatureKind.Ladybug => Color.FromRgb(40, 33, 25),
@@ -38,6 +42,11 @@ internal static class AdditionalInsectSprite
             {
                 for (var pair = 0; pair < 3; pair++)
                 {
+                    if (jumping)
+                    {
+                        DrawJumpLeg(dc, pen.Brush, pair, side, length, width, motion, progress);
+                        continue;
+                    }
                     var phase = (frame / 8.0 + pair * 0.5 + (side > 0 ? 0.5 : 0)) % 1;
                     var stroke = phase < 0.65 ? 1 - 2 * phase / 0.65 : -Math.Cos((phase - 0.65) / 0.35 * Math.PI);
                     if (kind == CreatureKind.Mantis)
@@ -60,6 +69,12 @@ internal static class AdditionalInsectSprite
                     var root = new Point(rootX, side * width * 0.2);
                     var knee = new Point(rootX + reach * 0.6 + stroke * stride * 0.35, side * span * 0.6);
                     var foot = new Point(rootX + reach + stroke * stride, side * span);
+                    if (kind == CreatureKind.Ladybug && motion is LocomotionState.Flying or LocomotionState.TakingOff or LocomotionState.Landing)
+                    {
+                        var tuck = motion == LocomotionState.TakingOff ? progress : motion == LocomotionState.Landing ? 1 - progress : 1;
+                        knee = Lerp(knee, new(rootX - 0.5, side * width * 0.28), tuck);
+                        foot = Lerp(foot, new(rootX - 1, side * width * 0.4), tuck);
+                    }
                     if (pair == 2 && kind is CreatureKind.Cricket or CreatureKind.Grasshopper)
                     {
                         // Enlarged femur folds back, followed by a thin, spiny tibia.
@@ -103,11 +118,80 @@ internal static class AdditionalInsectSprite
             }
             if (kind == CreatureKind.Silverfish)
                 dc.DrawLine(fine, new(-length * 0.4, 0), new(-length * 1.16, 0));
-            if (cute) CuteAdditionalBody.Draw(dc, insect);
+            if (kind == CreatureKind.Ladybug && motion is LocomotionState.TakingOff or LocomotionState.Flying or LocomotionState.Landing)
+                DrawFlyingLadybug(dc, insect, frame, cute, motion == LocomotionState.TakingOff ? progress : motion == LocomotionState.Landing ? 1 - progress : 1);
+            else if (cute) CuteAdditionalBody.Draw(dc, insect);
             else dc.DrawImage(Bodies[index], new Rect(-length / 2, -width / 2, length, width));
+            dc.Pop();
         }
         group.Freeze();
         return group;
+    }
+
+    private static void DrawJumpLeg(DrawingContext dc, Brush brush, int pair, int side, double length, double width, LocomotionState motion, double t)
+    {
+        var root = new Point(length * (0.25 - pair * 0.085), side * width * 0.2);
+        var back = pair == 2;
+        var knee = new Point(root.X + length * (back ? -0.3 : 0.12 - pair * 0.12), side * length * (back ? 0.24 : 0.14));
+        var foot = new Point(root.X + length * (back ? 0.1 : 0.22 - pair * 0.2), side * length * (back ? 0.33 : 0.24));
+        var tuckedKnee = new Point(root.X - length * (back ? 0.22 : 0.035), side * width * (back ? 0.9 : 0.5));
+        var tuckedFoot = new Point(root.X - length * 0.08, side * width * 0.75);
+        if (motion == LocomotionState.JumpPreparing)
+        {
+            knee = Lerp(knee, tuckedKnee, t * 0.45);
+            foot = Lerp(foot, tuckedFoot, t * 0.75);
+        }
+        else if (motion == LocomotionState.Jumping)
+        {
+            if (back && t < 0.22)
+            {
+                knee = Lerp(new(root.X - length * 0.29, side * width * 0.95), tuckedKnee, t / 0.22);
+                foot = Lerp(new(root.X - length * 0.6, side * width * 1.1), tuckedFoot, t / 0.22);
+            }
+            else { knee = tuckedKnee; foot = tuckedFoot; }
+            // Reach out before touching down.
+            if (t > 0.8)
+            {
+                var reach = (t - 0.8) / 0.2;
+                knee = Lerp(knee, new(root.X + length * (back ? -0.26 : 0.1), side * length * 0.2), reach);
+                foot = Lerp(foot, new(root.X + length * (back ? 0.08 : 0.16 - pair * 0.17), side * length * 0.28), reach);
+            }
+        }
+        var upper = new Pen(brush, back ? length * 0.07 : 0.7) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+        var lower = new Pen(brush, back ? 0.65 : 0.45) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round };
+        dc.DrawLine(upper, root, knee); dc.DrawLine(lower, knee, foot);
+        dc.DrawLine(new Pen(brush, 0.25), foot, new(foot.X - 0.8, foot.Y + side * 0.35));
+    }
+
+    private static void DrawFlyingLadybug(DrawingContext dc, InsectDefinition insect, int frame, bool cute, double spread)
+    {
+        double length = insect.BodyLength, width = insect.BodyWidth;
+        void Body()
+        {
+            if (cute) CuteAdditionalBody.Draw(dc, insect);
+            else dc.DrawImage(Bodies[0], new Rect(-length / 2, -width / 2, length, width));
+        }
+        if (spread < 0.015) { Body(); return; }
+        var abdomen = new SolidColorBrush(cute ? Color.FromRgb(114, 132, 114) : Color.FromRgb(49, 39, 31));
+        dc.DrawEllipse(abdomen, null, new(-length * 0.13, 0), length * 0.36, width * 0.39);
+        // Hindwings unfold under the rigid elytra and beat independently in flight.
+        for (var side = -1; side <= 1; side += 2)
+        {
+            var beat = Math.Sin(frame * Math.PI / 4);
+            dc.PushTransform(new RotateTransform(-side * (28 + beat * 18) * spread, length * 0.17, 0));
+            var wing = new SolidColorBrush(Color.FromArgb((byte)(spread * (cute ? 155 : 110)), 218, 235, 240));
+            var vein = new Pen(new SolidColorBrush(Color.FromArgb((byte)(spread * 130), 133, 153, 154)), 0.18);
+            dc.DrawEllipse(wing, vein, new(-length * 0.32, side * width * 0.36 * spread), length * 0.7 * spread, width * 0.38 * spread);
+            dc.DrawLine(vein, new(length * 0.16, 0), new(-length * 0.91 * spread, side * width * 0.43 * spread));
+            dc.Pop();
+            dc.PushTransform(new RotateTransform(-side * 62 * spread, length * 0.24, 0));
+            dc.PushClip(new RectangleGeometry(new Rect(-length * 0.52, side < 0 ? -width * 0.55 : 0, length * 0.76, width * 0.55)));
+            Body();
+            dc.Pop(); dc.Pop();
+        }
+        // Head and pronotum remain anchored while the two shell halves open.
+        dc.PushClip(new RectangleGeometry(new Rect(length * 0.24, -width, length * 0.5, width * 2)));
+        Body(); dc.Pop();
     }
 
     private static void DrawMantisLeg(DrawingContext dc, Brush brush, int pair, int side, double stroke, double length, double width)

@@ -12,5 +12,9 @@ public interface ICreature
     bool IsResting => false;
     float AnimationPhase => 0;
     float RestingSeconds => 0;
+    LocomotionState MotionState => LocomotionState.Walking;
+    float MotionProgress => 0f;
+    float Elevation => 0f;
+    float WingSpread => 0f;
     void Update(float deltaTime, in CreatureContext context);
 }

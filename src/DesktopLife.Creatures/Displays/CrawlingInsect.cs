@@ -2,7 +2,7 @@ using System.Numerics;
 using DesktopLife.Engine.Creatures;
 namespace DesktopLife.Creatures.Displays;
 
-/// <summary>Small walkers share desktop boundaries; touching screen edges are traversable.</summary>
+/// <summary>Insect locomotion shares desktop boundaries; touching screen edges are traversable.</summary>
 public sealed class CrawlingInsect : Creature
 {
     public override CreatureKind Kind { get; }
@@ -17,7 +17,17 @@ public sealed class CrawlingInsect : Creature
     private readonly float _pauseDuration;
     private readonly float _wanderAngle;
     private readonly bool _flees;
-    public override bool IsResting => _pauseRemaining > 0;
+    private float _motionIn = -1;
+    private float _jumpCooldown;
+    private float _motionElapsed;
+    private float _motionDuration;
+    private float _jumpDuration;
+    private float _motionSpeed;
+    private float _entrySpeed;
+    private float _motionHeading;
+    private float _flightTurnIn;
+    private bool CanJump => Kind is CreatureKind.Cricket or CreatureKind.Grasshopper;
+    public override bool IsResting => MotionState == LocomotionState.Walking && _pauseRemaining > 0;
     public CrawlingInsect(Vector2 position, CreatureKind kind, float scale = 1)
     {
         var definition = kind is CreatureKind.Ant or CreatureKind.Caterpillar ? null : InsectCatalog.Get(kind);
@@ -48,6 +58,23 @@ public sealed class CrawlingInsect : Creature
         var previous = Position;
         var away = Position - context.Mouse.Position;
         var threatened = _flees && away.LengthSquared() is > 1 and < 6400;
+        if (CanJump || Kind == CreatureKind.Ladybug)
+        {
+            if (_motionIn < 0) ScheduleMotion(context);
+            if (MotionState != LocomotionState.Walking)
+            {
+                UpdateMotion(deltaTime, context);
+                return;
+            }
+            _motionIn -= deltaTime;
+            _jumpCooldown = MathF.Max(0, _jumpCooldown - deltaTime);
+            if (_motionIn <= 0 || (CanJump && threatened && _jumpCooldown <= 0))
+            {
+                BeginMotion(context, threatened, away);
+                UpdateMotion(deltaTime, context);
+                return;
+            }
+        }
         if (threatened) _pauseRemaining = 0;
         if (_pauseRemaining > 0)
         {
@@ -88,6 +115,143 @@ public sealed class CrawlingInsect : Creature
             _heading = inward.HasValue ? MathF.Atan2(inward.Value.Y, inward.Value.X) : Rotation + MathF.PI;
             _turnIn = 0.5f;
         }
+    }
+
+    private void ScheduleMotion(in CreatureContext context) =>
+        _motionIn = CanJump ? context.Random.NextFloat(3, 7) : context.Random.NextFloat(5, 12);
+
+    private void BeginMotion(in CreatureContext context, bool threatened, Vector2 away)
+    {
+        _pauseRemaining = 0;
+        RestingSeconds = 0;
+        _entrySpeed = Velocity.Length();
+        _motionHeading = threatened ? MathF.Atan2(away.Y, away.X) : Rotation;
+        if (CanJump)
+        {
+            _motionSpeed = Kind == CreatureKind.Cricket ? context.Random.NextFloat(110, 145) : context.Random.NextFloat(145, 180);
+            _jumpDuration = context.Random.NextFloat(0.45f, 0.65f);
+            EnterMotion(LocomotionState.JumpPreparing, context.Random.NextFloat(0.15f, 0.22f));
+        }
+        else
+        {
+            _motionSpeed = context.Random.NextFloat(80, 110);
+            EnterMotion(LocomotionState.TakingOff, 0.35f);
+        }
+    }
+
+    private void EnterMotion(LocomotionState state, float duration)
+    {
+        MotionState = state;
+        _motionElapsed = 0;
+        _motionDuration = duration;
+        MotionProgress = 0;
+    }
+
+    private void UpdateMotion(float dt, in CreatureContext context)
+    {
+        _motionElapsed = MathF.Min(_motionElapsed + dt, _motionDuration);
+        MotionProgress = _motionElapsed / _motionDuration;
+        var t = MotionProgress;
+        var eased = t * t * (3 - 2 * t);
+        float speed;
+        switch (MotionState)
+        {
+            case LocomotionState.JumpPreparing:
+                TurnToward(_motionHeading, 12 * dt);
+                speed = _entrySpeed * (1 - eased);
+                break;
+            case LocomotionState.Jumping:
+                Elevation = 4 * (Kind == CreatureKind.Cricket ? 16 : 20) * t * (1 - t);
+                speed = _motionSpeed;
+                break;
+            case LocomotionState.JumpLanding:
+                Elevation = 0;
+                speed = _speed * (0.4f + 0.6f * eased);
+                break;
+            case LocomotionState.TakingOff:
+                WingSpread = SmoothStep(t / 0.4f);
+                var lift = SmoothStep((t - 0.4f) / 0.6f);
+                Elevation = 12 * lift;
+                speed = _entrySpeed * (1 - WingSpread) + _motionSpeed * lift;
+                TurnToward(_motionHeading, 1.6f * dt);
+                break;
+            case LocomotionState.Flying:
+                _flightTurnIn -= dt;
+                if (_flightTurnIn <= 0)
+                {
+                    _motionHeading = Rotation + context.Random.NextFloat(-0.5f, 0.5f);
+                    _flightTurnIn = context.Random.NextFloat(0.8f, 1.6f);
+                }
+                TurnToward(_motionHeading, 1.6f * dt);
+                Elevation = 12;
+                WingSpread = 1;
+                speed = _motionSpeed;
+                break;
+            default: // Ladybug landing.
+                Elevation = 12 * (1 - SmoothStep(t / 0.65f));
+                WingSpread = 1 - SmoothStep((t - 0.65f) / 0.35f);
+                speed = _motionSpeed + (_speed - _motionSpeed) * eased;
+                TurnToward(_motionHeading, 1.6f * dt);
+                break;
+        }
+        var next = Position + new Vector2(MathF.Cos(Rotation), MathF.Sin(Rotation)) * speed * dt;
+        var allowed = context.Layout?.ConstrainMove(Position, next) ?? context.Bounds.Clamp(next);
+        Velocity = (allowed - Position) / dt;
+        Position = allowed;
+        if (Vector2.DistanceSquared(next, allowed) > 0.0001f)
+        {
+            var inward = context.Layout?.NearestEdge(Position).Inward;
+            _motionHeading = inward.HasValue ? MathF.Atan2(inward.Value.Y, inward.Value.X) : Rotation + MathF.PI;
+            _flightTurnIn = 0.5f;
+        }
+        // Airborne distance does not advance the walking gait.
+        if (t < 1) return;
+        switch (MotionState)
+        {
+            case LocomotionState.JumpPreparing:
+                EnterMotion(LocomotionState.Jumping, _jumpDuration);
+                break;
+            case LocomotionState.Jumping:
+                EnterMotion(LocomotionState.JumpLanding, 0.15f);
+                break;
+            case LocomotionState.TakingOff:
+                EnterMotion(LocomotionState.Flying, context.Random.NextFloat(2, 4));
+                _flightTurnIn = 0;
+                break;
+            case LocomotionState.Flying:
+                EnterMotion(LocomotionState.Landing, 0.35f);
+                break;
+            default:
+                MotionState = LocomotionState.Walking;
+                MotionProgress = Elevation = WingSpread = 0;
+                _heading = _motionHeading;
+                _turnIn = 0.5f;
+                _jumpCooldown = 2.5f;
+                ScheduleMotion(context);
+                break;
+        }
+    }
+
+    private void TurnToward(float heading, float maximum) =>
+        Rotation += Math.Clamp(MathF.IEEERemainder(heading - Rotation, MathF.Tau), -maximum, maximum);
+
+    private static float SmoothStep(float progress)
+    {
+        var t = Math.Clamp(progress, 0, 1);
+        return t * t * (3 - 2 * t);
+    }
+
+    public override void Relocate(Vector2 position)
+    {
+        base.Relocate(position);
+        if (!CanJump && Kind != CreatureKind.Ladybug) return;
+        MotionState = LocomotionState.Walking;
+        MotionProgress = Elevation = WingSpread = RestingSeconds = 0;
+        _motionElapsed = _pauseRemaining = 0;
+        _motionIn = -1;
+        _jumpCooldown = 2.5f;
+        _heading = _motionHeading = Rotation;
+        _turnIn = 0.5f;
     }
 }
 

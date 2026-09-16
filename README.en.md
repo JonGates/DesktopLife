@@ -16,9 +16,9 @@ Each has its own body texture and appendages. Relative body sizes reflect repres
 
 ![12 insects at 3x detail and native size — WPF render, not a recording](docs/images/insect-catalog.png)
 
-## Development preview: cute styles for all 12 insects
+## Development preview: cute styles, jumps and flight
 
-Current source and local preview builds include distinct cute appearances for all eight additions in desktop and screen saver modes. Switching preserves populations, sizes and positions. This update is not yet included in the v0.4.0 downloads below.
+Current source and local preview builds include distinct cute appearances for all eight additions in desktop and screen saver modes. Switching preserves populations, sizes and positions. Crickets and grasshoppers now prepare, jump, tuck their legs and settle on landing. Ladybugs open their wings, take off, fly, descend and fold their wings after touchdown. Nearby cursor movement can trigger jumps with a cooldown; pausing freezes all motion. These updates are not yet included in the v0.4.0 downloads below.
 
 ![All 12 cute insects — WPF render, not a recording](docs/images/cute-insect-catalog.png)
 
