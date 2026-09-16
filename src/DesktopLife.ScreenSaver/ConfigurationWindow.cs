@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.IO;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -7,143 +8,138 @@ using System.Windows.Media.Imaging;
 using System.Windows.Automation;
 using DesktopLife.Creatures.Displays;
 using DesktopLife.Engine.Creatures;
+using DesktopLife.Rendering;
 namespace DesktopLife.ScreenSaver;
 
 public sealed class ConfigurationWindow : Window
 {
+    private readonly List<Action> _translations = [];
+    private bool _english;
+    private string Text(string zh, string en) => _english ? en : zh;
+    private void Translate(Action update) { _translations.Add(update); update(); }
+
     public ConfigurationWindow(SaverSettingsStore store)
     {
         var settings = store.Load(out var warning);
-        Title = "DesktopLife · 屏保设置 / Screen saver settings";
+        _english = (settings.Language ?? DesktopLanguage()) == "en-US";
+        Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/DesktopLife.Rendering;component/Themes/SettingsTheme.xaml", UriKind.Relative) });
+        NameScope.SetNameScope(this, new NameScope());
+        Translate(() => Title = Text("DesktopLife · 屏保设置", "DesktopLife · Screen saver settings"));
         Icon = BitmapFrame.Create(new Uri("pack://application:,,,/DesktopLife.ScreenSaver;component/DesktopLife.ico"));
-        Width = Math.Min(540, SystemParameters.WorkArea.Width);
-        Height = Math.Min(760, SystemParameters.WorkArea.Height);
-        ResizeMode = ResizeMode.NoResize;
-        WindowStartupLocation = WindowStartupLocation.CenterScreen;
-        Background = new SolidColorBrush(Color.FromRgb(242, 246, 250));
-        var root = new DockPanel { Margin = new Thickness(16) }; Content = root;
-        var panel = new StackPanel();
-        void Label(string text, double size = 12) => panel.Children.Add(new TextBlock { Text = text, FontSize = size, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 10) });
-        Label("DesktopLife 屏幕保护程序", 21);
-        Label("Screen saver · 所有屏幕共享数量 / One population across all monitors");
-        Label("背景 / Background");
-        var theme = new ComboBox { Margin = new Thickness(0, 0, 0, 10), Height = 32, ItemsSource = new[] { "深色 / Dark", "浅色 / Light" }, SelectedIndex = settings.Light ? 1 : 0 };
-        panel.Children.Add(theme);
-        Label("生物风格 / Creature style");
-        var style = new ComboBox { Margin = new Thickness(0, 0, 0, 10), Height = 32, ItemsSource = new[] { "写实 / Realistic", "可爱 / Cute" }, SelectedIndex = (int)settings.Style };
-        panel.Children.Add(style);
-        TextBox Count(string label, int value)
+        Width = Math.Min(620, SystemParameters.WorkArea.Width); Height = Math.Min(800, SystemParameters.WorkArea.Height - 40);
+        MinWidth = 470; MinHeight = 480; WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        FontFamily = new FontFamily("Microsoft YaHei UI"); FontSize = 12; UseLayoutRounding = true; Foreground = Brush("#243C33");
+        var root = new DockPanel(); Content = root;
+        var footer = new StackPanel { Margin = new Thickness(22, 10, 22, 18) };
+        DockPanel.SetDock(footer, Dock.Bottom); root.Children.Add(footer);
+        var status = new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Brush("#65776F"), MinHeight = 30, FontSize = 11, Margin = new Thickness(0, 0, 0, 10) };
+        AutomationProperties.SetLiveSetting(status, AutomationLiveSetting.Polite);
+        Action statusMessage = () => status.Text = warning != null ? Text("原配置无法读取，已显示默认值。", "Could not read the previous settings; defaults are shown.") : Text("保存后应用场景与两组数量，桌面宠物配置保持独立。", "Save to apply the scene and both populations. Desktop settings stay separate.");
+        Translate(() => statusMessage()); footer.Children.Add(status);
+        var save = new Button { Name = "SaveButton", Height = 36, MinWidth = 132, IsDefault = true, HorizontalAlignment = HorizontalAlignment.Right, Foreground = Brushes.White };
+        RegisterName(save.Name, save); Translate(() => save.Content = Text("保存屏保设置", "Save screen saver")); footer.Children.Add(save);
+        var panel = new StackPanel { Margin = new Thickness(22, 16, 22, 12) };
+        var scroll = new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled }; root.Children.Add(scroll);
+        TextBlock Label(string zh, string en, bool heading = false)
         {
-            Label(label);
-            var box = new TextBox { Text = value.ToString(CultureInfo.InvariantCulture), Height = 26, Padding = new Thickness(6, 3, 6, 3), Margin = new Thickness(0, 0, 0, 6) };
-            panel.Children.Add(box); return box;
+            var label = new TextBlock { TextWrapping = TextWrapping.Wrap, Foreground = Brush(heading ? "#243C33" : "#65776F"), FontWeight = heading ? FontWeights.SemiBold : FontWeights.Normal, Margin = new Thickness(0, 0, 0, 6) };
+            Translate(() => label.Text = Text(zh, en)); return label;
         }
-        (TextBox Min, TextBox Max) SizeRange(int min, int max)
+        Border Card(UIElement content) => new() { Style = (Style)FindResource("Card"), Child = content, Margin = new Thickness(0, 0, 0, 10) };
+        var top = new DockPanel { Margin = new Thickness(0, 0, 0, 18) }; panel.Children.Add(top);
+        var language = new ComboBox { Name = "LanguagePicker", Width = 108, Height = 30, VerticalAlignment = VerticalAlignment.Center, ItemsSource = new[] { "简体中文", "English" }, SelectedIndex = _english ? 1 : 0 };
+        RegisterName(language.Name, language); DockPanel.SetDock(language, Dock.Right); top.Children.Add(language); AutomationProperties.SetName(language, "语言 / Language");
+        var brand = new StackPanel(); top.Children.Add(brand);
+        brand.Children.Add(new TextBlock { Text = "DesktopLife", FontFamily = new FontFamily("Segoe UI Semibold"), FontSize = 25 }); brand.Children.Add(Label("让闲置屏幕也有生机", "Bring your idle screen to life"));
+        var appearance = new Grid(); appearance.ColumnDefinitions.Add(new ColumnDefinition()); appearance.ColumnDefinitions.Add(new ColumnDefinition());
+        ComboBox Picker(string name, int selected, string zh, string en, string firstZh, string firstEn, string secondZh, string secondEn, int column)
         {
-            var row = new StackPanel { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 10) };
-            TextBox Field(string label, int value)
-            {
-                row.Children.Add(new TextBlock { Text = label, FontSize = 12, VerticalAlignment = VerticalAlignment.Center });
-                var box = new TextBox { Text = value.ToString(), Width = 48, FontSize = 12, Padding = new Thickness(4, 2, 4, 2), Margin = new Thickness(5, 0, 10, 0) };
-                row.Children.Add(box); return box;
-            }
-            var low = Field("最小 / Min %", min); var high = Field("最大 / Max %", max);
-            panel.Children.Add(row); return (low, high);
+            var section = new StackPanel { Margin = new Thickness(column == 0 ? 0 : 8, 0, column == 0 ? 8 : 0, 0) }; Grid.SetColumn(section, column); appearance.Children.Add(section); section.Children.Add(Label(zh, en, true));
+            var combo = new ComboBox { Name = name, Height = 34 }; var first = new ComboBoxItem(); var second = new ComboBoxItem(); combo.Items.Add(first); combo.Items.Add(second); combo.SelectedIndex = selected;
+            Translate(() => { first.Content = Text(firstZh, firstEn); second.Content = Text(secondZh, secondEn); AutomationProperties.SetName(combo, Text(zh, en)); });
+            RegisterName(name, combo); section.Children.Add(combo); return combo;
         }
-        var sharedPanel = panel;
-        var tabs = new TabControl { Name = "HabitatTabs", Background = Brushes.Transparent, BorderThickness = new Thickness(0), Padding = new Thickness(0, 10, 0, 0) };
-        NameScope.SetNameScope(this, new NameScope()); RegisterName(tabs.Name, tabs);
-        sharedPanel.Children.Add(tabs);
-        var forestPanel = new StackPanel(); var oceanPanel = new StackPanel();
-        tabs.Items.Add(new TabItem { Header = "森林 / Forest", Content = forestPanel, Padding = new Thickness(22, 8, 22, 8), Background = new SolidColorBrush(Color.FromRgb(231, 239, 233)), Foreground = new SolidColorBrush(Color.FromRgb(48, 105, 81)) });
-        tabs.Items.Add(new TabItem { Header = "海洋 / Ocean", Content = oceanPanel, Padding = new Thickness(22, 8, 22, 8), Background = new SolidColorBrush(Color.FromRgb(225, 240, 246)), Foreground = new SolidColorBrush(Color.FromRgb(28, 100, 125)) });
-        tabs.SelectedIndex = (int)settings.Habitat;
-        panel = forestPanel;
-        Label("苍蝇 · 固定 1 只 / Fly · always one");
-        var roaches = Count("蟑螂 / Cockroaches (0–500)", settings.Cockroaches);
-        var roachSize = SizeRange(settings.RoachMin, settings.RoachMax);
-        var ants = Count("蚂蚁 / Ants (0–500)", settings.Ants);
-        var antSize = SizeRange(settings.AntMin, settings.AntMax);
-        var caterpillars = Count("毛毛虫 / Caterpillars (0–100)", settings.Caterpillars);
-        var caterpillarSize = SizeRange(settings.CaterpillarMin, settings.CaterpillarMax);
-        Label("更多生物 / More creatures", 16);
-        Label("每种 0–100 只，尺寸 10–300%；数量为 0 时关闭。\n0–100 per species, size 10–300%; a count of 0 disables it.\n所有生物支持写实和可爱风格。 / All creatures support realistic and cute styles.");
-        var additionalRows = new List<(InsectDefinition Definition, TextBox Count, TextBox Min, TextBox Max)>();
-        Grid AdditionalRow()
+        var theme = Picker("ThemePicker", settings.Light ? 1 : 0, "屏保背景", "Background", "深色", "Dark", "浅色", "Light", 0);
+        var style = Picker("StylePicker", (int)settings.Style, "生物风格", "Creature style", "写实", "Realistic", "可爱", "Cute", 1); panel.Children.Add(Card(appearance));
+        var tabs = new TabControl { Name = "HabitatTabs", Padding = new Thickness(0, 12, 0, 0) }; RegisterName(tabs.Name, tabs); panel.Children.Add(tabs);
+        var rows = new List<(CreatureKind Kind, int Limit, TextBox Count, TextBox Min, TextBox Max)>();
+        var forest = new StackPanel(); var ocean = new StackPanel();
+        var forestTab = new TabItem { Content = forest, Background = Brush("#E6EEE9"), Foreground = Brush("#306951") }; var oceanTab = new TabItem { Content = ocean, Background = Brush("#E1F0F6"), Foreground = Brush("#1C647D") };
+        Translate(() => { forestTab.Header = Text("森林", "Forest"); oceanTab.Header = Text("海洋", "Ocean"); }); tabs.Items.Add(forestTab); tabs.Items.Add(oceanTab); tabs.SelectedIndex = (int)settings.Habitat;
+        void Theme() { var sea = tabs.SelectedIndex == 1; Background = Brush(sea ? "#EFF5F8" : "#F0F4F1"); save.Background = save.BorderBrush = Brush(sea ? "#1C647D" : "#306951"); }
+        tabs.SelectionChanged += (_, e) => { if (e.Source == tabs) Theme(); }; Theme();
+        Grid Row(StackPanel table)
         {
-            var row = new Grid { Margin = new Thickness(0, 3, 0, 3) };
-            row.ColumnDefinitions.Add(new ColumnDefinition());
-            for (var i = 0; i < 3; i++) row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(72) });
-            panel.Children.Add(row); return row;
+            var grid = new Grid { Margin = new Thickness(0, 3, 0, 3) }; grid.ColumnDefinitions.Add(new ColumnDefinition());
+            for (var i = 0; i < 3; i++) grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(66) }); table.Children.Add(grid); return grid;
         }
-        void Header()
+        StackPanel SpeciesTable(StackPanel destination, bool sea)
         {
-        var header = AdditionalRow();
-        var columns = new[] { "数量\nCount", "最小 %\nMin %", "最大 %\nMax %" };
-        for (var i = 0; i < columns.Length; i++)
-        {
-            var text = new TextBlock { Text = columns[i], TextAlignment = TextAlignment.Center, FontSize = 11 };
-            Grid.SetColumn(text, i + 1); header.Children.Add(text);
+            var companion = new StackPanel(); companion.Children.Add(Label(sea ? "绿海龟 · 固定 1 只" : "苍蝇 · 固定 1 只", sea ? "Green turtle · always one" : "Fly · always one", true)); companion.Children.Add(Label("屏保中自动活动，移动鼠标或按键即可退出。", "Roams automatically. Move the mouse or press a key to exit.")); destination.Children.Add(Card(companion));
+            var table = new StackPanel(); destination.Children.Add(Card(table));
+            table.Children.Add(Label(sea ? "海洋生物 · 12 种鱼" : "生物配置 · 12 种", sea ? "Ocean creatures · 12 species" : "Creatures · 12 species", true));
+            table.Children.Add(Label(sea ? "数量 0–100，0 为关闭；尺寸 10–300%。" : "数量设为 0 可关闭。蟑螂、蚂蚁上限 500，其余 100；尺寸 10–300%。", sea ? "Counts 0–100; 0 disables a species. Sizes: 10–300%." : "0 disables a species. Roaches and ants: up to 500; others: 100. Sizes: 10–300%."));
+            var header = Row(table); var zh = new[] { "数量", "最小 %", "最大 %" }; var en = new[] { "Count", "Min %", "Max %" };
+            for (var i = 0; i < 3; i++) { var label = Label(zh[i], en[i]); label.TextAlignment = TextAlignment.Center; Grid.SetColumn(label, i + 1); header.Children.Add(label); } return table;
         }
-        }
-        Header();
-        void SpeciesRows(IEnumerable<InsectDefinition> definitions, bool ocean)
+        void AddRow(StackPanel table, CreatureKind kind, string zh, string en, int limit, SpeciesPopulation value)
         {
-        foreach (var definition in definitions)
-        {
-            var value = ocean ? settings.Population.GetOcean(definition.Kind) : settings.Population.GetAdditional(definition.Kind);
-            var row = AdditionalRow();
-            var name = definition.ChineseName + " / " + definition.EnglishName;
-            row.Children.Add(new TextBlock { Text = name, TextWrapping = TextWrapping.Wrap, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(0, 0, 6, 0) });
+            var grid = Row(table); var label = Label(zh, en); label.Foreground = Foreground; label.Margin = new Thickness(0, 0, 6, 0); label.VerticalAlignment = VerticalAlignment.Center; grid.Children.Add(label);
             TextBox Field(int number, int column, string suffix)
             {
-                var box = new TextBox { Name = definition.Kind + suffix, Text = number.ToString(CultureInfo.InvariantCulture), MaxLength = 3, MinHeight = 29, Padding = new Thickness(5, 3, 5, 3), Margin = new Thickness(4, 0, 0, 0) };
-                AutomationProperties.SetName(box, name + " " + new[] { "数量 Count", "最小 Min %", "最大 Max %" }[column - 1]);
-                RegisterName(box.Name, box);
-                AutomationProperties.SetAutomationId(box, box.Name);
-                Grid.SetColumn(box, column); row.Children.Add(box); return box;
+                var box = new TextBox { Name = kind + suffix, Text = number.ToString(CultureInfo.InvariantCulture), MaxLength = 3, MinHeight = 29, FontSize = 13, Margin = new Thickness(4, 0, 0, 0) };
+                Translate(() => AutomationProperties.SetName(box, Text(zh, en) + " · " + Text(new[] { "数量", "最小 %", "最大 %" }[column - 1], new[] { "Count", "Min %", "Max %" }[column - 1])));
+                RegisterName(box.Name, box); AutomationProperties.SetAutomationId(box, box.Name); Grid.SetColumn(box, column); grid.Children.Add(box); return box;
             }
-            var count = Field(value.Count, 1, "Count"); count.ToolTip = $"0–{definition.MaxCount}";
-            additionalRows.Add((definition, count, Field(value.MinPercent, 2, "Min"), Field(value.MaxPercent, 3, "Max")));
+            var count = Field(value.Count, 1, "Count"); count.ToolTip = $"0–{limit}"; rows.Add((kind, limit, count, Field(value.MinPercent, 2, "Min"), Field(value.MaxPercent, 3, "Max")));
         }
+        var forestTable = SpeciesTable(forest, false);
+        AddRow(forestTable, CreatureKind.Cockroach, "蟑螂", "Cockroach", 500, new(settings.Cockroaches, settings.RoachMin, settings.RoachMax));
+        AddRow(forestTable, CreatureKind.Ant, "蚂蚁", "Ant", 500, new(settings.Ants, settings.AntMin, settings.AntMax));
+        AddRow(forestTable, CreatureKind.Caterpillar, "毛毛虫", "Caterpillar", 100, new(settings.Caterpillars, settings.CaterpillarMin, settings.CaterpillarMax));
+        foreach (var d in InsectCatalog.Additional) AddRow(forestTable, d.Kind, d.ChineseName, d.EnglishName, d.MaxCount, settings.Population.GetAdditional(d.Kind));
+        var oceanTable = SpeciesTable(ocean, true);
+        foreach (var d in OceanCatalog.Fish) AddRow(oceanTable, d.Kind, d.ChineseName, d.EnglishName, d.MaxCount, settings.Population.GetOcean(d.Kind));
+        panel.Children.Add(Label("自动启动的等待时间与恢复登录选项，请在 Windows 屏保设置中调整。", "Choose the automatic activation delay and sign-in option in Windows screen saver settings."));
+        language.SelectionChanged += (_, _) => { _english = language.SelectedIndex == 1; foreach (var update in _translations) update(); };
+        void Error(TextBox field, CreatureKind kind, string zh, string en)
+        {
+            tabs.SelectedIndex = OceanCatalog.IsOcean(kind) ? 1 : 0; status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text(zh, en); statusMessage(); field.BringIntoView(); field.Focus(); field.SelectAll();
         }
-        SpeciesRows(InsectCatalog.Additional, false);
-        panel = oceanPanel;
-        Label("绿海龟 · 固定 1 只 / Green turtle · always one", 16);
-        Label("海龟和鱼在所有屏幕间悠游。 / The turtle and fish swim across all displays.");
-        Label("海洋生物 · 12 种鱼 / Ocean · 12 fish species", 16);
-        Label("每种 0–100 条；0 为关闭。尺寸 10–300%。\n0–100 per species; 0 disables it. Sizes: 10–300%.");
-        Header(); SpeciesRows(OceanCatalog.Fish, true);
-        panel = sharedPanel;
-        Label("场景和两组数量在保存后生效。 / Save to apply the scene and both populations.");
-        Label("森林固定 1 只苍蝇，海洋固定 1 只绿海龟，自由活动。移动鼠标或按键退出屏保。\nOne fly in Forest or one green turtle in Ocean roams automatically. Move the mouse or press a key to exit.");
-        Label("等待时间和恢复登录由 Windows 屏幕保护程序设置管理。\nChoose the idle timeout and sign-in option in Windows settings.");
-        var footer = new StackPanel { Margin = new Thickness(0, 12, 0, 0) };
-        DockPanel.SetDock(footer, Dock.Bottom); root.Children.Add(footer);
-        var status = new TextBlock { Text = warning, Foreground = Brushes.Firebrick, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 0, 10) }; footer.Children.Add(status);
-        var save = new Button { Content = "保存 / Save", Height = 36, IsDefault = true, HorizontalAlignment = HorizontalAlignment.Right, Width = 120 }; footer.Children.Add(save);
-        root.Children.Add(new ScrollViewer { Content = panel, VerticalScrollBarVisibility = ScrollBarVisibility.Auto, HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled });
         save.Click += (_, _) =>
         {
-            if (!int.TryParse(roaches.Text, out var r) || r is < 0 or > 500 || !int.TryParse(ants.Text, out var a) || a is < 0 or > 500 || !int.TryParse(caterpillars.Text, out var c) || c is < 0 or > 100)
-            { tabs.SelectedIndex = 0; status.Text = "请输入范围内的整数。 / Enter whole numbers within the ranges."; return; }
-            if (!int.TryParse(roachSize.Min.Text, out var rMin) || !int.TryParse(roachSize.Max.Text, out var rMax) ||
-                !int.TryParse(antSize.Min.Text, out var aMin) || !int.TryParse(antSize.Max.Text, out var aMax) ||
-                !int.TryParse(caterpillarSize.Min.Text, out var cMin) || !int.TryParse(caterpillarSize.Max.Text, out var cMax))
-            { tabs.SelectedIndex = 0; status.Text = "尺寸请输入整数 / Enter whole size percentages."; return; }
-            var additional = new Dictionary<CreatureKind, SpeciesPopulation>();
-            var ocean = new Dictionary<CreatureKind, SpeciesPopulation>();
-            foreach (var row in additionalRows)
+            var values = new Dictionary<CreatureKind, SpeciesPopulation>();
+            foreach (var row in rows)
             {
-                if (!int.TryParse(row.Count.Text, out var count) || count < 0 || count > row.Definition.MaxCount)
-                { tabs.SelectedIndex = OceanCatalog.IsOcean(row.Definition.Kind) ? 1 : 0; status.Text = $"{row.Definition.ChineseName} / {row.Definition.EnglishName}: 请输入 0–{row.Definition.MaxCount} 的整数 / Enter a whole count in range."; row.Count.Focus(); return; }
+                if (!int.TryParse(row.Count.Text, out var count) || count < 0 || count > row.Limit)
+                { Error(row.Count, row.Kind, $"数量请输入 0–{row.Limit} 的整数。", $"Enter a whole count from 0 to {row.Limit}."); return; }
                 if (!int.TryParse(row.Min.Text, out var min) || !int.TryParse(row.Max.Text, out var max) || min < 10 || max > 300 || min > max)
-                { tabs.SelectedIndex = OceanCatalog.IsOcean(row.Definition.Kind) ? 1 : 0; status.Text = "尺寸范围 10–300%，最小值 ≤ 最大值。 / Size 10–300%, min ≤ max."; row.Min.Focus(); return; }
-                (OceanCatalog.IsOcean(row.Definition.Kind) ? ocean : additional).Add(row.Definition.Kind, new(count, min, max));
+                { Error(row.Min, row.Kind, "尺寸范围 10–300%，最小值不能大于最大值。", "Sizes must be 10–300%, with minimum no greater than maximum."); return; }
+                values.Add(row.Kind, new(count, min, max));
             }
-            try { store.Save(new(theme.SelectedIndex == 1, r, a, c, (DesktopLife.Rendering.CreatureStyle)style.SelectedIndex, rMin, rMax, aMin, aMax, cMin, cMax, additional, (Habitat)tabs.SelectedIndex, ocean)); Close(); }
-            catch (ArgumentOutOfRangeException) { tabs.SelectedIndex = 0; status.Text = "尺寸范围 10–300%，最小值 ≤ 最大值。 / Size 10–300%, min ≤ max."; }
-            catch (Exception e) when (e is IOException or UnauthorizedAccessException) { status.Text = "保存失败。 / Could not save: " + e.Message; }
+            var r = values[CreatureKind.Cockroach]; var a = values[CreatureKind.Ant]; var c = values[CreatureKind.Caterpillar];
+            try
+            {
+                store.Save(new(theme.SelectedIndex == 1, r.Count, a.Count, c.Count, (CreatureStyle)style.SelectedIndex, r.MinPercent, r.MaxPercent, a.MinPercent, a.MaxPercent, c.MinPercent, c.MaxPercent,
+                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _english ? "en-US" : "zh-CN")); Close();
+            }
+            catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+            { status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text("无法保存，请检查配置文件夹是否可写。", "Unable to save. Check that the settings folder is writable."); statusMessage(); }
         };
+    }
+    private static SolidColorBrush Brush(string color) => new((Color)ColorConverter.ConvertFromString(color));
+    private static string DesktopLanguage()
+    {
+        try
+        {
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "DesktopLife", "settings.preferences.json");
+            if (File.Exists(path))
+            {
+                using var json = JsonDocument.Parse(File.ReadAllText(path));
+                if (json.RootElement.TryGetProperty("Language", out var value) && value.GetString() == "en-US") return "en-US";
+            }
+        }
+        catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException) { }
+        return "zh-CN";
     }
 }

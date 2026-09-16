@@ -75,7 +75,7 @@ internal static class StyleProbe
         config.Show(); config.UpdateLayout();
         var root = (DockPanel)config.Content;
         var content = (StackPanel)((ScrollViewer)root.Children[1]).Content;
-        var styles = content.Children.OfType<ComboBox>().Last();
+        var styles = (ComboBox)config.FindName("StylePicker");
         if (styles.SelectedIndex != 1) throw new Exception("Saver style UI load");
         styles.SelectedIndex = 0;
         ((Button)((StackPanel)root.Children[0]).Children[1]).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
