@@ -252,7 +252,7 @@ powershell -ExecutionPolicy Bypass -File scripts/Publish.ps1 -SelfContained
 | `DesktopLife.Engine` | DesktopLayout 的屏幕并集与外露边界、MouseTracker、GameLoop、CreatureManager、SimulationWorld；不引用 WPF / Win32 |
 | `DesktopLife.Creatures` | Fly 与 Cockroach 状态机、蚂蚁爬行与毛毛虫缓行、全局群体差额调整、共享世界与布局同步、邻近避让；仅依赖 Engine |
 | `DesktopLife.Windows` | Win32 鼠标采样、只读全局左键观察、显示器枚举与物理矩形、窗口扩展样式 |
-| `DesktopLife.Rendering` | 按物种与姿态批量绘制；苍蝇使用嵌入的透明写实图集，蟑螂为两帧矢量素材；素材缓存并 Freeze |
+| `DesktopLife.Rendering` | 按物种与姿态批量绘制；苍蝇使用嵌入的透明写实图集，爬行昆虫使用独立身体纹理和程序驱动的足部、触角或尾部；素材缓存并 Freeze |
 | `DesktopLife.App` | DesktopHost 统一管理每屏视口、单一主循环及鼠标采样、数量控制窗口、JSON 配置、托盘、Debug HUD、异常日志 |
 
 模拟坐标为屏幕物理像素，Renderer 显式减去显示器原点，再除以当前 WPF DPI 比例。Manifest 使用 PerMonitorV2。
@@ -265,13 +265,13 @@ Overlay 在显示前配置 `WS_EX_LAYERED | WS_EX_TRANSPARENT | WS_EX_NOACTIVATE
 
 ## 范围与限制
 
-- 支持 Windows x64 多显示器。苍蝇为生成的写实图像，蟑螂仍是程序绘制的占位图形。
-- 已通过 Debug / Release 构建和 97 项 xUnit 测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。详见 `docs/FLY_LANDING_VERIFICATION.md`；旧版本验证记录作为历史保留。
+- 支持 Windows 10/11 x64 多显示器。写实模式使用生成的身体纹理，配合程序驱动的足部、触角与翅膀；素材是插画资源，并非实拍照片。
+- 已通过 Debug / Release 构建、自动化测试，以及真实控制窗口、双屏窗口、跨屏渲染、点击降落与暂停/恢复检查。当前结果见 [v0.4.1 发布说明](https://github.com/JonGates/DesktopLife/releases/tag/v0.4.1)；旧版本验证记录作为历史保留。
 - 尚未完成稳定 60 FPS 和 500 只群体的性能验收；数量上限是输入约束，不代表任何设备均能流畅运行上限数量。
 - 125% / 150% 已通过离屏渲染检查，插拔与拓扑变化已通过模拟布局的真实窗口检查；实际混合系统缩放、物理拔插、浏览器点击体验和不同 GPU 尚未完整验收。
-- 暂无蚂蚁、开机自启、安装器。
+- 暂未提供开机自启和传统安装器；桌面宠物与屏保均以便携 ZIP 提供。
 - 数量配置保存在 `%AppData%\DesktopLife\settings.json`；每次保存立即应用，下次启动自动读取。文件损坏或数量无效时使用默认值，并在设置窗口提示；保存失败时保留原数量。
 - 异常日志：`%LocalAppData%\DesktopLife\logs\yyyy-MM-dd.log`。
-- 自带运行时的发布在本次网络环境下载中断；本次实际交付的是轻量依赖运行时版本。
+- v0.4.1 的桌面宠物与屏保便携包均自带 .NET 运行环境，无需另外安装 .NET、SDK 或 Visual Studio。
 
 完整产品规格：`docs/DesktopLife_Codex_Development_Spec.md`；当前计划：`docs/superpowers/plans/2026-09-15-shared-desktop-controls.md`。本次用户要求已取代此前“每屏固定 1/20”的规则。
