@@ -12,6 +12,8 @@ Windows 10/11 x64 · 12 insect species · Realistic and cute styles · Multi-mon
 
 </div>
 
+> **In development:** the current source and local `0.4.2-preview.2` build add a spider with eight animated legs, realistic/cute appearances, and population/size controls in both desktop and screen saver modes. The linked v0.4.1 release does not include it yet. [Creature details](docs/INSECTS.md).
+
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
 > DesktopLife is currently a preview. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).

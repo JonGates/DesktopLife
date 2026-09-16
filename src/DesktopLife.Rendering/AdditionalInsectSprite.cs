@@ -15,6 +15,7 @@ internal static class AdditionalInsectSprite
         LocomotionState motion = LocomotionState.Walking, float progress = 0)
     {
         var kind = insect.Kind;
+        if (kind == CreatureKind.Spider) return SpiderSprite.Create(insect, frame, cute);
         var index = InsectCatalog.Additional.ToList().FindIndex(x => x.Kind == kind);
         var length = (double)insect.BodyLength;
         var width = (double)insect.BodyWidth;

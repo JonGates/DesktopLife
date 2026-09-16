@@ -10,6 +10,8 @@
 
 Windows 10/11 x64 · 12 种昆虫 · 写实/可爱风格 · 多显示器 · 自带运行环境
 
+> **开发预览：** 当前源码及本地 `0.4.2-preview.2` 新增蜘蛛，支持八足爬行、写实/可爱外观，以及桌面和屏保的数量、尺寸配置。上方 v0.4.1 下载包尚不包含蜘蛛。[生物与比例说明](docs/INSECTS.md)。
+
 ![DesktopLife Windows 桌面宠物实录：昆虫在桌面自由活动](docs/images/live-desktop.gif)
 
 > 当前 v0.4.1 为预览版。如果它让你的桌面更有生命力——或者变得更糟了一点——欢迎点亮 ⭐，并在 [Issues](https://github.com/JonGates/DesktopLife/issues) 告诉我们下一种该加入什么生物。

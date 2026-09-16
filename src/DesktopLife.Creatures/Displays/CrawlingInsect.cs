@@ -48,6 +48,7 @@ public sealed class CrawlingInsect : Creature
             CreatureKind.Cricket => (4f, 0.4f, 1.3f, 1.1f, true),
             CreatureKind.Grasshopper => (2.5f, 0.45f, 1.7f, 0.8f, true),
             CreatureKind.Mantis => (1.2f, 0.65f, 2.8f, 0.6f, false),
+            CreatureKind.Spider => (6f, 0.45f, 1.4f, 1.1f, true),
             _ => (0.7f, 0.55f, 2.2f, 0.4f, false)
         };
     }

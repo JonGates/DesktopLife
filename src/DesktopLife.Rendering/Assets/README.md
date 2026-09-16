@@ -1,4 +1,14 @@
-# Realistic fly atlas
+# Sprite assets
+
+## Spider body · 0.4.2-preview.2
+
+`spider-body.png` was generated with the built-in image_gen tool on 2026-09-16. The original transparent PNG is embedded without pixel edits; the renderer bounds its alpha silhouette at load time. Legs and pedipalps are animated separately by `SpiderSprite`; the cute appearance is code-native. This is a generated representative body texture, not a specimen photograph.
+
+Final generation prompt:
+
+Create ONE production game sprite texture, transparent PNG with real alpha. Photorealistic natural brown wolf-spider BODY ONLY for an articulated desktop pet. Strict orthographic dorsal view looking straight down, long axis horizontal, facing RIGHT. Exactly two connected body masses: oval softly hairy mottled brown abdomen on LEFT, smaller brown cephalothorax on RIGHT joined by very short narrow pedicel. Subtle pale median stripe and natural dark markings, fine short hairs, realistic muted brown, soft neutral lighting. Absolutely NO legs, NO pedipalps, NO antennae, NO wings: all appendages are separately animated in code, this is only the intact central body texture, not an injured animal depiction. No ground, no cast shadow, no text, no checkerboard pixels. Body aspect ratio approximately 1.85:1, centered with generous transparent margin, fills 75% of image width. This is a biological game asset, not a cartoon or logo.
+
+## Realistic fly atlas
 
 Generated with the built-in image_gen tool on 2026-09-15. This is a generated photorealistic asset, not a documentary photograph.
 

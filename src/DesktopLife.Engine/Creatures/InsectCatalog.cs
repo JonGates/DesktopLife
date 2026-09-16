@@ -13,7 +13,8 @@ public static class InsectCatalog
         new(CreatureKind.Cricket, "蟋蟀", "Cricket", 26, 7, 32, 20),
         new(CreatureKind.Grasshopper, "蚱蜢", "Grasshopper", 38, 8, 26, 26),
         new(CreatureKind.Mantis, "螳螂", "Mantis", 60, 8, 12, 14),
-        new(CreatureKind.StickInsect, "竹节虫", "Stick insect", 80, 4, 8, 40)
+        new(CreatureKind.StickInsect, "竹节虫", "Stick insect", 80, 4, 8, 40),
+        new(CreatureKind.Spider, "蜘蛛", "Spider", 16, 9, 34, 14)
     ]);
 
     public static InsectDefinition Get(CreatureKind kind) =>

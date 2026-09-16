@@ -1,4 +1,5 @@
 using System.Windows;
+using DesktopLife.Engine.Creatures;
 namespace DesktopLife.App.Settings;
 public static class LanguageService
 {
@@ -6,7 +7,7 @@ public static class LanguageService
     public static event Action? Changed;
     private static readonly Dictionary<string, (string Zh, string En)> Texts = new()
     {
-        ["CaptureToggle"] = ("从录屏中隐藏昆虫和设置窗口", "Exclude creatures and settings from screen capture"),
+        ["CaptureToggle"] = ("从录屏中隐藏生物和设置窗口", "Exclude creatures and settings from screen capture"),
         ["CaptureHelp"] = ("本机仍可见。需 Windows 10 2004 或更新版本；仅对支持此机制的录屏工具有效，不能保证所有监控软件均无法录制。", "Still visible on your display. Requires Windows 10 2004 or later. Only compatible capture tools honor this setting; it cannot block every monitoring tool."),
         ["CaptureSaved"] = ("录屏显示设置已保存。", "Capture preference saved."),
         ["CaptureFailed"] = ("Windows 未能对所有窗口应用录屏排除。请勿依赖此功能隐藏内容。", "Windows could not apply capture exclusion to every window. Do not rely on it to hide content."),
@@ -14,11 +15,11 @@ public static class LanguageService
         ["MinSize"] = ("最小尺寸 %", "Min size %"),
         ["MaxSize"] = ("最大尺寸 %", "Max size %"),
         ["InvalidSizes"] = ("尺寸须为 10–300% 的整数，最小值不能大于最大值。", "Sizes must be whole percentages from 10–300%; min must not exceed max."),
-        ["Appearance"] = ("昆虫风格", "Creature style"),
+        ["Appearance"] = ("生物风格", "Creature style"),
         ["RealisticStyle"] = ("写实", "Realistic"),
         ["CuteStyle"] = ("可爱 · 圆润自然", "Cute · soft and rounded"),
         ["StyleHelp"] = ("切换后立即生效，保留数量和当前位置。", "Applies immediately, keeping populations and positions."),
-        ["StyleSaved"] = ("昆虫风格已保存。", "Creature style saved."),
+        ["StyleSaved"] = ("生物风格已保存。", "Creature style saved."),
         ["Title"] = ("DesktopLife · 数量设置", "DesktopLife · Settings"),
         ["Subtitle"] = ("让生物在整个桌面自由活动", "Let creatures roam across your desktop"),
         ["Apply"] = ("保存数量与尺寸", "Save population & sizes"),
@@ -28,8 +29,8 @@ public static class LanguageService
         ["LayoutName"] = ("已识别的屏幕排列", "Detected display layout"),
         ["LayoutHelp"] = ("相接边缘可跨屏移动，方向跟随 Windows 显示设置。", "Creatures cross touching edges, following your Windows display layout."),
         ["Counts"] = ("全桌面总数量", "Desktop population"),
-        ["AdditionalSpecies"] = ("昆虫配置 · 11 种", "Insect settings · 11 species"),
-        ["AdditionalHelp"] = ("蟑螂、蚂蚁最多 500 只，其余最多 100 只；0 为关闭。尺寸范围 10–300%。所有昆虫均支持写实和可爱风格。", "Up to 500 cockroaches or ants, 100 of each other species; 0 disables it. Sizes: 10–300%. All insects support realistic and cute styles."),
+        ["AdditionalSpecies"] = ($"生物配置 · {InsectCatalog.Additional.Count + 3} 种", $"Creature settings · {InsectCatalog.Additional.Count + 3} species"),
+        ["AdditionalHelp"] = ("蟑螂、蚂蚁最多 500 只，其余最多 100 只；0 为关闭。尺寸范围 10–300%。所有生物均支持写实和可爱风格。", "Up to 500 cockroaches or ants, 100 of each other species; 0 disables it. Sizes: 10–300%. All creatures support realistic and cute styles."),
         ["CountColumn"] = ("数量", "Count"),
         ["MinColumn"] = ("最小 %", "Min %"),
         ["MaxColumn"] = ("最大 %", "Max %"),
@@ -49,7 +50,7 @@ public static class LanguageService
         ["AntSliderName"] = ("蚂蚁数量滑块", "Ant count slider"),
         ["CaterpillarSliderName"] = ("毛毛虫数量滑块", "Caterpillar count slider"),
         ["Unit"] = ("只", ""),
-        ["Hint"] = ("爬行昆虫设为 0 可关闭。关闭窗口后，生物会继续运行。", "Set a crawler count to 0 to disable it. Closing this window keeps DesktopLife running."),
+        ["Hint"] = ("爬行生物设为 0 可关闭。关闭窗口后，生物会继续运行。", "Set a crawler count to 0 to disable it. Closing this window keeps DesktopLife running."),
         ["Language"] = ("语言", "Language"),
         ["Hotkeys"] = ("全局快捷键", "Global shortcuts"),
         ["Start"] = ("启动／恢复", "Start / resume"),
@@ -62,7 +63,7 @@ public static class LanguageService
         ["SaveFailed"] = ("保存失败，设置未更改。请检查配置目录是否可写。", "Could not save. Settings are unchanged; check access to the settings folder."),
         ["KeysSaved"] = ("快捷键已保存，立即生效。", "Shortcuts saved and active."),
         ["LanguageSaved"] = ("语言已保存。", "Language saved."),
-        ["InvalidCounts"] = ("请输入有效整数：蟑螂、蚂蚁 0–500，其余爬行昆虫 0–100。", "Enter whole numbers: cockroaches and ants 0–500; all other crawlers 0–100."),
+        ["InvalidCounts"] = ("请输入有效整数：蟑螂、蚂蚁 0–500，其余爬行生物 0–100。", "Enter whole numbers: cockroaches and ants 0–500; all other crawlers 0–100."),
         ["Saved"] = ("数量已保存，下次启动自动恢复。", "Population saved for the next launch."),
         ["ConfigWarning"] = ("无法读取已保存的设置，已使用默认值。", "Saved settings could not be read. Defaults are in use."),
         ["Primary"] = ("主屏", "Primary"),

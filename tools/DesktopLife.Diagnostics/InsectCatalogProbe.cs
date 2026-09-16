@@ -15,6 +15,8 @@ internal static class InsectCatalogProbe
     {
         Directory.CreateDirectory(output);
         var renderer = new WpfCreatureRenderer();
+        var speciesCount = InsectCatalog.Additional.Count + 4;
+        var galleryHeight = 110 + ((speciesCount + 3) / 4) * 218;
         foreach (var insect in InsectCatalog.Additional)
         {
             byte[]? previous = null;
@@ -57,8 +59,8 @@ internal static class InsectCatalogProbe
             using (var dc = visual.RenderOpen())
             {
                 var foreground = dark == 1 ? Brushes.Gainsboro : Brushes.DarkSlateGray;
-                dc.DrawRectangle(dark == 1 ? new SolidColorBrush(Color.FromRgb(24, 30, 27)) : new SolidColorBrush(Color.FromRgb(241, 245, 240)), null, new Rect(0, 0, 1440, 800));
-                Text(dc, style == 0 ? "DesktopLife · 12 种写实昆虫" : "DesktopLife · 12 种可爱昆虫", 28, 20, 26, foreground);
+                dc.DrawRectangle(dark == 1 ? new SolidColorBrush(Color.FromRgb(24, 30, 27)) : new SolidColorBrush(Color.FromRgb(241, 245, 240)), null, new Rect(0, 0, 1440, galleryHeight));
+                Text(dc, $"DesktopLife · {speciesCount} 种" + (style == 0 ? "写实生物" : "可爱生物"), 28, 20, 26, foreground);
                 Text(dc, "WPF 渲染示意 · 上方 3 倍细节，下方原始尺寸 · 默认 100% 身体比例", 28, 60, 14, foreground);
                 var kinds = new[] { CreatureKind.Fly, CreatureKind.Cockroach, CreatureKind.Ant, CreatureKind.Caterpillar }.Concat(InsectCatalog.Additional.Select(x => x.Kind)).ToArray();
                 var names = new[] { "苍蝇 / Fly", "蟑螂 / Cockroach", "蚂蚁 / Ant", "毛毛虫 / Caterpillar" }.Concat(InsectCatalog.Additional.Select(x => x.ChineseName + " / " + x.EnglishName)).ToArray();
@@ -68,13 +70,34 @@ internal static class InsectCatalogProbe
                     var y = 155 + i / 4 * 218;
                     dc.PushTransform(new ScaleTransform(3, 3));
                     var detailX = kinds[i] == CreatureKind.StickInsect ? x - 60 : x;
-                    renderer.Render(dc, [new Pose(kinds[i], new(detailX / 3f, y / 3f), 0.25f)], new(0, 0, 1440, 800), 0, 1, 1);
+                    renderer.Render(dc, [new Pose(kinds[i], new(detailX / 3f, y / 3f), 0.25f)], new(0, 0, 1440, galleryHeight), 0, 1, 1);
                     dc.Pop();
-                    renderer.Render(dc, [new Pose(kinds[i], new(x, y + 77), 0.25f)], new(0, 0, 1440, 800), 0, 1, 1);
+                    renderer.Render(dc, [new Pose(kinds[i], new(x, y + 77), 0.25f)], new(0, 0, 1440, galleryHeight), 0, 1, 1);
                     Text(dc, names[i], x - 100, y + 100, 14, foreground);
                 }
             }
-            Save(Render(visual, 1440, 800), Path.Combine(output, (style == 1 ? "cute-" : "") + (dark == 1 ? "insects-dark.png" : "insects-light.png")));
+            Save(Render(visual, 1440, galleryHeight), Path.Combine(output, (style == 1 ? "cute-" : "") + (dark == 1 ? "insects-dark.png" : "insects-light.png")));
+        }
+        for (var frame = 0; frame < 8; frame++)
+        {
+            var visual = new DrawingVisual();
+            using (var dc = visual.RenderOpen())
+            {
+                dc.DrawRectangle(new SolidColorBrush(Color.FromRgb(241, 245, 240)), null, new Rect(0, 0, 800, 340));
+                Text(dc, "蜘蛛 / Spider · 写实与可爱", 24, 18, 22, Brushes.DarkSlateGray);
+                Text(dc, "WPF 渲染示意（非实录） · 上方 4 倍细节，下方原始尺寸", 24, 52, 13, Brushes.DarkSlateGray);
+                for (var style = 0; style < 2; style++)
+                {
+                    renderer.Style = (CreatureStyle)style;
+                    var x = 200 + style * 400;
+                    dc.PushTransform(new ScaleTransform(4, 4));
+                    renderer.Render(dc, [new Pose(CreatureKind.Spider, new(x / 4f, 38), frame / 8f)], new(0, 0, 800, 340), 0, 1, 1);
+                    dc.Pop();
+                    renderer.Render(dc, [new Pose(CreatureKind.Spider, new(x, 252), frame / 8f)], new(0, 0, 800, 340), 0, 1, 1);
+                    Text(dc, style == 0 ? "写实 · 八足爬行" : "可爱 · 八足爬行", x - 65, 298, 15, Brushes.DarkSlateGray);
+                }
+            }
+            Save(Render(visual, 800, 340), Path.Combine(output, $"spider-{frame:00}.png"));
         }
     }
     private static void Text(DrawingContext dc, string value, double x, double y, double size, Brush brush) =>

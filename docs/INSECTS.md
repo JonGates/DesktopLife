@@ -1,6 +1,6 @@
-# 昆虫与比例 · v0.4.1
+# 生物与比例
 
-桌面与屏保共用 12 种昆虫的模拟与绘制。全桌面固定一只苍蝇，其余物种按全桌面总数配置；相接的屏幕可连续通行。
+当前源码与本地 v0.4.2-preview.2 共用 13 种生物的模拟与绘制（12 种昆虫及蜘蛛）。GitHub Release v0.4.1 尚不包含蜘蛛。全桌面固定一只苍蝇，其余物种按全桌面总数配置；相接的屏幕可连续通行。
 
 ## 新增物种
 
@@ -14,6 +14,7 @@
 | 蚱蜢 Grasshopper | 38 | 绿色翅鞘、短触角、粗后腿，慢走与跳跃 |
 | 螳螂 Mantis | 60 | 三角头、细长前胸、折叠捕捉足，缓慢转向 |
 | 竹节虫 Stick insect | 80 | 细长枝条形身体与长足，低速爬行 |
+| 蜘蛛 Spider | 16 | 棕色地栖蜘蛛，两段身体、八条分节足，爬行、短暂停顿与避让鼠标 |
 
 新增种类默认数量 0，每种可设 0–100；尺寸默认 80%–120%，允许 10%–300%。尺寸按身体连同附肢一起缩放。旧配置保留原数量与尺寸，更新不会自动增加昆虫。
 
@@ -22,6 +23,8 @@
 结构参考：[瓢虫形态与体型（马里兰大学）](https://www.extension.umd.edu/resource/ladybugs-or-ladybird-beetles)、[衣鱼的三尾丝与体型（马里兰大学）](https://extension.umd.edu/resource/silverfish-and-firebrats)、[蠼螋（明尼苏达大学）](https://extension.umn.edu/garden-and-home/yard-and-garden/yard-and-garden-insects/earwigs)、[螳螂（密苏里州保护部门）](https://mdc.mo.gov/discover-nature/field-guide/mantids-mantises)、[竹节虫（密苏里州保护部门）](https://mdc.mo.gov/discover-nature/field-guide/walkingsticks-stick-insects)。未使用这些网站的照片。
 
 ## 外观与当前动作范围
+
+蜘蛛属于蛛形纲，采用地栖狼蛛类外形作为参考，四对步足从头胸部伸出，没有触角。写实身体使用 AI 生成纹理，八足及短触肢由程序绘制；可爱版使用淡紫色圆润身体。两种外观都支持尺寸混合、跨屏爬行和屏保。本次不模拟结网、捕食或跳跃。形态参考：[马里兰大学蜘蛛介绍](https://www.extension.umd.edu/resource/predatory-spiders)。
 
 新增 8 种使用 AI 生成的独立身体素材，程序绘制并驱动足、触角、尾钳或尾丝；不是实拍照片。v0.4.1已为全部 12 种补齐可爱外观：圆润矢量身体、柔和配色和小眼睛，保留各类附肢特征与相同比例、步态。桌面与屏保均可切换。桌面与屏保的 v0.4.1 下载包均包含这些外观和动作。
 

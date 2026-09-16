@@ -44,7 +44,11 @@ internal static class AdditionalSettingsProbe
         var window = new SettingsWindow(host, store);
         TextBox Input(string suffix) => (TextBox)window.FindName("Ladybug" + suffix);
         void Apply() => ((Button)window.FindName("ApplyButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        ((TextBox)window.FindName("SpiderCount")).Text = "4";
+        ((TextBox)window.FindName("SpiderMin")).Text = "60";
+        ((TextBox)window.FindName("SpiderMax")).Text = "140";
         Input("Count").Text = "2"; Input("Min").Text = "70"; Input("Max").Text = "140"; Apply();
+        Require(host.Simulation.Settings.GetAdditional(CreatureKind.Spider) == new SpeciesPopulation(4, 60, 140), "Spider desktop UI apply failed");
         Require(host.Simulation.Settings.GetAdditional(CreatureKind.Ladybug) == new SpeciesPopulation(2, 70, 140), "Desktop UI apply failed");
         var saved = File.ReadAllText(store.FilePath);
         foreach (var invalid in new[] { "-1", "101", "1.5", "abc", "" })
@@ -56,6 +60,7 @@ internal static class AdditionalSettingsProbe
         Require(File.ReadAllText(store.FilePath) == saved, "Invalid desktop size saved");
         LanguageService.Apply("en-US");
         Require(AutomationProperties.GetName(Input("Count")).Contains("Ladybug"), "Live translation failed");
+        Require(AutomationProperties.GetName((TextBox)window.FindName("SpiderCount")).Contains("Spider"), "Spider live translation failed");
         Require(Input("Min").Text == "200", "Translation lost unsaved values");
         Input("Min").Text = "70"; Apply();
         ShowOffscreen(window);
@@ -88,6 +93,9 @@ internal static class AdditionalSettingsProbe
         var fields = Descendants(saver).OfType<TextBox>().ToArray();
         var button = Descendants(saver).OfType<Button>().Single();
         var ladybug = fields.Single(field => field.Name == "LadybugCount");
+        fields.Single(field => field.Name == "SpiderCount").Text = "5";
+        fields.Single(field => field.Name == "SpiderMin").Text = "60";
+        fields.Single(field => field.Name == "SpiderMax").Text = "140";
         saved = File.ReadAllText(saverStore.Path);
         ladybug.Text = "101"; button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Require(File.ReadAllText(saverStore.Path) == saved, "Invalid saver count saved");
@@ -103,8 +111,9 @@ internal static class AdditionalSettingsProbe
         SaveWindow(saver, Path.Combine(output, "additional-screensaver.png"));
         button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Require(saverStore.Load(out _).Population.GetAdditional(CreatureKind.Ladybug) == new SpeciesPopulation(3, 70, 140), "Saver UI apply failed");
+        Require(saverStore.Load(out _).Population.GetAdditional(CreatureKind.Spider) == new SpeciesPopulation(5, 60, 140), "Spider saver UI apply failed");
         app.Shutdown();
-        File.WriteAllText(Path.Combine(output, "result.txt"), "PASS: all 8 species round-trip, old JSON migration, invalid JSON fallback, desktop/saver UI validation without mutation, save/apply, and live translation.");
+        File.WriteAllText(Path.Combine(output, "result.txt"), $"PASS: all {InsectCatalog.Additional.Count} additional species round-trip, old JSON migration, invalid JSON fallback, desktop/saver UI validation without mutation, save/apply, and live translation.");
         Console.WriteLine(File.ReadAllText(Path.Combine(output, "result.txt")));
     }
 

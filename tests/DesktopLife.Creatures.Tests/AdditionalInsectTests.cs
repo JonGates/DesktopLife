@@ -9,6 +9,38 @@ namespace DesktopLife.Creatures.Tests;
 
 public class AdditionalInsectTests
 {
+    [Fact]
+    public void SpiderIsAvailableAndOptInWithPersistentSizeSettings()
+    {
+        var kind = (CreatureKind)13;
+        Assert.Contains(InsectCatalog.Additional, d => d.Kind == kind && d.EnglishName == "Spider");
+        Assert.Equal(0, new PopulationSettings().GetAdditional(kind).Count);
+        var settings = new PopulationSettings(0, 0, 0, Additional: new() { [kind] = new(3, 60, 140) });
+        var restored = JsonSerializer.Deserialize<PopulationSettings>(JsonSerializer.Serialize(settings))!;
+        var simulation = new DisplaySimulation(17);
+        simulation.Synchronize([new("screen", new(0, 0, 1000, 800))]);
+        simulation.SetPopulation(restored);
+        var spiders = simulation.World.Manager.Creatures.Where(c => c.Kind == kind).ToArray();
+        Assert.Equal(3, spiders.Length);
+        Assert.All(spiders, c => Assert.InRange(c.Scale, 0.6f, 1.4f));
+    }
+
+    [Fact]
+    public void SpiderAvoidsNearbyMouseAndRemainsGrounded()
+    {
+        var spider = new CrawlingInsect(new(500, 400), (CreatureKind)13);
+        var random = new RandomSource(17);
+        for (var i = 0; i < 80; i++)
+        {
+            var mouse = spider.Position - new Vector2(25, 0);
+            spider.Update(0.02f, new(new(mouse, Vector2.Zero, 0, false, TimeSpan.Zero), new(0, 0, 1000, 800), i * 0.02f, random));
+            Assert.Equal(LocomotionState.Walking, spider.MotionState);
+            Assert.Equal(0, spider.Elevation);
+            Assert.Equal(0, spider.WingSpread);
+        }
+        Assert.True(spider.Position.X > 570);
+    }
+
     public static IEnumerable<object[]> Kinds => InsectCatalog.Additional.Select(d => new object[] { d.Kind });
 
     [Theory]
@@ -74,7 +106,7 @@ public class AdditionalInsectTests
     [Fact]
     public void AdditionalSpeciesAreAppendedWithoutChangingExistingEnumValues()
     {
-        Assert.Equal(new[] { "Debug", "Fly", "Cockroach", "Ant", "Caterpillar", "Ladybug", "GroundBeetle", "Earwig", "Silverfish", "Cricket", "Grasshopper", "Mantis", "StickInsect" }, Enum.GetNames<CreatureKind>());
+        Assert.Equal(new[] { "Debug", "Fly", "Cockroach", "Ant", "Caterpillar", "Ladybug", "GroundBeetle", "Earwig", "Silverfish", "Cricket", "Grasshopper", "Mantis", "StickInsect", "Spider" }, Enum.GetNames<CreatureKind>());
     }
 
     [Fact]
