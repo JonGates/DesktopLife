@@ -6,7 +6,7 @@
 
 Flies chase your cursor. Cockroaches scatter. Ants cross monitor boundaries. When your PC goes idle, the same creatures can take over as a native Windows screen saver.
 
-[**Download Desktop Pets**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip) · [**Download Screen Saver**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
+[**Download Desktop Pets v0.4.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-Portable-win-x64-v0.4.1.zip) · [**Download Screen Saver v0.4.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.4.1/DesktopLife-ScreenSaver-win-x64-v0.4.1.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
 
 Windows 10/11 x64 · 12 insect species · Realistic and cute styles · Multi-monitor · Portable
 
@@ -29,7 +29,7 @@ DesktopLife is both a **Windows desktop pet app** and a native **`.scr` screen s
 | Species-specific motion | Crickets and grasshoppers jump. Ladybugs open their wings, take off and land. |
 | Realistic or cute | Switch the visual style without resetting populations, sizes or positions. |
 | True multi-monitor movement | Creatures cross the edges where monitors touch, including stacked, offset and negative-coordinate layouts. |
-| Per-species controls | Configure the population and size range for every species. Set a population to zero to hide it. |
+| Per-species controls | Configure population and size ranges for the 11 non-fly species; set any of them to zero to hide it. The fly remains fixed at one. |
 
 ## Choose your mode
 
