@@ -17,6 +17,8 @@
 
 `LocomotionState`、`MotionProgress`、`Elevation`、`WingSpread` 将行为与绘制分开。`CrawlingInsect` 驱动分阶段运动，`WpfCreatureRenderer` 使用缓存姿态与模拟时间绘制。瓢虫展翅程度和拍翅帧相互独立，暂停不会继续拍翅。
 
+瓢虫后翅使用窄根、圆润末端的膜翅轮廓，拍翅时通过俯视宽度变化表现上下挥动。两片膜翅统一绘制在鞘翅下面，鞘翅最大展开角度为每侧 48°；这是一种俯视动画表现，不是三维翅膀模型。
+
 ```powershell
 dotnet test DesktopLife.sln -c Release
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --locomotion artifacts/locomotion
