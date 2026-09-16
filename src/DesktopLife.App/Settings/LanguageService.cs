@@ -48,7 +48,7 @@ public static class LanguageService
         ["CuteStyle"] = ("可爱 · 圆润自然", "Cute · soft and rounded"),
         ["StyleHelp"] = ("切换后立即生效，保留数量和当前位置。", "Applies immediately, keeping populations and positions."),
         ["StyleSaved"] = ("生物风格已保存。", "Creature style saved."),
-        ["Title"] = ("DesktopLife · 数量设置", "DesktopLife · Settings"),
+        ["Title"] = ("DesktopLife · 设置", "DesktopLife · Settings"),
         ["Subtitle"] = ("让生物在整个桌面自由活动", "Let creatures roam across your desktop"),
         ["Apply"] = ("保存数量与尺寸", "Save population & sizes"),
         ["Pause"] = ("暂停全部", "Pause all"),
