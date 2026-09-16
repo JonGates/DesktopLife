@@ -1,6 +1,6 @@
 ﻿param(
     [ValidatePattern('^v?\d+\.\d+\.\d+(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$')]
-    [string]$Version = '0.3.2',
+    [string]$Version = '0.4.0',
     [string]$RuntimeVersion = '10.0.12',
     [string]$NuGetSource
 )
@@ -32,7 +32,7 @@ DesktopLife - Windows x64 portable edition / 便携版
 1. 将整个 ZIP 解压到普通文件夹。
 2. 双击 Start-DesktopLife.cmd 启动并打开设置。
 3. 已自带 .NET 运行环境，不需要安装 .NET、SDK 或 Visual Studio。
-4. 右上角切换语言；调整蟑螂、蚂蚁、毛毛虫数量，点击“保存数量”。
+4. 右上角切换语言；调整昆虫数量与尺寸；“更多昆虫”中可开启新增 8 种，点击“保存数量与尺寸”。
 5. 苍蝇围绕鼠标飞行，左键点击指定落点，停留 3 秒后继续飞行。
 6. 默认 Ctrl+Alt+S 启动/恢复，Ctrl+Alt+P 暂停；可在设置中修改。
 7. 关闭设置后继续运行。双击托盘图标重开设置；托盘右键“退出”结束程序。

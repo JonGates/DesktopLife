@@ -118,6 +118,14 @@
             </StackPanel>
         </Border>
         <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
+            <Expander x:Name="AdditionalSpeciesExpander" Header="{DynamicResource AdditionalSpecies}" IsExpanded="True">
+                <StackPanel>
+                    <TextBlock Text="{DynamicResource AdditionalHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,6,0,10"/>
+                    <StackPanel x:Name="AdditionalSpeciesPanel"/>
+                </StackPanel>
+            </Expander>
+        </Border>
+        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
 <Expander Header="{DynamicResource Hotkeys}" IsExpanded="False"><StackPanel>
 <TextBlock Text="{DynamicResource KeyHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C" Margin="0,6,0,10"/>
 <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition/></Grid.ColumnDefinitions>

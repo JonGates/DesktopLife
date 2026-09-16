@@ -1,13 +1,13 @@
 # DesktopLife 昆虫屏保 · Windows 10/11 Insect Screensaver (.scr)
 
-[中文项目首页](https://github.com/JonGates/DesktopLife#readme) · [English guide](https://github.com/JonGates/DesktopLife/blob/main/README.en.md) · **[下载屏保 / Download screensaver](https://github.com/JonGates/DesktopLife/releases/download/v0.3.2/DesktopLife-ScreenSaver-win-x64-v0.3.2.zip)**
+[中文项目首页](https://github.com/JonGates/DesktopLife#readme) · [English guide](https://github.com/JonGates/DesktopLife/blob/main/README.en.md) · **[下载屏保 / Download screensaver](https://github.com/JonGates/DesktopLife/releases/download/v0.4.0/DesktopLife-ScreenSaver-win-x64-v0.4.0.zip)**
 
 Windows 10/11 x64 屏保，自带 .NET 运行环境。独立于桌面宠物模式，可切换深色／浅色背景，支持多显示器、昆虫总数量设置、自动飞行和停落。
 
 ## 使用
 
 1. 完整解压屏保 ZIP 到**长期保留的文件夹**。
-2. 双击 `Configure-ScreenSaver.cmd`，选择深色或浅色背景，设置蟑螂、蚂蚁、毛毛虫数量后保存。苍蝇固定 1 只。
+2. 双击 `Configure-ScreenSaver.cmd`，选择深色或浅色背景，设置各类昆虫的数量与尺寸范围后保存（新增 8 种默认关闭）。苍蝇固定 1 只。
 3. 双击 `Preview-FullScreen.cmd` 体验全屏效果；启动约 0.75 秒后，移动鼠标、点击或按键会退出。
 4. 双击 `Install-ScreenSaver.cmd`，打开 Windows“屏幕保护程序设置”。选择 DesktopLife，设置等待分钟数，再点击“应用”。可以在这个窗口直接预览动画或打开屏保设置。
 5. 如需恢复时登录，勾选 Windows 的“在恢复时显示登录屏幕”；是否需要登录由 Windows 和组织策略管理。
@@ -41,10 +41,10 @@ Keep the extracted folder in place after selecting the screen saver. To disable 
 dotnet run --project src/DesktopLife.ScreenSaver -- /c
 dotnet run --project src/DesktopLife.ScreenSaver -- /s
 dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-check
-powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.3.2
+powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.4.0
 ```
 
-输出：`artifacts/DesktopLife-ScreenSaver-win-x64-v0.3.2.zip` 和 `.zip.sha256`。原桌面模式继续使用 `Package-Portable.ps1` 打包。
+输出：`artifacts/DesktopLife-ScreenSaver-win-x64-v0.4.0.zip` 和 `.zip.sha256`。原桌面模式继续使用 `Package-Portable.ps1` 打包。
 
 源码 / Source: https://github.com/JonGates/DesktopLife
 

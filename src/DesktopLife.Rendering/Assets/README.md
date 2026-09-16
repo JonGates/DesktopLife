@@ -20,3 +20,20 @@ Create a production-ready photorealistic housefly sprite atlas PNG with a genuin
 Generation prompt: one production game texture atlas, three equal horizontal rows, directly overhead insect bodies facing right, no legs/antennae (animated separately), genuine transparent background, no cast shadows or text. Row 1: brown cockroach with tapered veined forewings and shield-shaped pronotum. Row 2: dark reddish-brown worker ant with narrow thorax/petiole and glossy segmented abdomen. Row 3: continuous green caterpillar body with granular skin, pale markings and small lateral spiracles. Neutral diffuse illumination; no cartoon outlines or cute eyes.
 
 Final edit prompt: preserve the three bodies and positions; remove all background/glow/halos and cast shadows. Outside body silhouettes alpha must be zero, with only narrow edge antialiasing and fine hairs; body interiors opaque. Keep 1536×1024 and separate rows, no added legs or antennae.
+
+# Eight additional insect bodies · v0.4.0
+
+Generated with the built-in image_gen tool on 2026-09-16. Two original 1024×1536 RGBA files, no pixel edits or background removal. Alpha range 0–254; four separated nontransparent row bands verified per file. The visible RGB glow in a raw viewer has zero alpha outside the bodies. Runtime bounds each occupied row and preserves the alpha. WPF diagnostic checks render all eight species on transparent, light and dark backgrounds.
+
+- `small-insect-bodies.png`: ladybug, ground beetle, earwig, silverfish; occupied rows 51–409, 478–768, 855–1065, 1179–1419.
+- `long-insect-bodies.png`: cricket, grasshopper, mantis, stick insect; occupied rows 161–379, 540–733, 902–1076, 1279–1342.
+
+## Prompt set
+
+Common: production 2D game BODY texture atlas, genuinely transparent RGBA background, portrait 1024×1536, exactly four separated horizontal rows, one isolated body per row, dorsal top-down orthographic macro photorealistic view. Head right, tail left. Omit all legs, antennae, tail filaments and pincers because they will be animated separately. Neutral diffuse illumination, no shadow, text, scenery, cartoon outlines or painted checkerboard. Leave transparent gutters and outer margins.
+
+Small atlas: row 1 red seven-spotted ladybug, domed elytra and black/white pronotum, body about 420×320 px; row 2 black-bronze ground beetle, elongated striated elytra and narrow pronotum, about 650×220; row 3 dark reddish-brown European earwig, segmented narrow abdomen and short wing covers, no pincers, about 720×130; row 4 metallic silverfish with scaled tapered segmented abdomen, tiny head and no tail filaments, about 720×140. Requested row centers y=192,576,960,1344; actual transparent gutters are detected rather than assuming exact row placement.
+
+Long atlas: row 1 dark brown/black field cricket, folded leathery forewings and rounded pronotum, about 650×190 px; row 2 green grasshopper, tapered folded wings with subtle brown dorsal stripe, pronounced pronotum and rounded head, about 720×160; row 3 adult green mantis, folded wings over abdomen, very long thin prothorax, triangular head with two eyes on right, no raptorial arms, about 780×110; row 4 brown walking-stick body, very long thin segmented twig with subtle bark texture, tiny head, about 800×40. Requested row centers y=192,576,960,1344.
+
+These assets convey representative insect groups and are not scientific specimen photographs. Legs, antennae and characteristic rear appendages are drawn in `AdditionalInsectSprite` with per-group proportions.

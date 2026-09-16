@@ -16,7 +16,7 @@ public sealed class SettingsStore(string? filePath = null)
             settings.Validate();
             return settings;
         }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException or ArgumentOutOfRangeException)
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or JsonException or ArgumentException)
         {
             warning = LanguageService.Get("ConfigWarning");
             return new();

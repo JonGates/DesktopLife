@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using DesktopLife.Creatures.Displays;
+using DesktopLife.Engine.Creatures;
+using System.Windows.Automation;
 namespace DesktopLife.App.Settings;
 
 public partial class SettingsWindow : Window
@@ -14,6 +16,7 @@ public partial class SettingsWindow : Window
     private readonly PreferencesController _preferences;
     private bool _ready;
     private string _statusKey = "Hint";
+    private readonly List<(InsectDefinition Definition, TextBlock Label, TextBox Count, TextBox Min, TextBox Max)> _additionalRows = [];
     public SettingsWindow(DesktopHost host, SettingsStore store, string? warning = null, PreferencesController? preferences = null)
     {
         _host = host;
@@ -37,6 +40,7 @@ public partial class SettingsWindow : Window
         RoachMin.Text = sizes.RoachMin.ToString(); RoachMax.Text = sizes.RoachMax.ToString();
         AntMin.Text = sizes.AntMin.ToString(); AntMax.Text = sizes.AntMax.ToString();
         CaterpillarMin.Text = sizes.CaterpillarMin.ToString(); CaterpillarMax.Text = sizes.CaterpillarMax.ToString();
+        BuildAdditionalRows(sizes);
         _ready = true;
         Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
@@ -79,7 +83,54 @@ public partial class SettingsWindow : Window
         }
     }
     private void SetStatus(string key) { _statusKey = key; Status.Text = LanguageService.Get(key); }
-    private void Translate() { RefreshState(); RefreshLayout(); SetStatus(_statusKey); }
+    private void Translate() { RefreshState(); RefreshLayout(); TranslateAdditionalRows(); SetStatus(_statusKey); }
+    private void BuildAdditionalRows(PopulationSettings settings)
+    {
+        Grid Row()
+        {
+            var row = new Grid { Margin = new Thickness(0, 3, 0, 3) };
+            row.ColumnDefinitions.Add(new ColumnDefinition());
+            for (var i = 0; i < 3; i++) row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(66) });
+            AdditionalSpeciesPanel.Children.Add(row);
+            return row;
+        }
+        var header = Row();
+        var keys = new[] { "CountColumn", "MinColumn", "MaxColumn" };
+        for (var i = 0; i < keys.Length; i++)
+        {
+            var label = new TextBlock { HorizontalAlignment = HorizontalAlignment.Center, Foreground = new SolidColorBrush(Color.FromRgb(99, 119, 108)) };
+            label.SetResourceReference(TextBlock.TextProperty, keys[i]);
+            Grid.SetColumn(label, i + 1); header.Children.Add(label);
+        }
+        foreach (var definition in InsectCatalog.Additional)
+        {
+            var value = settings.GetAdditional(definition.Kind);
+            var row = Row();
+            var label = new TextBlock { VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 6, 0) };
+            row.Children.Add(label);
+            TextBox Field(int number, int column, string suffix)
+            {
+                var field = new TextBox { Name = definition.Kind + suffix, Text = number.ToString(CultureInfo.InvariantCulture), MaxLength = 3, Margin = new Thickness(4, 0, 0, 0), FontSize = 13, MinHeight = 29 };
+                RegisterName(field.Name, field);
+                AutomationProperties.SetAutomationId(field, field.Name);
+                Grid.SetColumn(field, column); row.Children.Add(field); return field;
+            }
+            _additionalRows.Add((definition, label, Field(value.Count, 1, "Count"), Field(value.MinPercent, 2, "Min"), Field(value.MaxPercent, 3, "Max")));
+        }
+        TranslateAdditionalRows();
+    }
+    private void TranslateAdditionalRows()
+    {
+        foreach (var row in _additionalRows)
+        {
+            var name = LanguageService.Choose(row.Definition.ChineseName, row.Definition.EnglishName);
+            row.Label.Text = name;
+            row.Count.ToolTip = $"{name} · 0–{row.Definition.MaxCount}";
+            AutomationProperties.SetName(row.Count, name + " · " + LanguageService.Get("CountColumn"));
+            AutomationProperties.SetName(row.Min, name + " · " + LanguageService.Get("MinSize"));
+            AutomationProperties.SetName(row.Max, name + " · " + LanguageService.Get("MaxSize"));
+        }
+    }
     private void LanguageChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_ready) return;
@@ -140,7 +191,17 @@ public partial class SettingsWindow : Window
                 !int.TryParse(AntMin.Text, out var aMin) || !int.TryParse(AntMax.Text, out var aMax) ||
                 !int.TryParse(CaterpillarMin.Text, out var cMin) || !int.TryParse(CaterpillarMax.Text, out var cMax))
             { SetStatus("InvalidSizes"); return; }
-            var settings = new PopulationSettings(roaches, ants, caterpillars, rMin, rMax, aMin, aMax, cMin, cMax);
+            var additional = new Dictionary<CreatureKind, SpeciesPopulation>();
+            foreach (var row in _additionalRows)
+            {
+                if (!int.TryParse(row.Count.Text, out var count) || count < 0 || count > row.Definition.MaxCount)
+                { SetStatus("InvalidCounts"); row.Count.Focus(); return; }
+                if (!int.TryParse(row.Min.Text, out var min) || !int.TryParse(row.Max.Text, out var max) || min < 10 || max > 300 || min > max)
+                { SetStatus("InvalidSizes"); row.Min.Focus(); return; }
+                additional.Add(row.Definition.Kind, new(count, min, max));
+            }
+            var settings = new PopulationSettings(roaches, ants, caterpillars, rMin, rMax, aMin, aMax, cMin, cMax,
+                additional.Values.All(value => value == new SpeciesPopulation()) ? null : additional);
             try { settings.Validate(); } catch (ArgumentOutOfRangeException) { SetStatus("InvalidSizes"); return; }
             _store.Save(settings);
             _host.SetPopulation(settings);

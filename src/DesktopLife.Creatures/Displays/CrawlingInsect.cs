@@ -10,13 +10,36 @@ public sealed class CrawlingInsect : Creature
     private float _heading;
     private float _pauseRemaining;
     private bool _hasWandered;
+    private readonly float _speed;
+    private readonly float _stride;
+    private readonly float _turnRate;
+    private readonly float _pauseChance;
+    private readonly float _pauseDuration;
+    private readonly float _wanderAngle;
+    private readonly bool _flees;
+    public override bool IsResting => _pauseRemaining > 0;
     public CrawlingInsect(Vector2 position, CreatureKind kind, float scale = 1)
     {
-        if (kind is not (CreatureKind.Ant or CreatureKind.Caterpillar)) throw new ArgumentOutOfRangeException(nameof(kind));
+        var definition = kind is CreatureKind.Ant or CreatureKind.Caterpillar ? null : InsectCatalog.Get(kind);
         if (!float.IsFinite(scale) || scale < 0.1f || scale > 3f) throw new ArgumentOutOfRangeException(nameof(scale));
         Scale = scale;
         Position = position;
         Kind = kind;
+        _speed = definition?.Speed ?? (kind == CreatureKind.Ant ? 48 : 13);
+        _stride = definition?.Stride ?? (kind == CreatureKind.Ant ? 12 : 9);
+        (_turnRate, _pauseChance, _pauseDuration, _wanderAngle, _flees) = kind switch
+        {
+            CreatureKind.Ant => (8f, 0.22f, 0.35f, 0.9f, true),
+            CreatureKind.Caterpillar => (2f, 0f, 0f, 0.9f, false),
+            CreatureKind.Ladybug => (3f, 0.2f, 0.7f, 0.75f, false),
+            CreatureKind.GroundBeetle => (5f, 0.12f, 0.4f, 0.7f, true),
+            CreatureKind.Earwig => (4f, 0.25f, 0.8f, 1f, true),
+            CreatureKind.Silverfish => (9f, 0.3f, 0.45f, 1.4f, true),
+            CreatureKind.Cricket => (4f, 0.4f, 1.3f, 1.1f, true),
+            CreatureKind.Grasshopper => (2.5f, 0.45f, 1.7f, 0.8f, true),
+            CreatureKind.Mantis => (1.2f, 0.65f, 2.8f, 0.6f, false),
+            _ => (0.7f, 0.55f, 2.2f, 0.4f, false)
+        };
     }
     public override void Update(float deltaTime, in CreatureContext context)
     {
@@ -24,31 +47,33 @@ public sealed class CrawlingInsect : Creature
         deltaTime = MathF.Min(deltaTime, 0.05f);
         var previous = Position;
         var away = Position - context.Mouse.Position;
-        var threatened = Kind == CreatureKind.Ant && away.LengthSquared() is > 1 and < 6400;
+        var threatened = _flees && away.LengthSquared() is > 1 and < 6400;
         if (threatened) _pauseRemaining = 0;
         if (_pauseRemaining > 0)
         {
             _pauseRemaining -= deltaTime;
             Velocity = Vector2.Zero;
+            RestingSeconds += deltaTime;
             return;
         }
+        RestingSeconds = 0;
         _turnIn -= deltaTime;
         if (_turnIn <= 0)
         {
-            if (_hasWandered && Kind == CreatureKind.Ant && !threatened && context.Random.NextFloat(0, 1) < 0.22f)
-                _pauseRemaining = context.Random.NextFloat(0.12f, 0.35f);
+            if (_hasWandered && !threatened && _pauseChance > 0 && context.Random.NextFloat(0, 1) < _pauseChance)
+                _pauseRemaining = context.Random.NextFloat(0.12f, _pauseDuration);
             _hasWandered = true;
-            _heading = Rotation + context.Random.NextFloat(-0.9f, 0.9f);
+            _heading = Rotation + context.Random.NextFloat(-_wanderAngle, _wanderAngle);
             _turnIn = context.Random.NextFloat(0.6f, 2.5f);
         }
-        var speed = Kind == CreatureKind.Ant ? 48f : 13f;
+        var speed = _speed;
         if (threatened)
         {
             _heading = MathF.Atan2(away.Y, away.X);
             speed *= 1.8f;
         }
         var turn = MathF.IEEERemainder(_heading - Rotation, MathF.Tau);
-        var maxTurn = (Kind == CreatureKind.Ant ? 8 : 2) * deltaTime;
+        var maxTurn = _turnRate * deltaTime;
         Rotation += Math.Clamp(turn, -maxTurn, maxTurn);
         speed *= MathF.Max(0.2f, 1 - MathF.Abs(turn) / MathF.PI);
         var direction = new Vector2(MathF.Cos(Rotation), MathF.Sin(Rotation));
@@ -56,7 +81,7 @@ public sealed class CrawlingInsect : Creature
         var allowed = context.Layout?.ConstrainMove(Position, next) ?? context.Bounds.Clamp(next);
         Velocity = (allowed - Position) / deltaTime;
         Position = allowed;
-        AdvanceGait(previous, (Kind == CreatureKind.Ant ? 12 : 9) * Scale);
+        AdvanceGait(previous, _stride * Scale);
         if (Vector2.DistanceSquared(next, allowed) > 0.0001f)
         {
             var inward = context.Layout?.NearestEdge(Position).Inward;

@@ -13,6 +13,8 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--insect-catalog") { InsectCatalogProbe.Run(args.Length > 1 ? args[1] : "artifacts/insect-catalog"); return; }
+        if (args.Length > 0 && args[0] == "--additional-settings") { AdditionalSettingsProbe.Run(args.Length > 1 ? args[1] : "artifacts/additional-settings"); return; }
         if (args.Length > 0 && args[0] == "--styles") { StyleProbe.Run(args.Length > 1 ? args[1] : "artifacts/style-check"); return; }
         if (args.Length > 1 && args[0] == "--screensaver-external-check") { ScreenSaverProbe.RunExternal(args[1]); return; }
         if (args.Length > 0 && args[0] == "--screensaver-layout-check") { ScreenSaverProbe.RunFullScreen(args.Length > 1 ? args[1] : "artifacts/screensaver-layout-check", synthetic: true); return; }

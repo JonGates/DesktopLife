@@ -43,6 +43,7 @@ public sealed class DisplaySimulation(int seed)
     public void SetPopulation(PopulationSettings settings)
     {
         settings.Validate();
+        settings = settings with { Additional = settings.Additional is null ? null : new(settings.Additional) };
         var population = new List<ICreature>();
         Add(CreatureKind.Fly, 1, () => new FlyCreature(SpawnPoint(outside: true)));
         Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true, scale: World.Random.NextFloat(settings.RoachMin / 100f, settings.RoachMax / 100f)));
@@ -51,6 +52,14 @@ public sealed class DisplaySimulation(int seed)
         Resize(CreatureKind.Cockroach, Settings.RoachMin, Settings.RoachMax, settings.RoachMin, settings.RoachMax);
         Resize(CreatureKind.Ant, Settings.AntMin, Settings.AntMax, settings.AntMin, settings.AntMax);
         Resize(CreatureKind.Caterpillar, Settings.CaterpillarMin, Settings.CaterpillarMax, settings.CaterpillarMin, settings.CaterpillarMax);
+        foreach (var definition in InsectCatalog.Additional)
+        {
+            var configured = settings.GetAdditional(definition.Kind);
+            var previous = Settings.GetAdditional(definition.Kind);
+            Add(definition.Kind, configured.Count, () => new CrawlingInsect(SpawnPoint(), definition.Kind,
+                World.Random.NextFloat(configured.MinPercent / 100f, configured.MaxPercent / 100f)));
+            Resize(definition.Kind, previous.MinPercent, previous.MaxPercent, configured.MinPercent, configured.MaxPercent);
+        }
         Settings = settings;
         World.Manager.Replace(population);
         TotalCockroachCount = settings.Cockroaches;
