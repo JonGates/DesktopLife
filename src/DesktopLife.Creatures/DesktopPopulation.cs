@@ -24,7 +24,7 @@ public static class DesktopPopulation
                 2 => new Vector2(bounds.Left + bounds.Width * along, bounds.Top - 12),
                 _ => new Vector2(bounds.Left + bounds.Width * along, bounds.Bottom + 12)
             };
-            population[i + 1] = new CockroachCreature(position, initiallyHidden: true);
+            population[i + 1] = new CockroachCreature(position, initiallyHidden: true, scale: random.NextFloat(0.6f, 1.8f));
         }
         return Array.AsReadOnly(population);
     }

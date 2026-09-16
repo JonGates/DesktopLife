@@ -10,8 +10,10 @@ public sealed class CockroachCreature : Creature
     private readonly CockroachOptions _options;
     public CockroachState State => _brain.State;
 
-    public CockroachCreature(Vector2 position, bool initiallyHidden = false, CockroachOptions? options = null)
+    public CockroachCreature(Vector2 position, bool initiallyHidden = false, CockroachOptions? options = null, float scale = 1)
     {
+        if (!float.IsFinite(scale) || scale < 0.1f || scale > 3f) throw new ArgumentOutOfRangeException(nameof(scale));
+        Scale = scale;
         Position = position;
         _options = options ?? new CockroachOptions();
         _brain = new(_options, initiallyHidden);
@@ -31,7 +33,7 @@ public sealed class CockroachCreature : Creature
         var motion = _brain.Update(this, deltaTime, in context);
         Position = motion.Position;
         Velocity = motion.Velocity;
-        AdvanceGait(previous, 20);
+        AdvanceGait(previous, 20 * Scale);
         if (Velocity.LengthSquared() > 1)
         {
             var turn = MathF.IEEERemainder(MathF.Atan2(Velocity.Y, Velocity.X) - Rotation, MathF.Tau);

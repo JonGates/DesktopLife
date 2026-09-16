@@ -16,32 +16,38 @@ Realistic mode combines AI-generated macro-style body textures with animated leg
 
 ![Realistic insects on dark and light backgrounds, 3x details and native size — WPF samples, not a recording](docs/images/realistic-insects.png)
 
+## v0.3.2 settings update
+
+Per-species minimum and maximum sizes (10–300%). Defaults: cockroaches 60–180%, ants 60–120%, caterpillars 60–140%. Saving applies sizes without resetting positions or populations. Screen saver settings are independent; the fly keeps its original size.
+
+A compact green settings panel groups population and size controls, with collapsible display information, shortcuts and capture options.
+
 ## Choose your download
 
 | Experience | Windows x64 portable download | Start here |
 | --- | --- | --- |
-| Native screen saver for an idle computer, with dark/light themes | **[Screensaver v0.3.1](https://github.com/JonGates/DesktopLife/releases/download/v0.3.1/DesktopLife-ScreenSaver-win-x64-v0.3.1.zip)** | Extract and run `Install-ScreenSaver.cmd`, then choose an idle timeout in Windows. |
-| Desktop companions, a mouse-following fly and roaming insects | **[Desktop pets v0.3.1](https://github.com/JonGates/DesktopLife/releases/download/v0.3.1/DesktopLife-Portable-win-x64-v0.3.1.zip)** | Extract and run `Start-DesktopLife.cmd`. |
+| Native screen saver for an idle computer, with dark/light themes | **[Screensaver v0.3.2](https://github.com/JonGates/DesktopLife/releases/download/v0.3.2/DesktopLife-ScreenSaver-win-x64-v0.3.2.zip)** | Extract and run `Install-ScreenSaver.cmd`, then choose an idle timeout in Windows. |
+| Desktop companions, a mouse-following fly and roaming insects | **[Desktop pets v0.3.2](https://github.com/JonGates/DesktopLife/releases/download/v0.3.2/DesktopLife-Portable-win-x64-v0.3.2.zip)** | Extract and run `Start-DesktopLife.cmd`. |
 
-DesktopLife v0.3.1 is one preview release with two programs: the desktop app and the screen saver. Both include the .NET runtime and keep separate settings. The release contains two ZIPs and one [SHA256SUMS.txt](https://github.com/JonGates/DesktopLife/releases/download/v0.3.1/SHA256SUMS.txt) listing both checksums. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
+DesktopLife v0.3.2 is one preview release with two programs: the desktop app and the screen saver. Both include the .NET runtime and keep separate settings. The release contains two ZIPs and one [SHA256SUMS.txt](https://github.com/JonGates/DesktopLife/releases/download/v0.3.2/SHA256SUMS.txt) listing both checksums. [Screen saver guide](docs/SCREENSAVER.md) · [All releases and checksums](https://github.com/JonGates/DesktopLife/releases)
 
 ![DesktopLife Windows desktop pets: insects roaming on the primary monitor](docs/images/live-desktop.gif)
 
 ## Download and run
 
-**[Download DesktopLife v0.3.1 for Windows x64 — portable ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.3.1/DesktopLife-Portable-win-x64-v0.3.1.zip)**
+**[Download DesktopLife v0.3.2 for Windows x64 — portable ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.3.2/DesktopLife-Portable-win-x64-v0.3.2.zip)**
 
-Version **v0.3.1 is a preview release**. [Release notes and checksums](https://github.com/JonGates/DesktopLife/releases/tag/v0.3.1).
+Version **v0.3.2 is a preview release**. [Release notes and checksums](https://github.com/JonGates/DesktopLife/releases/tag/v0.3.2).
 
-### Screen saver v0.3.1
+### Screen saver v0.3.2
 
-**[Download the self-contained screen saver ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.3.1/DesktopLife-ScreenSaver-win-x64-v0.3.1.zip)** · [Release notes](https://github.com/JonGates/DesktopLife/releases/tag/v0.3.1)
+**[Download the self-contained screen saver ZIP](https://github.com/JonGates/DesktopLife/releases/download/v0.3.2/DesktopLife-ScreenSaver-win-x64-v0.3.2.zip)** · [Release notes](https://github.com/JonGates/DesktopLife/releases/tag/v0.3.2)
 
 Extract it, run `Configure-ScreenSaver.cmd` to choose **Dark / Light** and populations, and try `Preview-FullScreen.cmd`. Run `Install-ScreenSaver.cmd` to select it in Windows Screen Saver Settings and set the idle timeout. Move the mouse or press a key to exit. Keep the extracted folder in place. [Full bilingual instructions](docs/SCREENSAVER.md).
 
-### Desktop companion v0.3.1
+### Desktop companion v0.3.2
 
-1. Open the release page and download **`DesktopLife-Portable-win-x64-v0.3.1.zip`** from **Assets**.
+1. Open the release page and download **`DesktopLife-Portable-win-x64-v0.3.2.zip`** from **Assets**.
 2. Extract the entire ZIP into a folder.
 3. Double-click **`Start-DesktopLife.cmd`** to launch the app and open settings. You can also run **`DesktopLife.exe`** and double-click its system tray icon to open settings.
 4. Choose **English** in the language selector, adjust insect counts, and click **Save population**.
@@ -109,10 +115,10 @@ dotnet run --project src/DesktopLife.App -- --settings
 Create a self-contained Windows x64 portable package:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.2
 ```
 
-Output: `artifacts/DesktopLife-Portable-win-x64-v0.3.1.zip` and its SHA256 file. The `artifacts/` directory is generated locally and excluded from Git.
+Output: `artifacts/DesktopLife-Portable-win-x64-v0.3.2.zip` and its SHA256 file. The `artifacts/` directory is generated locally and excluded from Git.
 
 See the [development and packaging guide (Chinese)](docs/DEVELOPMENT_AND_PACKAGING.md), [recording guide (Chinese)](docs/images/README.md), and [sprite asset notes (Chinese)](src/DesktopLife.Rendering/Assets/README.md).
 

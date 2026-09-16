@@ -44,6 +44,26 @@ internal static class StyleProbe
             var picker = (ComboBox)window.FindName("StylePicker");
             picker.SelectedIndex = 1;
             if (host.Style != CreatureStyle.Cute || host.Overlays.Any(w => w.InsectStyle != CreatureStyle.Cute) || store.LoadPreferences(out _).Style != CreatureStyle.Cute) throw new Exception("Style UI not applied");
+            ((TextBox)window.FindName("RoachMin")).Text = "80";
+            ((TextBox)window.FindName("RoachMax")).Text = "160";
+            ((Button)window.FindName("ApplyButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            if (store.Load(out _).RoachMin != 80 || host.Simulation.Settings.RoachMax != 160) throw new Exception("Size UI save failed");
+            window.Left = -10000; window.Top = -10000; window.WindowStartupLocation = WindowStartupLocation.Manual;
+            window.ShowActivated = false; window.ShowInTaskbar = false; window.Show(); window.UpdateLayout();
+            var ui = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            ui.Render(window);
+            var uiEncoder = new PngBitmapEncoder(); uiEncoder.Frames.Add(BitmapFrame.Create(ui));
+            using (var uiStream = File.Create(Path.Combine(output, "settings-compact.png"))) uiEncoder.Save(uiStream);
+            var screenInfo = (Expander)window.FindName("ScreenInfoExpander");
+            if (screenInfo.IsExpanded) throw new Exception("Screen information should start collapsed");
+            screenInfo.IsExpanded = true; window.UpdateLayout();
+            if (((System.Windows.Controls.Canvas)window.FindName("DisplayMap")).Children.Count == 0) throw new Exception("Expanded display map missing");
+            screenInfo.IsExpanded = false;
+            LanguageService.Apply("en-US"); window.Width = 470; window.Height = 600; window.UpdateLayout();
+            var narrow = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+            narrow.Render(window);
+            var narrowEncoder = new PngBitmapEncoder(); narrowEncoder.Frames.Add(BitmapFrame.Create(narrow));
+            using (var narrowStream = File.Create(Path.Combine(output, "settings-narrow-en.png"))) narrowEncoder.Save(narrowStream);
             window.Close();
         }
         saver.Save(new(Style: CreatureStyle.Cute));

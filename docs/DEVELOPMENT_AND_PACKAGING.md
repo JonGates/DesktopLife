@@ -45,7 +45,7 @@ dotnet run --project src/DesktopLife.App -- --settings
 ## 3. 推荐：一条命令生成便携包
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.2
 ```
 
 脚本会输出 JSON，包含：
@@ -57,7 +57,7 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 
 每次使用新的暂存目录，防止普通发布的旧 DLL 混入便携包。相同发布版本的 ZIP 已存在时，脚本会在构建前拒绝覆盖；请递增 -Version，或先重命名旧包。
 
-发布版本由 -Version 显式指定，也支持 v0.3.1、0.3.1-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v0.3.1。构建使用当前工作区，正式分享前应先提交应用代码：
+发布版本由 -Version 显式指定，也支持 v0.3.2、0.3.2-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v0.3.2。构建使用当前工作区，正式分享前应先提交应用代码：
 
 ```powershell
 git status --short
@@ -67,7 +67,7 @@ git rev-parse --short HEAD
 脚本默认打入 `.NET 10.0.12`，这是此次实际验证的运行环境版本。更新运行环境时显式指定版本，并重新验证：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.1 -RuntimeVersion 10.0.12
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.2 -RuntimeVersion 10.0.12
 ```
 
 朋友完整解压 ZIP 后，双击 `Start-DesktopLife.cmd` 即可启动并打开设置；双击 `DesktopLife.exe` 也能启动，设置窗口可通过托盘图标打开。
@@ -168,7 +168,7 @@ Get-FileHash '.\artifacts\DesktopLife-Portable-win-x64-<版本>.zip' -Algorithm 
 检查官方源连接。优先重试还原；不要关闭包签名或完整性校验。已有完整且可信的本地包源时，可使用：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.1 -NuGetSource D:\packages\verified-feed
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.2 -NuGetSource D:\packages\verified-feed
 ```
 
 本地源需包含指定版本所需的包，或依赖已有 NuGet 缓存。此前的 `artifacts/portable-nuget-feed` 只是本机临时缓存，不会随仓库上传。
@@ -190,16 +190,16 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 DesktopLife 使用统一项目版本：桌面应用与屏保是同一 Release 下的两个子程序，不分别维护版本。发布时在同一个干净的版本标签检出目录执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.1
-powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.3.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.3.2
+powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.3.2
 ```
 
-打包脚本各自生成 `.zip.sha256` 供本地检查；发布时将校验值合并为一个清单，只上传两个 ZIP 和一个 `SHA256SUMS.txt` 到同一个 `v0.3.1` Release。检查两个包的 `build-info.json` 中 Version 一致，SourceRevision 解析到同一个 Git 提交（可用 `git rev-parse <SourceRevision>` 比较完整哈希）。后续版本同步更新两条命令的版本号；保留旧 Release 作为历史记录。
+打包脚本各自生成 `.zip.sha256` 供本地检查；发布时将校验值合并为一个清单，只上传两个 ZIP 和一个 `SHA256SUMS.txt` 到同一个 `v0.3.2` Release。检查两个包的 `build-info.json` 中 Version 一致，SourceRevision 解析到同一个 Git 提交（可用 `git rev-parse <SourceRevision>` 比较完整哈希）。后续版本同步更新两条命令的版本号；保留旧 Release 作为历史记录。
 
 生成统一校验清单（每行是一个 ZIP 的 SHA256 和文件名）：
 
 ```powershell
-$releaseVersion = '0.3.1'
+$releaseVersion = '0.3.2'
 $packageNames = @(
     "DesktopLife-Portable-win-x64-v$releaseVersion.zip",
     "DesktopLife-ScreenSaver-win-x64-v$releaseVersion.zip"
@@ -223,10 +223,10 @@ GitHub 自动提供的 Source code ZIP / tar.gz 是源码附件；我们维护�
 新增独立项目 `src/DesktopLife.ScreenSaver`，复用引擎与素材，生成标准 Windows `.scr`。桌面模式打包入口保持 `Package-Portable.ps1`。
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.3.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.3.2
 ```
 
-输出 `artifacts/DesktopLife-ScreenSaver-win-x64-v0.3.1.zip`，包含自带运行环境的 `DesktopLife.scr`、安装/配置/全屏体验脚本；SHA256 校验文件位于 ZIP 旁。完整使用、配置位置与标准参数见 [屏保说明](SCREENSAVER.md)。
+输出 `artifacts/DesktopLife-ScreenSaver-win-x64-v0.3.2.zip`，包含自带运行环境的 `DesktopLife.scr`、安装/配置/全屏体验脚本；SHA256 校验文件位于 ZIP 旁。完整使用、配置位置与标准参数见 [屏保说明](SCREENSAVER.md)。
 
 验证命令：
 

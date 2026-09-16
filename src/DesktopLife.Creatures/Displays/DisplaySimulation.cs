@@ -16,6 +16,7 @@ public sealed class DisplaySimulation(int seed)
     public SimulationWorld World { get; } = new(new(0, 0, 1920, 1080), new RandomSource(seed), []);
     public DesktopLayout Layout { get; private set; } = new([]);
     public IReadOnlyList<DisplayWorld> Worlds { get; private set; } = [];
+    public PopulationSettings Settings { get; private set; } = new();
     public int TotalFlyCount => 1;
     public int TotalCockroachCount { get; private set; } = 20;
 
@@ -36,7 +37,7 @@ public sealed class DisplaySimulation(int seed)
                 if (!next.Contains(creature.Position)) creature.Relocate(next.Clamp(creature.Position));
             World.Mouse.Reset();
         }
-        SetPopulation(new(TotalCockroachCount, TotalAntCount, TotalCaterpillarCount));
+        SetPopulation(Settings);
     }
 
     public void SetPopulation(PopulationSettings settings)
@@ -44,13 +45,26 @@ public sealed class DisplaySimulation(int seed)
         settings.Validate();
         var population = new List<ICreature>();
         Add(CreatureKind.Fly, 1, () => new FlyCreature(SpawnPoint(outside: true)));
-        Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true));
-        Add(CreatureKind.Ant, settings.Ants, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Ant));
-        Add(CreatureKind.Caterpillar, settings.Caterpillars, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Caterpillar));
+        Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true, scale: World.Random.NextFloat(settings.RoachMin / 100f, settings.RoachMax / 100f)));
+        Add(CreatureKind.Ant, settings.Ants, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Ant, World.Random.NextFloat(settings.AntMin / 100f, settings.AntMax / 100f)));
+        Add(CreatureKind.Caterpillar, settings.Caterpillars, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Caterpillar, World.Random.NextFloat(settings.CaterpillarMin / 100f, settings.CaterpillarMax / 100f)));
+        Resize(CreatureKind.Cockroach, Settings.RoachMin, Settings.RoachMax, settings.RoachMin, settings.RoachMax);
+        Resize(CreatureKind.Ant, Settings.AntMin, Settings.AntMax, settings.AntMin, settings.AntMax);
+        Resize(CreatureKind.Caterpillar, Settings.CaterpillarMin, Settings.CaterpillarMax, settings.CaterpillarMin, settings.CaterpillarMax);
+        Settings = settings;
         World.Manager.Replace(population);
         TotalCockroachCount = settings.Cockroaches;
         TotalAntCount = settings.Ants;
         TotalCaterpillarCount = settings.Caterpillars;
+        void Resize(CreatureKind kind, int oldMin, int oldMax, int min, int max)
+        {
+            if (oldMin == min && oldMax == max) return;
+            foreach (var creature in World.Manager.Creatures.OfType<Creature>().Where(c => c.Kind == kind))
+            {
+                var fraction = oldMax == oldMin ? 0.5f : Math.Clamp((creature.Scale * 100 - oldMin) / (oldMax - oldMin), 0, 1);
+                creature.SetScale((min + fraction * (max - min)) / 100f);
+            }
+        }
         void Add(CreatureKind kind, int count, Func<ICreature> create)
         {
             var retained = World.Manager.Creatures.Where(c => c.Kind == kind).Take(count).ToArray();

@@ -33,6 +33,10 @@ public partial class SettingsWindow : Window
         _preferences.Capture.Track(this);
         _preferences.CaptureFailed += CaptureError;
         Closed += (_, _) => _preferences.CaptureFailed -= CaptureError;
+        var sizes = host.Simulation.Settings;
+        RoachMin.Text = sizes.RoachMin.ToString(); RoachMax.Text = sizes.RoachMax.ToString();
+        AntMin.Text = sizes.AntMin.ToString(); AntMax.Text = sizes.AntMax.ToString();
+        CaterpillarMin.Text = sizes.CaterpillarMin.ToString(); CaterpillarMax.Text = sizes.CaterpillarMax.ToString();
         _ready = true;
         Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
@@ -132,7 +136,12 @@ public partial class SettingsWindow : Window
         }
         try
         {
-            var settings = new PopulationSettings(roaches, ants, caterpillars);
+            if (!int.TryParse(RoachMin.Text, out var rMin) || !int.TryParse(RoachMax.Text, out var rMax) ||
+                !int.TryParse(AntMin.Text, out var aMin) || !int.TryParse(AntMax.Text, out var aMax) ||
+                !int.TryParse(CaterpillarMin.Text, out var cMin) || !int.TryParse(CaterpillarMax.Text, out var cMax))
+            { SetStatus("InvalidSizes"); return; }
+            var settings = new PopulationSettings(roaches, ants, caterpillars, rMin, rMax, aMin, aMax, cMin, cMax);
+            try { settings.Validate(); } catch (ArgumentOutOfRangeException) { SetStatus("InvalidSizes"); return; }
             _store.Save(settings);
             _host.SetPopulation(settings);
             RoachSlider.Value = roaches;

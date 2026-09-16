@@ -14,6 +14,11 @@ public abstract class Creature : ICreature
     public float RestingSeconds { get; protected set; }
     protected void AdvanceGait(Vector2 previous, float stride) =>
         AnimationPhase = (AnimationPhase + Vector2.Distance(previous, Position) / stride) % 1;
+    public void SetScale(float scale)
+    {
+        if (!float.IsFinite(scale) || scale < 0.1f || scale > 3f) throw new ArgumentOutOfRangeException(nameof(scale));
+        Scale = scale;
+    }
     public virtual void Relocate(Vector2 position) { Position = position; Velocity = Vector2.Zero; }
     public abstract void Update(float deltaTime, in CreatureContext context);
 }

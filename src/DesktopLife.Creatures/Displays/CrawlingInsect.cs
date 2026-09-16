@@ -10,9 +10,11 @@ public sealed class CrawlingInsect : Creature
     private float _heading;
     private float _pauseRemaining;
     private bool _hasWandered;
-    public CrawlingInsect(Vector2 position, CreatureKind kind)
+    public CrawlingInsect(Vector2 position, CreatureKind kind, float scale = 1)
     {
         if (kind is not (CreatureKind.Ant or CreatureKind.Caterpillar)) throw new ArgumentOutOfRangeException(nameof(kind));
+        if (!float.IsFinite(scale) || scale < 0.1f || scale > 3f) throw new ArgumentOutOfRangeException(nameof(scale));
+        Scale = scale;
         Position = position;
         Kind = kind;
     }
@@ -54,7 +56,7 @@ public sealed class CrawlingInsect : Creature
         var allowed = context.Layout?.ConstrainMove(Position, next) ?? context.Bounds.Clamp(next);
         Velocity = (allowed - Position) / deltaTime;
         Position = allowed;
-        AdvanceGait(previous, Kind == CreatureKind.Ant ? 12 : 9);
+        AdvanceGait(previous, (Kind == CreatureKind.Ant ? 12 : 9) * Scale);
         if (Vector2.DistanceSquared(next, allowed) > 0.0001f)
         {
             var inward = context.Layout?.NearestEdge(Position).Inward;
