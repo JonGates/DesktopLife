@@ -30,6 +30,7 @@ public sealed class FlyBrain(FlyOptions options)
     public FlyMotion Update(Vector2 position, Vector2 velocity, float dt, in CreatureContext context)
     {
         if (!float.IsFinite(dt) || dt <= 0) return new(position, velocity);
+        var elapsed = float.IsFinite(context.ElapsedSeconds) && context.ElapsedSeconds > 0 ? context.ElapsedSeconds : dt;
         dt = MathF.Min(dt, 0.05f);
         if (!_initialized)
         {
@@ -69,7 +70,6 @@ public sealed class FlyBrain(FlyOptions options)
         }
         if (State == FlyState.Landed)
         {
-            var elapsed = float.IsFinite(context.ElapsedSeconds) && context.ElapsedSeconds > 0 ? context.ElapsedSeconds : dt;
             _landedRemaining -= elapsed;
             if (_landedRemaining > 0.000001) return new(_landingTarget, Vector2.Zero);
             State = FlyState.Approach;

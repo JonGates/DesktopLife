@@ -13,7 +13,7 @@ public static class LanguageService
         ["HabitatHelp"] = ("切换标签会保存两组数量与尺寸，并立即切换桌面场景。", "Switching tabs saves both populations and sizes, then changes the desktop scene immediately."),
         ["HabitatSaved"] = ("场景已切换，两组配置已保存。", "Scene changed. Both populations are saved."),
         ["Turtle"] = ("绿海龟 · 固定 1 只", "Green turtle · always one"),
-        ["TurtleHelp"] = ("跟随鼠标悠游 · 点击后原地缩壳 3 秒", "Follows the cursor · click to retreat into its shell for 3 seconds"),
+        ["TurtleHelp"] = ("同苍蝇速度环绕鼠标 · 到达点击处后缩壳 3 秒", "Same motion as the fly · reaches the click, then retreats into its shell for 3 seconds"),
         ["OceanSpecies"] = ("海洋生物 · 12 种鱼", "Ocean creatures · 12 fish species"),
         ["OceanHelp"] = ("每种最多 100 条；0 为关闭。尺寸范围 10–300%。支持写实和可爱风格。", "Up to 100 of each fish; 0 disables it. Sizes: 10–300%. Realistic and cute styles supported."),
         ["CaptureToggle"] = ("从录屏中隐藏生物和设置窗口", "Exclude creatures and settings from screen capture"),

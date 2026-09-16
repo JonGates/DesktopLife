@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Text.Json;
 using DesktopLife.Creatures.Displays;
+using DesktopLife.Creatures.Fly;
 using DesktopLife.Engine.Creatures;
 using DesktopLife.Engine.Input;
 using DesktopLife.Engine.Math;
@@ -70,60 +71,46 @@ public class OceanTests
     }
 
     [Theory]
-    [InlineData(1000, true)]
-    [InlineData(1020, false)]
-    public void TurtleCrossesTouchingDisplaysButCannotCrossGaps(float right, bool crosses)
+    [InlineData(1000)]
+    [InlineData(1020)]
+    public void TurtleMatchesFlyAcrossDisplaysAndClicks(float right)
     {
         var layout = new DesktopLayout([new("a", new(0, 0, 1000, 800)), new("b", new(right, 0, 1000, 800))]);
         var turtle = new SwimmingCreature(new(990, 400), CreatureKind.GreenTurtle);
-        var random = new RandomSource(1);
-        for (var i = 0; i < 300; i++)
+        var fly = new FlyCreature(new(990, 400));
+        var turtleRandom = new RandomSource(1); var flyRandom = new RandomSource(1);
+        for (var i = 0; i < 800; i++)
         {
-            var previous = turtle.Position;
-            turtle.Update(.02f, new(new(new(1200, 400), Vector2.Zero, 0, false, TimeSpan.Zero), layout.Bounds, i * .02f, random, Layout: layout));
-            Assert.InRange(Vector2.Distance(previous, turtle.Position), 0, 2);
-            Assert.True(layout.Contains(turtle.Position));
+            var mouse = new MouseState(new(1200, 400), new(1000, 0), 1000, true, TimeSpan.Zero,
+                i >= 100 ? new MouseClick(1, new(1300, 450)) : null);
+            turtle.Update(.02f, new(mouse, layout.Bounds, i * .02f, turtleRandom, Layout: layout));
+            fly.Update(.02f, new(mouse, layout.Bounds, i * .02f, flyRandom, Layout: layout));
+            Assert.Equal(fly.Position, turtle.Position);
+            Assert.Equal(fly.Velocity, turtle.Velocity);
+            Assert.Equal(fly.IsResting, turtle.IsResting);
+            Assert.Equal(fly.IsVisible, turtle.IsVisible);
         }
-        Assert.Equal(crosses, turtle.Position.X > 1000);
     }
 
     [Fact]
-    public void TurtleRetractsImmediatelyForThreeSecondsThenResumesFollowing()
+    public void TurtleTravelsToClickThenRetractsForThreeSecondsAndResumesFollowing()
     {
         var turtle = new SwimmingCreature(new(100, 400), CreatureKind.GreenTurtle);
         var random = new RandomSource(1);
         var click = new MouseClick(1, new(200, 400));
         CreatureContext Context() => new(new(new(800, 400), Vector2.Zero, 0, false, TimeSpan.Zero, click), new(0, 0, 1000, 800), 0, random);
         turtle.Update(.02f, Context());
-        Assert.InRange(turtle.Position.X, 100, 102);
+        Assert.InRange(turtle.Position.X, 100.01f, 109);
+        Assert.False(turtle.IsResting);
         for (var i = 0; i < 1000 && !turtle.IsResting; i++) turtle.Update(.02f, Context());
         Assert.True(turtle.IsResting);
-        Assert.Equal(new Vector2(100, 400), turtle.Position);
+        Assert.Equal(click.Position, turtle.Position);
         var arrived = turtle.Position;
         for (var i = 0; i < 145; i++) turtle.Update(.02f, Context());
         Assert.Equal(arrived, turtle.Position);
         for (var i = 0; i < 100; i++) turtle.Update(.02f, Context());
         Assert.False(turtle.IsResting);
         Assert.True(turtle.Position.X > arrived.X + 10);
-    }
-
-    [Fact]
-    public void ClickOnDisconnectedDisplayRestsInPlaceThenResumesWithoutCrossingGap()
-    {
-        var layout = new DesktopLayout([new("a", new(0, 0, 1000, 800)), new("b", new(1020, 0, 1000, 800))]);
-        var turtle = new SwimmingCreature(new(990, 400), CreatureKind.GreenTurtle);
-        var random = new RandomSource(1);
-        var click = new MouseClick(1, new(1200, 400));
-        var context = new CreatureContext(new(new(700, 400), Vector2.Zero, 0, false, TimeSpan.Zero, click), layout.Bounds, 0, random, Layout: layout);
-        for (var i = 0; i < 300; i++)
-        {
-            var previous = turtle.Position;
-            turtle.Update(.02f, context);
-            Assert.InRange(Vector2.Distance(previous, turtle.Position), 0, 1);
-            Assert.True(turtle.Position.X < 1000);
-            Assert.True(layout.Contains(turtle.Position));
-        }
-        Assert.True(turtle.Position.X < 940, "After resting the turtle should follow the cursor again.");
     }
 
     [Theory]
@@ -144,7 +131,7 @@ public class OceanTests
         turtle.Update(delta, context);
         Assert.False(turtle.IsResting);
         turtle.Update(delta, context);
-        Assert.InRange(turtle.Position.X, 200.01f, 202.5f);
+        Assert.True(turtle.Position.X > 200);
     }
 
     [Fact]

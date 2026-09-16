@@ -1,4 +1,5 @@
 using System.Numerics;
+using DesktopLife.Creatures.Fly;
 using DesktopLife.Engine.Creatures;
 
 namespace DesktopLife.Creatures.Displays;
@@ -7,14 +8,13 @@ namespace DesktopLife.Creatures.Displays;
 public sealed class SwimmingCreature : Creature
 {
     public override CreatureKind Kind { get; }
-    public override bool IsResting => _dwellRemaining > 0;
+    public override bool IsResting => _cursorMotion?.IsResting ?? false;
+    private readonly FlyCreature? _cursorMotion;
     private readonly InsectDefinition _definition;
     private float _heading;
     private float _swimRotation;
     private float _turnRemaining;
     private bool _initialized;
-    private long? _lastClick;
-    private float _dwellRemaining;
 
     public SwimmingCreature(Vector2 position, CreatureKind kind, float scale = 1)
     {
@@ -22,12 +22,17 @@ public sealed class SwimmingCreature : Creature
         Kind = kind;
         Position = position;
         SetScale(scale);
+        if (kind == CreatureKind.GreenTurtle)
+        {
+            _cursorMotion = new FlyCreature(position);
+            IsVisible = _cursorMotion.IsVisible;
+        }
     }
 
     public override void Relocate(Vector2 position)
     {
         base.Relocate(position);
-        _dwellRemaining = 0;
+        _cursorMotion?.Relocate(position);
         RestingSeconds = 0;
         _turnRemaining = 0;
     }
@@ -36,34 +41,21 @@ public sealed class SwimmingCreature : Creature
     {
         if (!float.IsFinite(deltaTime) || deltaTime <= 0) return;
         var dt = MathF.Min(deltaTime, .05f);
-        var elapsed = float.IsFinite(context.ElapsedSeconds) && context.ElapsedSeconds > 0 ? context.ElapsedSeconds : deltaTime;
         var previous = Position;
-        Vector2 desired;
-        if (Kind == CreatureKind.GreenTurtle)
+        if (_cursorMotion is not null)
         {
-            var click = context.Mouse.Click;
-            if (click is not null && click.Sequence != _lastClick)
-            {
-                _lastClick = click.Sequence;
-                _dwellRemaining = 3;
-                RestingSeconds = 0;
-                Velocity = Vector2.Zero;
-                return;
-            }
-            if (_dwellRemaining > 0)
-            {
-                _dwellRemaining = MathF.Max(0, _dwellRemaining - elapsed);
-                RestingSeconds += elapsed;
-                Velocity = Vector2.Zero;
-                return;
-            }
-            RestingSeconds = 0;
-            var target = context.Mouse.Position;
-            target = context.Layout?.Clamp(target) ?? context.Bounds.Clamp(target);
-            var offset = target - Position;
-            desired = offset.LengthSquared() > .01f ? Vector2.Normalize(offset) * MathF.Min(_definition.Speed, offset.Length() * 2) : Vector2.Zero;
+            // Share the fly's speed and state machine; only appearance and gait differ.
+            var wasResting = IsResting;
+            _cursorMotion.Update(deltaTime, context);
+            Position = _cursorMotion.Position;
+            Velocity = _cursorMotion.Velocity;
+            Rotation = _cursorMotion.Rotation;
+            IsVisible = _cursorMotion.IsVisible;
+            RestingSeconds = IsResting ? (wasResting ? RestingSeconds + deltaTime : 0) : 0;
+            AdvanceGait(previous, _definition.Stride);
+            return;
         }
-        else
+        Vector2 desired;
         {
             if (!_initialized)
             {
@@ -95,11 +87,6 @@ public sealed class SwimmingCreature : Creature
         Velocity = (Position - previous) / dt;
         if (Kind != CreatureKind.GreenTurtle && Velocity.LengthSquared() > .0001f)
             Rotation = MathF.Atan2(Velocity.Y, Velocity.X);
-        if (Kind == CreatureKind.GreenTurtle && Velocity.LengthSquared() > .01f)
-        {
-            var angle = MathF.IEEERemainder(MathF.Atan2(Velocity.Y, Velocity.X) - Rotation, MathF.Tau);
-            Rotation += Math.Clamp(angle, -2.5f * dt, 2.5f * dt);
-        }
         AdvanceGait(previous, _definition.Stride);
     }
 }
