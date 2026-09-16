@@ -12,9 +12,15 @@ The native **Windows `.scr` screen saver** offers dark/light backgrounds and aut
 
 Adds **ladybugs, ground beetles, earwigs, silverfish, crickets, grasshoppers, mantises and stick insects** to the original four. Open **More insects** to set each population and size range in desktop or screen saver settings. New species start disabled, with an 80–120% size range.
 
-Each has its own body texture and appendages. Relative body sizes reflect representative insects, not calibrated physical millimeters. The eight additions currently retain realistic appearances in both style modes, with walking, turning and pausing; jumping, predation and takeoff are not simulated. [Species and proportions](docs/INSECTS.md).
+Each has its own body texture and appendages. Relative body sizes reflect representative insects, not calibrated physical millimeters. In the v0.4.0 download, the eight additions retain realistic appearances in both style modes, with walking, turning and pausing; jumping, predation and takeoff are not simulated. [Species and proportions](docs/INSECTS.md).
 
 ![12 insects at 3x detail and native size — WPF render, not a recording](docs/images/insect-catalog.png)
+
+## Development preview: cute styles for all 12 insects
+
+Current source and local preview builds include distinct cute appearances for all eight additions in desktop and screen saver modes. Switching preserves populations, sizes and positions. This update is not yet included in the v0.4.0 downloads below.
+
+![All 12 cute insects — WPF render, not a recording](docs/images/cute-insect-catalog.png)
 
 ## Realistic insect textures and articulated legs
 

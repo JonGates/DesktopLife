@@ -11,7 +11,7 @@ internal static class AdditionalInsectSprite
     private static readonly BitmapSource[] Bodies = LoadAtlas("small-insect-bodies.png")
         .Concat(LoadAtlas("long-insect-bodies.png")).ToArray();
 
-    public static DrawingGroup Create(InsectDefinition insect, int frame)
+    public static DrawingGroup Create(InsectDefinition insect, int frame, bool cute = false)
     {
         var kind = insect.Kind;
         var index = InsectCatalog.Additional.ToList().FindIndex(x => x.Kind == kind);
@@ -32,6 +32,7 @@ internal static class AdditionalInsectSprite
             };
             var pen = new Pen(new SolidColorBrush(color), Math.Clamp(length / 45, 0.4, 1.0))
                 { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round, LineJoin = PenLineJoin.Round };
+            if (cute) pen.Brush = new SolidColorBrush(Color.FromRgb(91, 108, 86));
             var fine = new Pen(pen.Brush, Math.Clamp(length / 100, 0.24, 0.5));
             for (var side = -1; side <= 1; side += 2)
             {
@@ -102,7 +103,8 @@ internal static class AdditionalInsectSprite
             }
             if (kind == CreatureKind.Silverfish)
                 dc.DrawLine(fine, new(-length * 0.4, 0), new(-length * 1.16, 0));
-            dc.DrawImage(Bodies[index], new Rect(-length / 2, -width / 2, length, width));
+            if (cute) CuteAdditionalBody.Draw(dc, insect);
+            else dc.DrawImage(Bodies[index], new Rect(-length / 2, -width / 2, length, width));
         }
         group.Freeze();
         return group;

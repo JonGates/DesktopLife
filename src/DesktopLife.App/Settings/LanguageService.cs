@@ -29,7 +29,7 @@ public static class LanguageService
         ["LayoutHelp"] = ("相接边缘可跨屏移动，方向跟随 Windows 显示设置。", "Creatures cross touching edges, following your Windows display layout."),
         ["Counts"] = ("全桌面总数量", "Desktop population"),
         ["AdditionalSpecies"] = ("昆虫配置 · 11 种", "Insect settings · 11 species"),
-        ["AdditionalHelp"] = ("蟑螂、蚂蚁最多 500 只，其余最多 100 只；0 为关闭。尺寸范围 10–300%。新增 8 种始终使用写实外观。", "Up to 500 cockroaches or ants, 100 of each other species; 0 disables it. Sizes: 10–300%. The eight additions always use realistic appearances."),
+        ["AdditionalHelp"] = ("蟑螂、蚂蚁最多 500 只，其余最多 100 只；0 为关闭。尺寸范围 10–300%。所有昆虫均支持写实和可爱风格。", "Up to 500 cockroaches or ants, 100 of each other species; 0 disables it. Sizes: 10–300%. All insects support realistic and cute styles."),
         ["CountColumn"] = ("数量", "Count"),
         ["MinColumn"] = ("最小 %", "Min %"),
         ["MaxColumn"] = ("最大 %", "Max %"),

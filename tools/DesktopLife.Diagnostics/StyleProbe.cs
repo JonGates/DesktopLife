@@ -37,6 +37,8 @@ internal static class StyleProbe
             host.TogglePause();
             host.SynchronizeDisplays();
             if (host.Overlays.Any(w => w.InsectStyle != CreatureStyle.Cute)) throw new Exception("New overlay style inheritance");
+            host.SetPopulation(new DesktopLife.Creatures.Displays.PopulationSettings(Additional:
+                InsectCatalog.Additional.ToDictionary(x => x.Kind, _ => new DesktopLife.Creatures.Displays.SpeciesPopulation(2))));
             var positions = host.Simulation.World.Manager.Creatures.Select(c => (c.Id, c.Position)).ToArray();
             if (!preferences.SaveStyle(CreatureStyle.Realistic, out _)) throw new Exception("Style save");
             if (!positions.SequenceEqual(host.Simulation.World.Manager.Creatures.Select(c => (c.Id, c.Position)))) throw new Exception("Style reset population");

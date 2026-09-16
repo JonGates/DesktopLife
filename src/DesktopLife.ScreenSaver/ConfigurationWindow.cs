@@ -57,7 +57,7 @@ public sealed class ConfigurationWindow : Window
         var caterpillars = Count("毛毛虫 / Caterpillars (0–100)", settings.Caterpillars);
         var caterpillarSize = SizeRange(settings.CaterpillarMin, settings.CaterpillarMax);
         Label("更多昆虫 / More insects", 16);
-        Label("每种 0–100 只，尺寸 10–300%；数量为 0 时关闭。\n0–100 per species, size 10–300%; a count of 0 disables it.\n这 8 种昆虫始终使用写实外观。 / These 8 species always use realistic bodies.");
+        Label("每种 0–100 只，尺寸 10–300%；数量为 0 时关闭。\n0–100 per species, size 10–300%; a count of 0 disables it.\n所有昆虫支持写实和可爱风格。 / All insects support realistic and cute styles.");
         var additionalRows = new List<(InsectDefinition Definition, TextBox Count, TextBox Min, TextBox Max)>();
         Grid AdditionalRow()
         {

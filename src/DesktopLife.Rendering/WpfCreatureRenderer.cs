@@ -14,7 +14,9 @@ public sealed class WpfCreatureRenderer : IRenderer
     private static readonly Dictionary<CreatureKind, DrawingGroup[]> Additional = InsectCatalog.Additional
         .ToDictionary(insect => insect.Kind, insect => Enumerable.Range(0, 8).Select(i => AdditionalInsectSprite.Create(insect, i)).ToArray());
     private static readonly Dictionary<CreatureKind, DrawingGroup[]> Cute = new[] { CreatureKind.Fly, CreatureKind.Ant, CreatureKind.Cockroach, CreatureKind.Caterpillar }
-        .ToDictionary(k => k, k => Enumerable.Range(0, 8).Select(i => CuteInsectSprite.Create(k, i)).ToArray());
+        .Concat(InsectCatalog.Additional.Select(x => x.Kind))
+        .ToDictionary(k => k, k => Enumerable.Range(0, 8).Select(i => k is CreatureKind.Fly or CreatureKind.Ant or CreatureKind.Cockroach or CreatureKind.Caterpillar
+            ? CuteInsectSprite.Create(k, i) : AdditionalInsectSprite.Create(InsectCatalog.Get(k), i, cute: true)).ToArray());
     private static readonly DrawingGroup[] CuteResting = Enumerable.Range(0, 8).Select(i => CuteInsectSprite.Create(CreatureKind.Fly, i, true)).ToArray();
     private static readonly DrawingGroup SettledFly = FlySprite.Create(true, grooming: false);
     private static readonly DrawingGroup CuteSettledFly = CuteInsectSprite.Create(CreatureKind.Fly, 0, true, false);

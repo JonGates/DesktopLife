@@ -18,6 +18,7 @@ internal static class InsectCatalogProbe
         foreach (var insect in InsectCatalog.Additional)
         {
             byte[]? previous = null;
+            byte[]? previousCute = null;
             for (var frame = 0; frame < 8; frame++)
             {
                 var visual = new DrawingVisual();
@@ -32,20 +33,32 @@ internal static class InsectCatalogProbe
                         if ((y < 122 || y > 133) && pixels[(y * 256 + x) * 4 + 3] > 32)
                             throw new Exception("Ladybug appendages extend too far beyond its compact body");
                 previous = pixels;
+                renderer.Style = CreatureStyle.Cute;
+                var cuteVisual = new DrawingVisual();
+                using (var dc = cuteVisual.RenderOpen()) renderer.Render(dc, [new Pose(insect.Kind, new(128, 128), frame / 8f)], new(0, 0, 256, 256), 0, 1, 1);
+                var cuteBitmap = Render(cuteVisual, 256, 256);
+                var cutePixels = new byte[pixels.Length]; cuteBitmap.CopyPixels(cutePixels, 1024, 0);
+                if (cutePixels.SequenceEqual(pixels)) throw new Exception("Cute style falls back to realistic: " + insect.Kind);
+                if (previousCute != null && previousCute.SequenceEqual(cutePixels)) throw new Exception("Cute animation is frozen: " + insect.Kind);
+                if (cutePixels[3] != 0 || cutePixels[(128 * 256 + 128) * 4 + 3] == 0) throw new Exception("Cute body/alpha failure: " + insect.Kind);
+                previousCute = cutePixels;
+                renderer.Style = CreatureStyle.Realistic;
             }
             // Pausing walkers must retain their gait pose instead of using fly grooming frames.
             var paused = new Pose(insect.Kind, new(128, 128), 0.625f, true);
             if (WpfCreatureRenderer.Frame(paused) != 5) throw new Exception("Walker pose changed while paused");
-            Console.WriteLine("PASS: " + insect.Kind + " body, transparent background, eight moving poses and stable pause");
+            Console.WriteLine("PASS: " + insect.Kind + " both styles, transparent background, eight moving poses, distinct cute appearance and stable pause");
         }
+        for (var style = 0; style < 2; style++)
         for (var dark = 0; dark < 2; dark++)
         {
+            renderer.Style = (CreatureStyle)style;
             var visual = new DrawingVisual();
             using (var dc = visual.RenderOpen())
             {
                 var foreground = dark == 1 ? Brushes.Gainsboro : Brushes.DarkSlateGray;
                 dc.DrawRectangle(dark == 1 ? new SolidColorBrush(Color.FromRgb(24, 30, 27)) : new SolidColorBrush(Color.FromRgb(241, 245, 240)), null, new Rect(0, 0, 1440, 800));
-                Text(dc, "DesktopLife · 12 种昆虫", 28, 20, 26, foreground);
+                Text(dc, style == 0 ? "DesktopLife · 12 种写实昆虫" : "DesktopLife · 12 种可爱昆虫", 28, 20, 26, foreground);
                 Text(dc, "WPF 渲染示意 · 上方 3 倍细节，下方原始尺寸 · 默认 100% 身体比例", 28, 60, 14, foreground);
                 var kinds = new[] { CreatureKind.Fly, CreatureKind.Cockroach, CreatureKind.Ant, CreatureKind.Caterpillar }.Concat(InsectCatalog.Additional.Select(x => x.Kind)).ToArray();
                 var names = new[] { "苍蝇 / Fly", "蟑螂 / Cockroach", "蚂蚁 / Ant", "毛毛虫 / Caterpillar" }.Concat(InsectCatalog.Additional.Select(x => x.ChineseName + " / " + x.EnglishName)).ToArray();
@@ -61,7 +74,7 @@ internal static class InsectCatalogProbe
                     Text(dc, names[i], x - 100, y + 100, 14, foreground);
                 }
             }
-            Save(Render(visual, 1440, 800), Path.Combine(output, dark == 1 ? "insects-dark.png" : "insects-light.png"));
+            Save(Render(visual, 1440, 800), Path.Combine(output, (style == 1 ? "cute-" : "") + (dark == 1 ? "insects-dark.png" : "insects-light.png")));
         }
     }
     private static void Text(DrawingContext dc, string value, double x, double y, double size, Brush brush) =>
