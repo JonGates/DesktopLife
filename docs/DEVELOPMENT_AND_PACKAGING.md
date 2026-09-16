@@ -42,12 +42,12 @@ dotnet run --project src/DesktopLife.App -- --settings
 
 “便携”指程序和 .NET 无需安装。个人配置仍保存在 `%AppData%\DesktopLife`，不会跟随 EXE 移动到另一台电脑。
 
-v0.5.0 起，主程序便携包同时包含桌面宠物与屏保入口，是普通用户的推荐下载。独立屏保 ZIP 作为可选包保留，两者采用相同版本并共用一份 `SHA256SUMS.txt`。主程序的「屏保」页可准备固定路径副本并打开 Windows 设置；升级后需再次操作，以更新 Windows 使用的副本。
+v5.0.0 起，主程序便携包同时包含桌面宠物与屏保入口，是普通用户的推荐下载。正式发布仅上传一个主程序 ZIP 和一份 `SHA256SUMS.txt`。主程序的「屏保」页可准备固定路径副本并打开 Windows 设置；升级后需再次操作，以更新 Windows 使用的副本。
 
 ## 3. 推荐：一条命令生成便携包
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0
 ```
 
 脚本会输出 JSON，包含：
@@ -59,7 +59,7 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 
 每次使用新的暂存目录，防止普通发布的旧 DLL 混入便携包。相同发布版本的 ZIP 已存在时，脚本会在构建前拒绝覆盖；请递增 -Version，或先重命名旧包。
 
-发布版本由 -Version 显式指定，也支持 v0.5.0、0.5.0-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v0.5.0。构建使用当前工作区，正式分享前应先提交应用代码：
+发布版本由 -Version 显式指定，也支持 v5.0.0、5.0.0-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v5.0.0。构建使用当前工作区，正式分享前应先提交应用代码：
 
 ```powershell
 git status --short
@@ -69,7 +69,7 @@ git rev-parse --short HEAD
 脚本默认打入 `.NET 10.0.12`，这是此次实际验证的运行环境版本。更新运行环境时显式指定版本，并重新验证：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0 -RuntimeVersion 10.0.12
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0 -RuntimeVersion 10.0.12
 ```
 
 朋友完整解压 ZIP 后，双击 `Start-DesktopLife.cmd` 即可启动并打开设置；双击 `DesktopLife.exe` 也能启动，设置窗口可通过托盘图标打开。
@@ -170,7 +170,7 @@ Get-FileHash '.\artifacts\DesktopLife-Portable-win-x64-<版本>.zip' -Algorithm 
 检查官方源连接。优先重试还原；不要关闭包签名或完整性校验。已有完整且可信的本地包源时，可使用：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0 -NuGetSource D:\packages\verified-feed
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0 -NuGetSource D:\packages\verified-feed
 ```
 
 本地源需包含指定版本所需的包，或依赖已有 NuGet 缓存。此前的 `artifacts/portable-nuget-feed` 只是本机临时缓存，不会随仓库上传。
@@ -189,53 +189,13 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0
 
 ## 8. 仓库与分发
 
-DesktopLife 使用统一项目版本：桌面应用与屏保是同一 Release 下的两个子程序，不分别维护版本。发布时在同一个干净的版本标签检出目录执行：
+DesktopLife v5.0.0 正式版统一发布主程序，内含桌面宠物与屏保功能。源码中的屏保项目供主程序复用，不再单独提供屏保下载包。先提交源码，再执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
-powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.5.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0
+Copy-Item artifacts/DesktopLife-Portable-win-x64-v5.0.0.zip.sha256 artifacts/SHA256SUMS.txt
 ```
 
-打包脚本各自生成 `.zip.sha256` 供本地检查；发布时将校验值合并为一个清单，只上传两个 ZIP 和一个 `SHA256SUMS.txt` 到同一个 `v0.5.0` Release。检查两个包的 `build-info.json` 中 Version 一致，SourceRevision 解析到同一个 Git 提交（可用 `git rev-parse <SourceRevision>` 比较完整哈希）。后续版本同步更新两条命令的版本号；保留旧 Release 作为历史记录。
+GitHub Release 使用 `v5.0.0` 标签，取消 Pre-release，并设为 Latest。只上传主程序 ZIP 与 `SHA256SUMS.txt` 两个附件；GitHub 自动附加的 Source code ZIP / tar.gz 是源码。保留历史版本记录。
 
-生成统一校验清单（每行是一个 ZIP 的 SHA256 和文件名）：
-
-```powershell
-$releaseVersion = '0.5.0'
-$packageNames = @(
-    "DesktopLife-Portable-win-x64-v$releaseVersion.zip",
-    "DesktopLife-ScreenSaver-win-x64-v$releaseVersion.zip"
-)
-$checksumLines = foreach ($packageName in $packageNames) {
-    $packageHash = (Get-FileHash -LiteralPath "artifacts/$packageName" -Algorithm SHA256 -ErrorAction Stop).Hash
-    "$packageHash  $packageName"
-}
-$checksumLines | Set-Content -LiteralPath artifacts/SHA256SUMS.txt -Encoding ASCII
-```
-
-GitHub 自动提供的 Source code ZIP / tar.gz 是源码附件；我们维护的发布附件共三个。Tags 页保留各历史版本，不用于展示这三个程序下载附件。
-
-- 提交源码、打包脚本、开发文档和验证记录。
-- `artifacts`、`bin`、`obj` 已被 Git 忽略，构建产物不会随 `git push` 上传。
-- 直接将 ZIP 发给朋友，或另外创建 GitHub Release 并上传 ZIP 和 SHA256 文件。提交源码不会自动生成 Release 下载附件。
-- 当前流程生成免安装运行的程序；如需带安装向导、桌面快捷方式和卸载入口的安装器，需要另外增加安装器构建步骤。
-
-## 屏保版补充
-
-新增独立项目 `src/DesktopLife.ScreenSaver`，复用引擎与素材，生成标准 Windows `.scr`。桌面模式打包入口保持 `Package-Portable.ps1`。
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-ScreenSaver.ps1 -Version 0.5.0
-```
-
-输出 `artifacts/DesktopLife-ScreenSaver-win-x64-v0.5.0.zip`，包含自带运行环境的 `DesktopLife.scr`、安装/配置/全屏体验脚本；SHA256 校验文件位于 ZIP 旁。完整使用、配置位置与标准参数见 [屏保说明](SCREENSAVER.md)。
-
-验证命令：
-
-```powershell
-dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-check
-dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-fullscreen-check
-dotnet run --project tools/DesktopLife.Diagnostics -- --screensaver-layout-check
-```
-
-后两项会短暂打开全屏窗口并自动关闭；分别验证当前真实显示器和包含负坐标、错位边缘的模拟双屏布局。
+核对 EXE 版本、`build-info.json` 中 Version / SourceRevision 和 ZIP 的 SHA256；从解压目录验证主程序及 `/c` 配置、`/p HWND` 系统预览入口。运行时安装屏保所需的 `.scr` 副本由主程序准备，用户无需另外下载。

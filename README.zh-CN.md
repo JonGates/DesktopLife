@@ -6,19 +6,19 @@
 
 森林里，苍蝇围绕鼠标飞行，昆虫跨屏爬行；海洋里，小绿龟跟随鼠标，12 种鱼自由游动。电脑闲置时，也可以作为 Windows 屏保运行。
 
-**[下载 DesktopLife v0.5.0 主程序包](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-Portable-win-x64-v0.5.0.zip)** · [可选：独立屏保包](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-ScreenSaver-win-x64-v0.5.0.zip)
+**[下载 DesktopLife v5.0.0 主程序包](https://github.com/JonGates/DesktopLife/releases/download/v5.0.0/DesktopLife-Portable-win-x64-v5.0.0.zip)**
 
 Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 · 多屏通行 · 自带运行环境
 
-> **v0.5.0 预览版：** 新增海洋场景、小绿龟与 12 种鱼，改进蜘蛛丝网，并统一主程序和屏保设置界面。[完整更新说明](docs/RELEASE_v0.5.0.md)。
+> **v5.0.0 正式版：** 新增海洋场景、小绿龟与 12 种鱼，改进蜘蛛丝网，并统一主程序和屏保设置界面。[完整更新说明](docs/RELEASE_v5.0.0.md)。
 >
-> **推荐只下载主程序包：已包含桌面宠物和屏保功能。** 独立屏保包供只需要屏保的用户使用，不必两个都下载。
+> **推荐只下载主程序包：已包含桌面宠物和屏保功能。** v5.0.0 统一发布一个主程序包。
 
 ![主屏实录：昆虫在桌面自由活动](docs/images/live-desktop.gif)
 
 ## 下载与开始使用
 
-1. 在 [Release 页面](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.0) 展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.5.0.zip`。
+1. 在 [Release 页面](https://github.com/JonGates/DesktopLife/releases/tag/v5.0.0) 展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v5.0.0.zip`。
 2. 完整解压，双击 **`Start-DesktopLife.cmd`** 启动并打开设置；也可运行 `DesktopLife.exe`。
 3. 在「生物」页切换「森林／海洋」，调整数量和尺寸并保存；在「偏好」页设置风格、快捷键和录屏选项。
 4. 关闭设置后生物继续运行。双击托盘图标重开设置，右键托盘选择「退出」结束程序。
@@ -27,9 +27,8 @@ Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 ·
 
 | Release 附件 | 用途 |
 | --- | --- |
-| `DesktopLife-Portable-win-x64-v0.5.0.zip` | 推荐：主程序，包含桌面宠物、屏保预览、配置与安装入口。 |
-| `DesktopLife-ScreenSaver-win-x64-v0.5.0.zip` | 可选：只使用屏保的独立 `.scr` 包。 |
-| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/SHA256SUMS.txt) | 两个 ZIP 共用的校验清单，每个文件一行 SHA256。 |
+| `DesktopLife-Portable-win-x64-v5.0.0.zip` | 推荐：主程序，包含桌面宠物、屏保预览、配置与安装入口。 |
+| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v5.0.0/SHA256SUMS.txt) | 主程序 ZIP 的 SHA256 校验值。 |
 | Tags 的 `zip` / `tar.gz` 或 `Source code` | 项目源码，不能直接当作便携程序运行。 |
 
 ## 从主程序设置 Windows 屏保
@@ -40,7 +39,7 @@ Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 ·
 
 完成设置后，Windows 在空闲时自动触发，主程序退出后仍可工作。仅打开程序或预览不会启用自动屏保。程序副本保存在 `%LocalAppData%\DesktopLife\ScreenSaver`；升级后重新点击 Windows 设置入口并应用，更新系统使用的副本。
 
-独立屏保包可通过 `Configure-ScreenSaver.cmd` 配置、`Preview-FullScreen.cmd` 预览、`Install-ScreenSaver.cmd` 打开系统设置；使用此包时请保留解压文件夹位置。[屏保详细说明](docs/SCREENSAVER.md)。
+[屏保详细说明](docs/SCREENSAVER.md)。
 
 ## 统一设置界面
 
@@ -95,9 +94,9 @@ cd DesktopLife
 dotnet build DesktopLife.sln
 dotnet test DesktopLife.sln
 dotnet run --project src/DesktopLife.App -- --settings
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0
 ```
 
-[开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)。本版本仍为预览版：不同 GPU、实际混合系统缩放与高数量性能仍需要更多设备验证。
+[开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)。v5.0.0 为正式版；不同 GPU、实际混合系统缩放与高数量性能仍需要更多设备验证。
 
 欢迎在 [Issues](https://github.com/JonGates/DesktopLife/issues) 提交反馈，并附上 Windows 版本、DesktopLife 版本、显示器排列和复现步骤。如果喜欢这个小生态，欢迎点亮 ⭐。

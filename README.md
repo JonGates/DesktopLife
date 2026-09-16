@@ -6,19 +6,19 @@
 
 Flies chase your cursor, spiders escape on silk, and a green turtle swims among 12 fish species. Switch between Forest and Ocean, across your monitors or as a native Windows screen saver.
 
-[**Download Desktop Pets v0.5.0**](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-Portable-win-x64-v0.5.0.zip) · [**Download Screen Saver v0.5.0**](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-ScreenSaver-win-x64-v0.5.0.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
+[**Download DesktopLife v5.0.0**](https://github.com/JonGates/DesktopLife/releases/download/v5.0.0/DesktopLife-Portable-win-x64-v5.0.0.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
 
 Windows 10/11 x64 · 26 creature types across two scenes · Realistic and cute styles · Multi-monitor · Portable
 
 </div>
 
-> **New in v0.5.0:** Forest / Ocean scenes, a cursor-following turtle and 12 fish species, improved spider silk, and redesigned bilingual settings. The main app now includes screen saver preview, configuration and Windows setup. [Release notes](docs/RELEASE_v0.5.0.md).
+> **New in v5.0.0:** Forest / Ocean scenes, a cursor-following turtle and 12 fish species, improved spider silk, and redesigned bilingual settings. The main app now includes screen saver preview, configuration and Windows setup. [Release notes](docs/RELEASE_v5.0.0.md).
 
-**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** The standalone screen saver ZIP is optional; you do not need both downloads. [Screen saver guide](docs/SCREENSAVER.md).
+**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** v5.0.0 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
 
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
-> DesktopLife is currently a preview. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
+> DesktopLife v5.0.0 is a stable release. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
 
 ## What lives on your desktop?
 
@@ -45,9 +45,8 @@ Ocean adds **Green turtle · Clownfish · Blue tang · Yellow tang · Butterflyf
 | Best for | Creatures that stay with you while you work | An animated ecosystem while the PC is idle |
 | Interaction | Mouse-following fly or turtle, cursor reactions, pause/resume hotkeys | Autonomous movement; mouse or keyboard exits |
 | Display | Transparent overlay across your desktop | Native Windows `.scr` with dark or light background |
-| Download | **[DesktopLife-Portable-win-x64-v0.5.0.zip](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-Portable-win-x64-v0.5.0.zip)** | **[DesktopLife-ScreenSaver-win-x64-v0.5.0.zip](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-ScreenSaver-win-x64-v0.5.0.zip)** |
 
-Both packages support **Windows 10/11 x64**, include the .NET runtime, and keep their settings separate. No SDK, Visual Studio or separate .NET installation is required.
+Both modes support **Windows 10/11 x64**, include the .NET runtime, and keep their settings separate. No SDK, Visual Studio or separate .NET installation is required.
 
 ## Quick start
 
@@ -66,7 +65,7 @@ Closing the settings window keeps DesktopLife running in the system tray. Right-
 2. Preview it immediately; mouse or keyboard input exits.
 3. Open **Windows screen saver settings**, select DesktopLife, choose an idle timeout and click **Apply**.
 
-The app prepares a persistent screen saver copy under `%LocalAppData%\DesktopLife\ScreenSaver`. Windows can start it even after the desktop app exits. After upgrading, repeat Windows setup to select the new copy. The optional standalone ZIP provides `Configure-ScreenSaver.cmd`, `Preview-FullScreen.cmd` and `Install-ScreenSaver.cmd`; keep that extracted folder in place. [Full guide](docs/SCREENSAVER.md).
+The app prepares a persistent screen saver copy under `%LocalAppData%\DesktopLife\ScreenSaver`. Windows can start it even after the desktop app exits. After upgrading, repeat Windows setup to select the new copy. [Full guide](docs/SCREENSAVER.md).
 
 ### Unified settings
 
@@ -76,7 +75,7 @@ The app prepares a persistent screen saver copy under `%LocalAppData%\DesktopLif
 
 Both windows support English and Simplified Chinese, resizing and persistent bottom actions. Screen saver settings remain separate from desktop settings.
 
-> GitHub's automatically generated **Source code** archives contain project files, not the ready-to-run Windows app. Download one of the two packages above.
+> GitHub's automatically generated **Source code** archives contain project files, not the ready-to-run Windows app. Download the Portable package above.
 
 ## Realistic or cute
 
@@ -94,7 +93,7 @@ Realistic mode combines generated macro-style body textures with program-driven 
 
 ### Live insects and bilingual settings
 
-This recording shows the earlier settings layout; the current v0.5.0 interface is shown above.
+This recording shows the earlier settings layout; the current v5.0.0 interface is shown above.
 
 ![DesktopLife settings with live insects and Chinese-English language switching](docs/images/live-settings.gif)
 
@@ -125,7 +124,7 @@ Desktop settings are stored under **`%AppData%\DesktopLife`**. The desktop app a
 
 ### Is this a finished release?
 
-Not yet. **v0.5.0 is a preview release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
+**v5.0.0 is a stable release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
 
 ## Build from source
 
@@ -142,7 +141,7 @@ dotnet run --project src/DesktopLife.App -- --settings
 Create a self-contained Windows x64 package:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0
 ```
 
 For implementation details, packaging commands and diagnostics, see the [development and packaging guide](docs/DEVELOPMENT_AND_PACKAGING.md). Motion and size behavior are documented in [locomotion](docs/LOCOMOTION.md) and [species and proportions](docs/INSECTS.md).
@@ -164,6 +163,6 @@ When reporting a problem, include:
 
 **If DesktopLife earned a permanent place on your desktop, consider giving it a ⭐.**
 
-[Download v0.5.0](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.0) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
+[Download v5.0.0](https://github.com/JonGates/DesktopLife/releases/tag/v5.0.0) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
 
 </div>

@@ -1,6 +1,6 @@
 # 海洋模式 / Ocean mode
 
-海洋模式已包含在 v0.5.0 的主程序与独立屏保包中。[下载版本](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.0)。
+海洋模式已包含在 v5.0.0 的主程序包中。[下载版本](https://github.com/JonGates/DesktopLife/releases/tag/v5.0.0)。
 
 ## 使用
 
@@ -38,4 +38,4 @@ dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --ocean-setting
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --ocean-render artifacts/ocean-render
 ```
 
-测试覆盖旧配置兼容、场景切换与配置保留、小绿龟停留、多屏边界，以及双风格渲染和不同 DPI。打包继续使用项目现有自包含发布流程，桌面与屏保采用同一版本号。
+测试覆盖旧配置兼容、场景切换与配置保留、小绿龟停留、多屏边界，以及双风格渲染和不同 DPI。打包继续使用项目现有自包含发布流程，桌面与屏保功能随同一个主程序包发布。
