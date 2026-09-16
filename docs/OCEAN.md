@@ -1,6 +1,6 @@
 # 海洋模式 / Ocean mode
 
-海洋模式已包含在 v5.0.0 的主程序包中。[下载版本](https://github.com/JonGates/DesktopLife/releases/tag/v5.0.0)。
+海洋模式已包含在 v0.5.0 的主程序包中。[下载版本](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.0)。
 
 ## 使用
 

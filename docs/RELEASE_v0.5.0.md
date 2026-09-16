@@ -1,14 +1,13 @@
 # DesktopLife v0.5.0 · Forest & Ocean
 
-Windows 10/11 x64 · 预览版 / Pre-release · 自带 .NET 运行环境 / Runtime included
+Windows 10/11 x64 · 正式版 / Stable release · 自带 .NET 运行环境 / Runtime included
 
 ## 下载哪个？ / Which download?
 
 - **推荐：`DesktopLife-Portable-win-x64-v0.5.0.zip`** — 主程序已包含桌面宠物、屏保预览、内容配置和 Windows 屏保设置入口。解压后运行 `Start-DesktopLife.cmd`。
-- **可选：`DesktopLife-ScreenSaver-win-x64-v0.5.0.zip`** — 只需要屏保时使用的独立包，无需同时下载两个 ZIP。
-- **`SHA256SUMS.txt`** — 两个 ZIP 的共用校验清单。
+- **`SHA256SUMS.txt`** — 主程序 ZIP 的校验值。
 
-Recommended: the Portable ZIP includes desktop pets **and screen saver functionality**. Extract it and run `Start-DesktopLife.cmd`. The standalone ScreenSaver ZIP is optional. Both include the runtime; no separate .NET installation is required. GitHub's Source code archives are for developers.
+Recommended: the Portable ZIP includes desktop pets **and screen saver functionality**. Extract it and run `Start-DesktopLife.cmd`. One application package includes the runtime; no separate .NET installation is required. GitHub's Source code archives are for developers.
 
 ## 更新内容
 
@@ -32,10 +31,10 @@ Recommended: the Portable ZIP includes desktop pets **and screen saver functiona
 
 Exit the old desktop app from its tray menu before upgrading. Preferences are retained. Open the main app's Screen saver page, open Windows settings, select DesktopLife and **Apply** an idle timeout. Repeat this after upgrading to use the new screen saver copy. Windows can start it even when the desktop app is closed.
 
-独立屏保包通过 `Install-ScreenSaver.cmd` 设置，需保留其解压路径。桌面和屏保配置独立，真实鼠标或键盘输入会退出屏保。
+屏保已集成在主程序，不再单独提供屏保包。桌面和屏保配置独立，真实鼠标或键盘输入会退出屏保。
 
 ## 验证与限制
 
-通过 227 项自动化测试，以及双语、窄窗口、配置保存与输入校验检查。发布包包含版本和源码提交信息；上传时核对文件大小与 SHA256。本版本为预览版，实际混合 DPI、不同 GPU 和高数量性能仍需更多设备验证。
+通过 227 项自动化测试，以及双语、窄窗口、配置保存与输入校验检查。发布包包含版本和源码提交信息；上传时核对文件大小与 SHA256。本版本为正式版；实际混合 DPI、不同 GPU 和高数量性能仍需更多设备验证。
 
 [中文说明](https://github.com/JonGates/DesktopLife/blob/main/README.zh-CN.md) · [English README](https://github.com/JonGates/DesktopLife#readme) · [反馈 / Issues](https://github.com/JonGates/DesktopLife/issues)

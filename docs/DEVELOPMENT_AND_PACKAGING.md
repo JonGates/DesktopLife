@@ -42,12 +42,12 @@ dotnet run --project src/DesktopLife.App -- --settings
 
 “便携”指程序和 .NET 无需安装。个人配置仍保存在 `%AppData%\DesktopLife`，不会跟随 EXE 移动到另一台电脑。
 
-v5.0.0 起，主程序便携包同时包含桌面宠物与屏保入口，是普通用户的推荐下载。正式发布仅上传一个主程序 ZIP 和一份 `SHA256SUMS.txt`。主程序的「屏保」页可准备固定路径副本并打开 Windows 设置；升级后需再次操作，以更新 Windows 使用的副本。
+v0.5.0 起，主程序便携包同时包含桌面宠物与屏保入口，是普通用户的推荐下载。正式发布仅上传一个主程序 ZIP 和一份 `SHA256SUMS.txt`。主程序的「屏保」页可准备固定路径副本并打开 Windows 设置；升级后需再次操作，以更新 Windows 使用的副本。
 
 ## 3. 推荐：一条命令生成便携包
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
 ```
 
 脚本会输出 JSON，包含：
@@ -59,7 +59,7 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5
 
 每次使用新的暂存目录，防止普通发布的旧 DLL 混入便携包。相同发布版本的 ZIP 已存在时，脚本会在构建前拒绝覆盖；请递增 -Version，或先重命名旧包。
 
-发布版本由 -Version 显式指定，也支持 v5.0.0、5.0.0-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v5.0.0。构建使用当前工作区，正式分享前应先提交应用代码：
+发布版本由 -Version 显式指定，也支持 v0.5.0、0.5.0-beta.1。EXE 版本属性和 build-info.json 同步记录此版本；SourceRevision 单独保留 Git 提交用于追溯。GitHub Release 标签应对应 v0.5.0。构建使用当前工作区，正式分享前应先提交应用代码：
 
 ```powershell
 git status --short
@@ -69,7 +69,7 @@ git rev-parse --short HEAD
 脚本默认打入 `.NET 10.0.12`，这是此次实际验证的运行环境版本。更新运行环境时显式指定版本，并重新验证：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0 -RuntimeVersion 10.0.12
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0 -RuntimeVersion 10.0.12
 ```
 
 朋友完整解压 ZIP 后，双击 `Start-DesktopLife.cmd` 即可启动并打开设置；双击 `DesktopLife.exe` 也能启动，设置窗口可通过托盘图标打开。
@@ -170,7 +170,7 @@ Get-FileHash '.\artifacts\DesktopLife-Portable-win-x64-<版本>.zip' -Algorithm 
 检查官方源连接。优先重试还原；不要关闭包签名或完整性校验。已有完整且可信的本地包源时，可使用：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0 -NuGetSource D:\packages\verified-feed
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0 -NuGetSource D:\packages\verified-feed
 ```
 
 本地源需包含指定版本所需的包，或依赖已有 NuGet 缓存。此前的 `artifacts/portable-nuget-feed` 只是本机临时缓存，不会随仓库上传。
@@ -189,13 +189,13 @@ powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5
 
 ## 8. 仓库与分发
 
-DesktopLife v5.0.0 正式版统一发布主程序，内含桌面宠物与屏保功能。源码中的屏保项目供主程序复用，不再单独提供屏保下载包。先提交源码，再执行：
+DesktopLife v0.5.0 正式版统一发布主程序，内含桌面宠物与屏保功能。源码中的屏保项目供主程序复用，不再单独提供屏保下载包。先提交源码，再执行：
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 5.0.0
-Copy-Item artifacts/DesktopLife-Portable-win-x64-v5.0.0.zip.sha256 artifacts/SHA256SUMS.txt
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
+Copy-Item artifacts/DesktopLife-Portable-win-x64-v0.5.0.zip.sha256 artifacts/SHA256SUMS.txt
 ```
 
-GitHub Release 使用 `v5.0.0` 标签，取消 Pre-release，并设为 Latest。只上传主程序 ZIP 与 `SHA256SUMS.txt` 两个附件；GitHub 自动附加的 Source code ZIP / tar.gz 是源码。保留历史版本记录。
+GitHub Release 使用 `v0.5.0` 标签，取消 Pre-release，并设为 Latest。只上传主程序 ZIP 与 `SHA256SUMS.txt` 两个附件；GitHub 自动附加的 Source code ZIP / tar.gz 是源码。保留历史版本记录。
 
 核对 EXE 版本、`build-info.json` 中 Version / SourceRevision 和 ZIP 的 SHA256；从解压目录验证主程序及 `/c` 配置、`/p HWND` 系统预览入口。运行时安装屏保所需的 `.scr` 副本由主程序准备，用户无需另外下载。
