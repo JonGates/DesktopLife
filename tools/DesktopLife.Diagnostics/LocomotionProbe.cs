@@ -49,19 +49,19 @@ internal static class LocomotionProbe
             {
                 dc.DrawRectangle(new SolidColorBrush(Color.FromRgb(241, 245, 240)), null, new Rect(0, 0, 1200, 580));
                 Text(dc, "DesktopLife · 跳跃与飞行", 24, 18, 26);
-                Text(dc, "动作渲染示意（非桌面实录） · 3 倍细节 · 写实 / 可爱", 24, 57, 14);
+                Text(dc, "动作渲染示意（非桌面实录） · 3 倍姿态细节，水平位移压缩 · 写实 / 可爱", 24, 57, 14);
                 for (var row = 0; row < 2; row++)
                 {
                     renderer.Style = (CreatureStyle)row;
                     Text(dc, row == 0 ? "写实" : "可爱", 24, 98 + row * 235, 14);
                     for (var column = 0; column < kinds.Length; column++)
                     {
-                        var center = new Vector2((110 + column * 400) / 3f, (205 + row * 235) / 3f);
+                        var center = new Vector2((110 + column * 400) / 3f, (260 + row * 235) / 3f);
                         var pose = At(kinds[column], time, center, true);
                         dc.PushTransform(new ScaleTransform(3, 3));
                         renderer.Render(dc, [pose], new(0, 0, 1200, 580), time, 1, 1);
                         dc.Pop();
-                        Text(dc, InsectCatalog.Get(kinds[column]).ChineseName + " · " + Label(pose.MotionState), 65 + column * 400, 257 + row * 235, 16);
+                        Text(dc, InsectCatalog.Get(kinds[column]).ChineseName + " · " + Label(pose.MotionState), 65 + column * 400, 300 + row * 235, 16);
                     }
                 }
             }
@@ -87,7 +87,7 @@ internal static class LocomotionProbe
         else
         {
             if (t is >= 0.3f and < 0.55f) { pose.State = LocomotionState.JumpPreparing; pose.Progress = (t - 0.3f) / 0.25f; }
-            else if (t is >= 0.55f and < 1.2f) { pose.State = LocomotionState.Jumping; pose.Progress = (t - 0.55f) / 0.65f; pose.Height = 4 * (kind == CreatureKind.Cricket ? 16 : 20) * pose.Progress * (1 - pose.Progress); }
+            else if (t is >= 0.55f and < 1.2f) { pose.State = LocomotionState.Jumping; pose.Progress = (t - 0.55f) / 0.65f; pose.Height = 4 * (kind == CreatureKind.Cricket ? 32 : 48) * pose.Progress * (1 - pose.Progress); }
             else if (t is >= 1.2f and < 1.42f) { pose.State = LocomotionState.JumpLanding; pose.Progress = (t - 1.2f) / 0.22f; }
             if (move) pose.Offset = new(Math.Clamp((t - 0.55f) / 0.65f, 0, 1) * 50, 0);
         }

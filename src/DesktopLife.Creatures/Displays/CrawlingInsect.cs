@@ -22,6 +22,7 @@ public sealed class CrawlingInsect : Creature
     private float _motionElapsed;
     private float _motionDuration;
     private float _jumpDuration;
+    private float _jumpHeight;
     private float _motionSpeed;
     private float _entrySpeed;
     private float _motionHeading;
@@ -129,8 +130,11 @@ public sealed class CrawlingInsect : Creature
         _motionHeading = threatened ? MathF.Atan2(away.Y, away.X) : Rotation;
         if (CanJump)
         {
-            _motionSpeed = Kind == CreatureKind.Cricket ? context.Random.NextFloat(110, 145) : context.Random.NextFloat(145, 180);
+            var distance = Kind == CreatureKind.Cricket ? context.Random.NextFloat(160, 260) : context.Random.NextFloat(300, 450);
             _jumpDuration = context.Random.NextFloat(0.45f, 0.65f);
+            // Choose the range at takeoff; changing size midair must not alter the planned landing.
+            _motionSpeed = distance * Scale * (threatened ? 1.3f : 1) / _jumpDuration;
+            _jumpHeight = (Kind == CreatureKind.Cricket ? 32 : 48) * (threatened ? 1.2f : 1);
             EnterMotion(LocomotionState.JumpPreparing, context.Random.NextFloat(0.15f, 0.22f));
         }
         else
@@ -150,6 +154,7 @@ public sealed class CrawlingInsect : Creature
 
     private void UpdateMotion(float dt, in CreatureContext context)
     {
+        var movementTime = MotionState == LocomotionState.Jumping ? MathF.Min(dt, _motionDuration - _motionElapsed) : dt;
         _motionElapsed = MathF.Min(_motionElapsed + dt, _motionDuration);
         MotionProgress = _motionElapsed / _motionDuration;
         var t = MotionProgress;
@@ -162,7 +167,7 @@ public sealed class CrawlingInsect : Creature
                 speed = _entrySpeed * (1 - eased);
                 break;
             case LocomotionState.Jumping:
-                Elevation = 4 * (Kind == CreatureKind.Cricket ? 16 : 20) * t * (1 - t);
+                Elevation = 4 * _jumpHeight * t * (1 - t);
                 speed = _motionSpeed;
                 break;
             case LocomotionState.JumpLanding:
@@ -195,7 +200,7 @@ public sealed class CrawlingInsect : Creature
                 TurnToward(_motionHeading, 1.6f * dt);
                 break;
         }
-        var next = Position + new Vector2(MathF.Cos(Rotation), MathF.Sin(Rotation)) * speed * dt;
+        var next = Position + new Vector2(MathF.Cos(Rotation), MathF.Sin(Rotation)) * speed * movementTime;
         var allowed = context.Layout?.ConstrainMove(Position, next) ?? context.Bounds.Clamp(next);
         Velocity = (allowed - Position) / dt;
         Position = allowed;

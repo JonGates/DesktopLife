@@ -8,6 +8,53 @@ namespace DesktopLife.Creatures.Tests;
 
 public class InsectLocomotionTests
 {
+    public static IEnumerable<object[]> JumpCases =>
+        from kind in new[] { CreatureKind.Cricket, CreatureKind.Grasshopper }
+        from scale in new[] { 0.6f, 1f, 2f, 3f }
+        from frightened in new[] { false, true }
+        select new object[] { kind, scale, frightened };
+
+    [Theory]
+    [MemberData(nameof(JumpCases))]
+    public void JumpDistanceScalesWithSizeAndEscapeJumpsAreStronger(CreatureKind kind, float scale, bool frightened)
+    {
+        var (distance, height) = MeasureJump(kind, scale, frightened, 0.02f);
+        var expected = (kind == CreatureKind.Cricket ? 210 : 375) * scale * (frightened ? 1.3f : 1);
+        Assert.InRange(distance, expected - 0.1f, expected + 0.1f);
+        // Height is in unscaled sprite coordinates; the renderer applies the individual's scale.
+        var expectedHeight = (kind == CreatureKind.Cricket ? 32 : 48) * (frightened ? 1.2f : 1);
+        Assert.InRange(height, expectedHeight * 0.99f, expectedHeight);
+    }
+
+    [Theory]
+    [InlineData(CreatureKind.Cricket)]
+    [InlineData(CreatureKind.Grasshopper)]
+    public void JumpDistanceDoesNotDependOnFrameStep(CreatureKind kind)
+    {
+        var fine = MeasureJump(kind, 3, true, 0.01f).Distance;
+        var coarse = MeasureJump(kind, 3, true, 0.047f).Distance;
+        Assert.InRange(MathF.Abs(coarse - fine), 0, 0.1f);
+    }
+
+    private static (float Distance, float Height) MeasureJump(CreatureKind kind, float scale, bool frightened, float dt)
+    {
+        var insect = new CrawlingInsect(new(5000, 5000), kind, scale);
+        CreatureContext JumpContext() => Context(mouse: frightened ? insect.Position - new Vector2(20, 0) : null)
+            with { Bounds = new(0, 0, 20000, 20000) };
+        for (var i = 0; i < 2000 && insect.MotionState != LocomotionState.Jumping; i++)
+            insect.Update(dt, JumpContext());
+        Assert.Equal(LocomotionState.Jumping, insect.MotionState);
+        var start = insect.Position;
+        float peak = 0;
+        while (insect.MotionState == LocomotionState.Jumping)
+        {
+            insect.Update(dt, JumpContext());
+            peak = MathF.Max(peak, insect.Elevation);
+        }
+        Assert.Equal(LocomotionState.JumpLanding, insect.MotionState);
+        return (Vector2.Distance(start, insect.Position), peak);
+    }
+
     private static string State(CrawlingInsect insect) => insect.MotionState.ToString();
 
     [Theory]
@@ -26,7 +73,7 @@ public class InsectLocomotionTests
             var previousRotation = insect.Rotation;
             insect.Update(0.02f, Context());
             Assert.InRange(insect.MotionProgress, 0, 1);
-            Assert.InRange(insect.Elevation, 0, kind == CreatureKind.Ladybug ? 12 : 20);
+            Assert.InRange(insect.Elevation, 0, kind == CreatureKind.Ladybug ? 12 : 48);
             Assert.InRange(insect.WingSpread, 0, 1);
             Assert.InRange(MathF.Abs(insect.Rotation - previousRotation), 0, 0.241f);
             if (previousState != LocomotionState.Walking) Assert.Equal(previousPhase, insect.AnimationPhase);
@@ -72,14 +119,15 @@ public class InsectLocomotionTests
         foreach (var gap in new[] { 0, 2, 40 })
         {
             var layout = new DesktopLayout([new("left", new(-400, -400, 400, 800)), new("right", new(gap, -400, 400, 800))]);
-            var insect = new CrawlingInsect(new(kind == CreatureKind.Ladybug ? -300 : -1, -100), kind);
+            var insect = new CrawlingInsect(new(kind == CreatureKind.Ladybug ? -300 : -1, -100), kind, 3);
             var crossedInAir = false;
             for (var i = 0; i < 1000; i++)
             {
                 var before = insect.Position;
                 insect.Update(0.02f, Context(layout, kind == CreatureKind.Ladybug ? null : insect.Position - new Vector2(20, 0)));
                 Assert.True(layout.Contains(insect.Position));
-                Assert.InRange(Vector2.Distance(before, insect.Position), 0, 3.61f);
+                // At 300% size even one airborne step can span a narrow screen gap.
+                Assert.InRange(Vector2.Distance(before, insect.Position), 0, kind == CreatureKind.Ladybug ? 2.21f : 78.01f);
                 if (gap > 0) Assert.True(insect.Position.X < 0);
                 if (insect.Elevation > 0 && insect.Position.X > 0) crossedInAir = true;
             }

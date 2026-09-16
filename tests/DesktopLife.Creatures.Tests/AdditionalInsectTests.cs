@@ -56,7 +56,7 @@ public class AdditionalInsectTests
             var previous = insect.Position;
             insect.Update(0.02f, new(new(new(-1000, -1000), Vector2.Zero, 0, false, TimeSpan.Zero), layout.Bounds, i * 0.02f, random, Layout: layout));
             var step = Vector2.Distance(previous, insect.Position);
-            Assert.InRange(step, 0, kind is CreatureKind.Cricket or CreatureKind.Grasshopper ? 3.61f : kind == CreatureKind.Ladybug ? 2.21f : 2);
+            Assert.InRange(step, 0, kind is CreatureKind.Cricket or CreatureKind.Grasshopper ? 20.01f : kind == CreatureKind.Ladybug ? 2.21f : 2);
             Assert.True(layout.Contains(insect.Position));
             Assert.True(insect.Position.X < 1000);
             distance += step;
