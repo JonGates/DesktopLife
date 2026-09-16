@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\ocean-*.png" />
     <EmbeddedResource Include="Assets\spider-body.png" LogicalName="DesktopLife.Rendering.Assets.spider-body.png" />
     <EmbeddedResource Include="Assets\small-insect-bodies.png" LogicalName="DesktopLife.Rendering.Assets.small-insect-bodies.png" />
     <EmbeddedResource Include="Assets\long-insect-bodies.png" LogicalName="DesktopLife.Rendering.Assets.long-insect-bodies.png" />

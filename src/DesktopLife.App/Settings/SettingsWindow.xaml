@@ -46,6 +46,7 @@
     </Window.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Margin="18,0,18,12">
+            <TextBlock x:Name="Status" Text="{DynamicResource Hint}" TextWrapping="Wrap" Foreground="#63776C" DockPanel.Dock="Top" Margin="0,6,0,8" FontSize="12" MinHeight="32" AutomationProperties.LiveSetting="Polite"/>
             <Button x:Name="PauseButton" Content="{DynamicResource Pause}" Click="PauseClicked" DockPanel.Dock="Left"/>
             <Button x:Name="ApplyButton" Content="{DynamicResource Apply}" Click="ApplyClicked" IsDefault="True" DockPanel.Dock="Right" Background="#306951" Foreground="White" BorderBrush="#306951"/>
         </DockPanel>
@@ -71,6 +72,17 @@
         </Border>
         <TextBlock Text="{DynamicResource Counts}" FontSize="15" FontWeight="SemiBold" Margin="0,12,0,4"/>
         <TextBlock Text="{DynamicResource CountHelp}" TextWrapping="Wrap" Foreground="#63776C" FontSize="12" Margin="0,0,0,12"/>
+        <TabControl x:Name="HabitatTabs" SelectionChanged="HabitatChanged" Background="Transparent" BorderThickness="0" Padding="0,10,0,0" AutomationProperties.Name="{DynamicResource HabitatLabel}">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Padding" Value="24,9"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Background" Value="#E7EFE9"/>
+                    <Setter Property="Foreground" Value="#306951"/>
+                    <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="White"/></Trigger></Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+            <TabItem x:Name="ForestTab" Header="{DynamicResource Forest}"><StackPanel TextElement.FontWeight="Normal">
         <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10">
             <StackPanel>
                 <TextBlock Text="{DynamicResource Fly}" FontWeight="SemiBold"/>
@@ -112,6 +124,25 @@
                 </StackPanel>
             </Expander>
         </Border>
+            </StackPanel></TabItem>
+            <TabItem x:Name="OceanTab" Header="{DynamicResource Ocean}" Foreground="#1C647D" Background="#E1F0F6"><StackPanel TextElement.FontWeight="Normal">
+                <Border Background="#EAF5FA" BorderBrush="#BEDCE8" BorderThickness="1" CornerRadius="10" Padding="10">
+                    <StackPanel><TextBlock Text="{DynamicResource Turtle}" FontWeight="SemiBold" Foreground="#1C647D"/><TextBlock Text="{DynamicResource TurtleHelp}" TextWrapping="Wrap" Foreground="#526F80" Margin="0,4,0,0"/></StackPanel>
+                </Border>
+                <Border Background="White" BorderBrush="#BEDCE8" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
+                    <Expander x:Name="OceanSpeciesExpander" Header="{DynamicResource OceanSpecies}" IsExpanded="True"><StackPanel>
+                        <TextBlock Text="{DynamicResource OceanHelp}" TextWrapping="Wrap" Foreground="#526F80" Margin="0,6,0,10"/>
+                        <Grid Margin="0,3,0,3"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/></Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="1" Text="{DynamicResource CountColumn}" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Text="{DynamicResource MinColumn}" HorizontalAlignment="Center"/>
+                            <TextBlock Grid.Column="3" Text="{DynamicResource MaxColumn}" HorizontalAlignment="Center"/>
+                        </Grid>
+                        <StackPanel x:Name="OceanSpeciesPanel"/>
+                    </StackPanel></Expander>
+                </Border>
+            </StackPanel></TabItem>
+        </TabControl>
+        <TextBlock Text="{DynamicResource HabitatHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,8,0,0"/>
         <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
 <Expander Header="{DynamicResource Hotkeys}" IsExpanded="False"><StackPanel>
 <TextBlock Text="{DynamicResource KeyHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C" Margin="0,6,0,10"/>
@@ -127,7 +158,7 @@
 <CheckBox x:Name="CaptureToggle" Checked="CaptureChanged" Unchecked="CaptureChanged"><TextBlock Text="{DynamicResource CaptureToggle}" TextWrapping="Wrap"/></CheckBox>
 <TextBlock Text="{DynamicResource CaptureHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C" Margin="0,8,0,0"/>
 </StackPanel></Expander></Border>
-<TextBlock x:Name="Status" Text="{DynamicResource Hint}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,14,0,14" FontSize="12" MinHeight="32" AutomationProperties.LiveSetting="Polite"/>
+
     </StackPanel>
     </ScrollViewer>
     </DockPanel>

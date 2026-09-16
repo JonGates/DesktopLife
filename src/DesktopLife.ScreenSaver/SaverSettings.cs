@@ -5,10 +5,10 @@ using DesktopLife.Creatures.Displays;
 using DesktopLife.Engine.Creatures;
 namespace DesktopLife.ScreenSaver;
 
-public sealed record SaverSettings(bool Light = false, int Cockroaches = 20, int Ants = 20, int Caterpillars = 3, CreatureStyle Style = CreatureStyle.Realistic, int RoachMin = 60, int RoachMax = 180, int AntMin = 60, int AntMax = 120, int CaterpillarMin = 60, int CaterpillarMax = 140, Dictionary<CreatureKind, SpeciesPopulation>? Additional = null)
+public sealed record SaverSettings(bool Light = false, int Cockroaches = 20, int Ants = 20, int Caterpillars = 3, CreatureStyle Style = CreatureStyle.Realistic, int RoachMin = 60, int RoachMax = 180, int AntMin = 60, int AntMax = 120, int CaterpillarMin = 60, int CaterpillarMax = 140, Dictionary<CreatureKind, SpeciesPopulation>? Additional = null, Habitat Habitat = Habitat.Forest, Dictionary<CreatureKind, SpeciesPopulation>? Ocean = null)
 {
     [System.Text.Json.Serialization.JsonIgnore]
-    public PopulationSettings Population => new(Cockroaches, Ants, Caterpillars, RoachMin, RoachMax, AntMin, AntMax, CaterpillarMin, CaterpillarMax, Additional);
+    public PopulationSettings Population => new(Cockroaches, Ants, Caterpillars, RoachMin, RoachMax, AntMin, AntMax, CaterpillarMin, CaterpillarMax, Additional, Habitat, Ocean);
 }
 
 public sealed class SaverSettingsStore(string? path = null)

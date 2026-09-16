@@ -14,6 +14,8 @@ Windows 10/11 x64 · 13 creature types · Realistic and cute styles · Multi-mon
 
 > **New in v0.4.2:** eight-legged spiders, longer size-scaled jumps and refined ladybug wings. Both desktop and screen saver packages include these changes. [Creature details](docs/INSECTS.md).
 
+> **In development:** Forest / Ocean tabs with separate saved populations, one cursor-following green turtle and 12 fish species in realistic and cute styles. This is not yet included in the v0.4.2 downloads. [Ocean preview guide](docs/OCEAN.md).
+
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
 > DesktopLife is currently a preview. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).

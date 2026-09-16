@@ -7,6 +7,15 @@ public static class LanguageService
     public static event Action? Changed;
     private static readonly Dictionary<string, (string Zh, string En)> Texts = new()
     {
+        ["Forest"] = ("森林", "Forest"),
+        ["Ocean"] = ("海洋", "Ocean"),
+        ["HabitatLabel"] = ("活动场景", "Active habitat"),
+        ["HabitatHelp"] = ("切换标签会保存两组数量与尺寸，并立即切换桌面场景。", "Switching tabs saves both populations and sizes, then changes the desktop scene immediately."),
+        ["HabitatSaved"] = ("场景已切换，两组配置已保存。", "Scene changed. Both populations are saved."),
+        ["Turtle"] = ("绿海龟 · 固定 1 只", "Green turtle · always one"),
+        ["TurtleHelp"] = ("围绕鼠标悠游，轻轻划动鳍足。", "Swims around the cursor with gentle flipper strokes."),
+        ["OceanSpecies"] = ("海洋生物 · 12 种鱼", "Ocean creatures · 12 fish species"),
+        ["OceanHelp"] = ("每种最多 100 条；0 为关闭。尺寸范围 10–300%。支持写实和可爱风格。", "Up to 100 of each fish; 0 disables it. Sizes: 10–300%. Realistic and cute styles supported."),
         ["CaptureToggle"] = ("从录屏中隐藏生物和设置窗口", "Exclude creatures and settings from screen capture"),
         ["CaptureHelp"] = ("本机仍可见。需 Windows 10 2004 或更新版本；仅对支持此机制的录屏工具有效，不能保证所有监控软件均无法录制。", "Still visible on your display. Requires Windows 10 2004 or later. Only compatible capture tools honor this setting; it cannot block every monitoring tool."),
         ["CaptureSaved"] = ("录屏显示设置已保存。", "Capture preference saved."),
@@ -50,7 +59,7 @@ public static class LanguageService
         ["AntSliderName"] = ("蚂蚁数量滑块", "Ant count slider"),
         ["CaterpillarSliderName"] = ("毛毛虫数量滑块", "Caterpillar count slider"),
         ["Unit"] = ("只", ""),
-        ["Hint"] = ("爬行生物设为 0 可关闭。关闭窗口后，生物会继续运行。", "Set a crawler count to 0 to disable it. Closing this window keeps DesktopLife running."),
+        ["Hint"] = ("生物数量设为 0 可关闭。关闭窗口后，生物会继续运行。", "Set a creature count to 0 to disable it. Closing this window keeps DesktopLife running."),
         ["Language"] = ("语言", "Language"),
         ["Hotkeys"] = ("全局快捷键", "Global shortcuts"),
         ["Start"] = ("启动／恢复", "Start / resume"),
@@ -63,7 +72,7 @@ public static class LanguageService
         ["SaveFailed"] = ("保存失败，设置未更改。请检查配置目录是否可写。", "Could not save. Settings are unchanged; check access to the settings folder."),
         ["KeysSaved"] = ("快捷键已保存，立即生效。", "Shortcuts saved and active."),
         ["LanguageSaved"] = ("语言已保存。", "Language saved."),
-        ["InvalidCounts"] = ("请输入有效整数：蟑螂、蚂蚁 0–500，其余爬行生物 0–100。", "Enter whole numbers: cockroaches and ants 0–500; all other crawlers 0–100."),
+        ["InvalidCounts"] = ("请输入有效整数：蟑螂、蚂蚁 0–500，其余生物 0–100。", "Enter whole numbers: cockroaches and ants 0–500; all other creatures 0–100."),
         ["Saved"] = ("数量已保存，下次启动自动恢复。", "Population saved for the next launch."),
         ["ConfigWarning"] = ("无法读取已保存的设置，已使用默认值。", "Saved settings could not be read. Defaults are in use."),
         ["Primary"] = ("主屏", "Primary"),

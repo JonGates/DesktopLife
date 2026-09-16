@@ -17,6 +17,7 @@ public partial class SettingsWindow : Window
     private bool _ready;
     private string _statusKey = "Hint";
     private readonly List<(InsectDefinition Definition, TextBlock Label, TextBox Count, TextBox Min, TextBox Max)> _additionalRows = [];
+    private readonly List<(InsectDefinition Definition, TextBlock Label, TextBox Count, TextBox Min, TextBox Max)> _oceanRows = [];
     public SettingsWindow(DesktopHost host, SettingsStore store, string? warning = null, PreferencesController? preferences = null)
     {
         _host = host;
@@ -41,11 +42,13 @@ public partial class SettingsWindow : Window
         AntMin.Text = sizes.AntMin.ToString(); AntMax.Text = sizes.AntMax.ToString();
         CaterpillarMin.Text = sizes.CaterpillarMin.ToString(); CaterpillarMax.Text = sizes.CaterpillarMax.ToString();
         BuildAdditionalRows(sizes);
+        HabitatTabs.SelectedIndex = (int)sizes.Habitat;
+        RefreshHabitatTheme();
         _ready = true;
         Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
-        RoachCount.Text = host.Simulation.TotalCockroachCount.ToString(CultureInfo.InvariantCulture);
-        AntCount.Text = host.Simulation.TotalAntCount.ToString(CultureInfo.InvariantCulture);
-        CaterpillarCount.Text = host.Simulation.TotalCaterpillarCount.ToString(CultureInfo.InvariantCulture);
+        RoachCount.Text = sizes.Cockroaches.ToString(CultureInfo.InvariantCulture);
+        AntCount.Text = sizes.Ants.ToString(CultureInfo.InvariantCulture);
+        CaterpillarCount.Text = sizes.Caterpillars.ToString(CultureInfo.InvariantCulture);
         _host.LayoutChanged += RefreshLayout;
         _host.StateChanged += RefreshState;
         Closed += (_, _) => { _host.LayoutChanged -= RefreshLayout; _host.StateChanged -= RefreshState; };
@@ -80,17 +83,23 @@ public partial class SettingsWindow : Window
     private void Translate() { RefreshState(); RefreshLayout(); TranslateAdditionalRows(); SetStatus(_statusKey); }
     private void BuildAdditionalRows(PopulationSettings settings)
     {
+        BuildRows(InsectCatalog.Additional, settings.GetAdditional, AdditionalSpeciesPanel, _additionalRows);
+        BuildRows(OceanCatalog.Fish, settings.GetOcean, OceanSpeciesPanel, _oceanRows);
+        TranslateAdditionalRows();
+    }
+    private void BuildRows(IEnumerable<InsectDefinition> definitions, Func<CreatureKind, SpeciesPopulation> get, StackPanel panel, List<(InsectDefinition Definition, TextBlock Label, TextBox Count, TextBox Min, TextBox Max)> rows)
+    {
         Grid Row()
         {
             var row = new Grid { Margin = new Thickness(0, 3, 0, 3) };
             row.ColumnDefinitions.Add(new ColumnDefinition());
             for (var i = 0; i < 3; i++) row.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(66) });
-            AdditionalSpeciesPanel.Children.Add(row);
+            panel.Children.Add(row);
             return row;
         }
-        foreach (var definition in InsectCatalog.Additional)
+        foreach (var definition in definitions)
         {
-            var value = settings.GetAdditional(definition.Kind);
+            var value = get(definition.Kind);
             var row = Row();
             var label = new TextBlock { VerticalAlignment = VerticalAlignment.Center, TextWrapping = TextWrapping.Wrap, Margin = new Thickness(0, 0, 6, 0) };
             row.Children.Add(label);
@@ -101,13 +110,13 @@ public partial class SettingsWindow : Window
                 AutomationProperties.SetAutomationId(field, field.Name);
                 Grid.SetColumn(field, column); row.Children.Add(field); return field;
             }
-            _additionalRows.Add((definition, label, Field(value.Count, 1, "Count"), Field(value.MinPercent, 2, "Min"), Field(value.MaxPercent, 3, "Max")));
+            rows.Add((definition, label, Field(value.Count, 1, "Count"), Field(value.MinPercent, 2, "Min"), Field(value.MaxPercent, 3, "Max")));
         }
         TranslateAdditionalRows();
     }
     private void TranslateAdditionalRows()
     {
-        foreach (var row in _additionalRows)
+        foreach (var row in _additionalRows.Concat(_oceanRows))
         {
             var name = LanguageService.Choose(row.Definition.ChineseName, row.Definition.EnglishName);
             row.Label.Text = name;
@@ -146,40 +155,61 @@ public partial class SettingsWindow : Window
         if (modifiers.HasFlag(ModifierKeys.Windows) || !Hotkey.TryParse(text, out _)) { SetStatus("InvalidHotkey"); return; }
         input.Text = text;
     }
-    private void ApplyClicked(object sender, RoutedEventArgs e)
+    private void ApplyClicked(object sender, RoutedEventArgs e) => SavePopulation((Habitat)HabitatTabs.SelectedIndex);
+    private void HabitatChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready || e.Source != HabitatTabs) return;
+        var previous = _host.Simulation.Settings.Habitat;
+        if (!SavePopulation((Habitat)HabitatTabs.SelectedIndex))
+        {
+            _ready = false; HabitatTabs.SelectedIndex = (int)previous; _ready = true;
+        }
+        else SetStatus("HabitatSaved");
+        RefreshHabitatTheme();
+    }
+    private void RefreshHabitatTheme()
+    {
+        var ocean = HabitatTabs.SelectedIndex == 1;
+        Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ocean ? "#EFF5F8" : "#F0F4F1"));
+        ApplyButton.Background = ApplyButton.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ocean ? "#1C647D" : "#306951"));
+    }
+    private bool SavePopulation(Habitat habitat)
     {
         if (!int.TryParse(RoachCount.Text, out var roaches) || roaches < 0 || roaches > PopulationSettings.MaxCockroaches ||
             !int.TryParse(AntCount.Text, out var ants) || ants < 0 || ants > PopulationSettings.MaxAnts ||
             !int.TryParse(CaterpillarCount.Text, out var caterpillars) || caterpillars < 0 || caterpillars > PopulationSettings.MaxCaterpillars)
         {
             SetStatus("InvalidCounts");
-            return;
+            return false;
         }
         try
         {
             if (!int.TryParse(RoachMin.Text, out var rMin) || !int.TryParse(RoachMax.Text, out var rMax) ||
                 !int.TryParse(AntMin.Text, out var aMin) || !int.TryParse(AntMax.Text, out var aMax) ||
                 !int.TryParse(CaterpillarMin.Text, out var cMin) || !int.TryParse(CaterpillarMax.Text, out var cMax))
-            { SetStatus("InvalidSizes"); return; }
+            { SetStatus("InvalidSizes"); return false; }
             var additional = new Dictionary<CreatureKind, SpeciesPopulation>();
-            foreach (var row in _additionalRows)
+            var ocean = new Dictionary<CreatureKind, SpeciesPopulation>();
+            foreach (var row in _additionalRows.Concat(_oceanRows))
             {
                 if (!int.TryParse(row.Count.Text, out var count) || count < 0 || count > row.Definition.MaxCount)
-                { SetStatus("InvalidCounts"); row.Count.Focus(); return; }
+                { SetStatus("InvalidCounts"); row.Count.Focus(); return false; }
                 if (!int.TryParse(row.Min.Text, out var min) || !int.TryParse(row.Max.Text, out var max) || min < 10 || max > 300 || min > max)
-                { SetStatus("InvalidSizes"); row.Min.Focus(); return; }
-                additional.Add(row.Definition.Kind, new(count, min, max));
+                { SetStatus("InvalidSizes"); row.Min.Focus(); return false; }
+                (OceanCatalog.IsOcean(row.Definition.Kind) ? ocean : additional).Add(row.Definition.Kind, new(count, min, max));
             }
             var settings = new PopulationSettings(roaches, ants, caterpillars, rMin, rMax, aMin, aMax, cMin, cMax,
-                additional.Values.All(value => value == new SpeciesPopulation()) ? null : additional);
-            try { settings.Validate(); } catch (ArgumentOutOfRangeException) { SetStatus("InvalidSizes"); return; }
+                additional.Values.All(value => value == new SpeciesPopulation()) ? null : additional, habitat, ocean);
+            try { settings.Validate(); } catch (ArgumentOutOfRangeException) { SetStatus("InvalidSizes"); return false; }
             _store.Save(settings);
             _host.SetPopulation(settings);
             SetStatus("Saved");
+            return true;
         }
         catch (Exception error) when (error is IOException or UnauthorizedAccessException)
         {
             SetStatus("SaveFailed");
+            return false;
         }
     }
     private void PauseClicked(object sender, RoutedEventArgs e) => _host.TogglePause();

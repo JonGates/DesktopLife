@@ -106,7 +106,7 @@ public class AdditionalInsectTests
     [Fact]
     public void AdditionalSpeciesAreAppendedWithoutChangingExistingEnumValues()
     {
-        Assert.Equal(new[] { "Debug", "Fly", "Cockroach", "Ant", "Caterpillar", "Ladybug", "GroundBeetle", "Earwig", "Silverfish", "Cricket", "Grasshopper", "Mantis", "StickInsect", "Spider" }, Enum.GetNames<CreatureKind>());
+        Assert.Equal(new[] { "Debug", "Fly", "Cockroach", "Ant", "Caterpillar", "Ladybug", "GroundBeetle", "Earwig", "Silverfish", "Cricket", "Grasshopper", "Mantis", "StickInsect", "Spider", "GreenTurtle", "Clownfish", "BlueTang", "YellowTang", "Butterflyfish", "Angelfish", "Lionfish", "Pufferfish", "Seahorse", "MandarinFish", "RoyalGramma", "MoorishIdol", "Wrasse" }, Enum.GetNames<CreatureKind>());
     }
 
     [Fact]

@@ -17,7 +17,9 @@ public sealed class DisplaySimulation(int seed)
     public DesktopLayout Layout { get; private set; } = new([]);
     public IReadOnlyList<DisplayWorld> Worlds { get; private set; } = [];
     public PopulationSettings Settings { get; private set; } = new();
-    public int TotalFlyCount => 1;
+    public int TotalFlyCount => Settings.Habitat == Habitat.Forest ? 1 : 0;
+    public int TotalTurtleCount => Settings.Habitat == Habitat.Ocean ? 1 : 0;
+    public int TotalFishCount => Settings.Habitat == Habitat.Ocean ? OceanCatalog.Fish.Sum(d => Settings.GetOcean(d.Kind).Count) : 0;
     public int TotalCockroachCount { get; private set; } = 20;
 
     public int TotalAntCount { get; private set; } = 20;
@@ -43,28 +45,43 @@ public sealed class DisplaySimulation(int seed)
     public void SetPopulation(PopulationSettings settings)
     {
         settings.Validate();
-        settings = settings with { Additional = settings.Additional is null ? null : new(settings.Additional) };
+        settings = settings with { Additional = settings.Additional is null ? null : new(settings.Additional), Ocean = settings.Ocean is null ? null : new(settings.Ocean) };
         var population = new List<ICreature>();
-        Add(CreatureKind.Fly, 1, () => new FlyCreature(SpawnPoint(outside: true)));
-        Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true, scale: World.Random.NextFloat(settings.RoachMin / 100f, settings.RoachMax / 100f)));
-        Add(CreatureKind.Ant, settings.Ants, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Ant, World.Random.NextFloat(settings.AntMin / 100f, settings.AntMax / 100f)));
-        Add(CreatureKind.Caterpillar, settings.Caterpillars, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Caterpillar, World.Random.NextFloat(settings.CaterpillarMin / 100f, settings.CaterpillarMax / 100f)));
-        Resize(CreatureKind.Cockroach, Settings.RoachMin, Settings.RoachMax, settings.RoachMin, settings.RoachMax);
-        Resize(CreatureKind.Ant, Settings.AntMin, Settings.AntMax, settings.AntMin, settings.AntMax);
-        Resize(CreatureKind.Caterpillar, Settings.CaterpillarMin, Settings.CaterpillarMax, settings.CaterpillarMin, settings.CaterpillarMax);
-        foreach (var definition in InsectCatalog.Additional)
+        if (settings.Habitat == Habitat.Ocean)
         {
-            var configured = settings.GetAdditional(definition.Kind);
-            var previous = Settings.GetAdditional(definition.Kind);
-            Add(definition.Kind, configured.Count, () => new CrawlingInsect(SpawnPoint(), definition.Kind,
-                World.Random.NextFloat(configured.MinPercent / 100f, configured.MaxPercent / 100f)));
-            Resize(definition.Kind, previous.MinPercent, previous.MaxPercent, configured.MinPercent, configured.MaxPercent);
+            Add(CreatureKind.GreenTurtle, 1, () => new SwimmingCreature(SpawnPoint(), CreatureKind.GreenTurtle));
+            foreach (var definition in OceanCatalog.Fish)
+            {
+                var configured = settings.GetOcean(definition.Kind);
+                var previous = Settings.GetOcean(definition.Kind);
+                Add(definition.Kind, configured.Count, () => new SwimmingCreature(SpawnPoint(), definition.Kind,
+                    World.Random.NextFloat(configured.MinPercent / 100f, configured.MaxPercent / 100f)));
+                Resize(definition.Kind, previous.MinPercent, previous.MaxPercent, configured.MinPercent, configured.MaxPercent);
+            }
+        }
+        else
+        {
+            Add(CreatureKind.Fly, 1, () => new FlyCreature(SpawnPoint(outside: true)));
+            Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true, scale: World.Random.NextFloat(settings.RoachMin / 100f, settings.RoachMax / 100f)));
+            Add(CreatureKind.Ant, settings.Ants, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Ant, World.Random.NextFloat(settings.AntMin / 100f, settings.AntMax / 100f)));
+            Add(CreatureKind.Caterpillar, settings.Caterpillars, () => new CrawlingInsect(SpawnPoint(), CreatureKind.Caterpillar, World.Random.NextFloat(settings.CaterpillarMin / 100f, settings.CaterpillarMax / 100f)));
+            Resize(CreatureKind.Cockroach, Settings.RoachMin, Settings.RoachMax, settings.RoachMin, settings.RoachMax);
+            Resize(CreatureKind.Ant, Settings.AntMin, Settings.AntMax, settings.AntMin, settings.AntMax);
+            Resize(CreatureKind.Caterpillar, Settings.CaterpillarMin, Settings.CaterpillarMax, settings.CaterpillarMin, settings.CaterpillarMax);
+            foreach (var definition in InsectCatalog.Additional)
+            {
+                var configured = settings.GetAdditional(definition.Kind);
+                var previous = Settings.GetAdditional(definition.Kind);
+                Add(definition.Kind, configured.Count, () => new CrawlingInsect(SpawnPoint(), definition.Kind,
+                    World.Random.NextFloat(configured.MinPercent / 100f, configured.MaxPercent / 100f)));
+                Resize(definition.Kind, previous.MinPercent, previous.MaxPercent, configured.MinPercent, configured.MaxPercent);
+            }
         }
         Settings = settings;
         World.Manager.Replace(population);
-        TotalCockroachCount = settings.Cockroaches;
-        TotalAntCount = settings.Ants;
-        TotalCaterpillarCount = settings.Caterpillars;
+        TotalCockroachCount = settings.Habitat == Habitat.Forest ? settings.Cockroaches : 0;
+        TotalAntCount = settings.Habitat == Habitat.Forest ? settings.Ants : 0;
+        TotalCaterpillarCount = settings.Habitat == Habitat.Forest ? settings.Caterpillars : 0;
         void Resize(CreatureKind kind, int oldMin, int oldMax, int min, int max)
         {
             if (oldMin == min && oldMax == max) return;
