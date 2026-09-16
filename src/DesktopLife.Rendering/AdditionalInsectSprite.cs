@@ -174,17 +174,33 @@ internal static class AdditionalInsectSprite
         if (spread < 0.015) { Body(); return; }
         var abdomen = new SolidColorBrush(cute ? Color.FromRgb(114, 132, 114) : Color.FromRgb(49, 39, 31));
         dc.DrawEllipse(abdomen, null, new(-length * 0.13, 0), length * 0.36, width * 0.39);
-        // Hindwings unfold under the rigid elytra and beat independently in flight.
+        // Keep the attachment narrow; a full ellipse looks like a paddle beside this small body.
+        var membrane = new StreamGeometry();
+        using (var path = membrane.Open())
+        {
+            path.BeginFigure(new(0, 0), true, true);
+            path.BezierTo(new(-length * 0.22, width * 0.13), new(-length * 0.62, width * 0.67), new(-length * 0.99, width * 0.6), true, false);
+            path.BezierTo(new(-length * 1.25, width * 0.54), new(-length * 1.22, width * 0.31), new(-length * 1.04, width * 0.22), true, false);
+            path.BezierTo(new(-length * 0.69, width * 0.02), new(-length * 0.25, -width * 0.015), new(0, 0), true, false);
+        }
+        membrane.Freeze();
+        // Both membranes sit below both rigid elytra. Foreshortening represents the vertical stroke.
+        var phase = frame * Math.PI / 4;
+        var projectedWidth = 0.7 + 0.3 * Math.Cos(phase);
         for (var side = -1; side <= 1; side += 2)
         {
-            var beat = Math.Sin(frame * Math.PI / 4);
-            dc.PushTransform(new RotateTransform(-side * (28 + beat * 18) * spread, length * 0.17, 0));
+            dc.PushTransform(new TranslateTransform(length * 0.17, side * width * 0.08));
+            dc.PushTransform(new RotateTransform(-side * (26 + Math.Sin(phase) * 10) * spread));
+            dc.PushTransform(new ScaleTransform(spread, side * spread * projectedWidth));
             var wing = new SolidColorBrush(Color.FromArgb((byte)(spread * (cute ? 155 : 110)), 218, 235, 240));
-            var vein = new Pen(new SolidColorBrush(Color.FromArgb((byte)(spread * 130), 133, 153, 154)), 0.18);
-            dc.DrawEllipse(wing, vein, new(-length * 0.32, side * width * 0.36 * spread), length * 0.7 * spread, width * 0.38 * spread);
-            dc.DrawLine(vein, new(length * 0.16, 0), new(-length * 0.91 * spread, side * width * 0.43 * spread));
-            dc.Pop();
-            dc.PushTransform(new RotateTransform(-side * 62 * spread, length * 0.24, 0));
+            var vein = new Pen(new SolidColorBrush(Color.FromArgb((byte)(spread * 110), 133, 153, 154)), 0.14);
+            dc.DrawGeometry(wing, vein, membrane);
+            Curve(dc, vein, new(0, 0), new(-length * 0.52, width * 0.2), new(-length * 1.06, width * 0.4));
+            dc.Pop(); dc.Pop(); dc.Pop();
+        }
+        for (var side = -1; side <= 1; side += 2)
+        {
+            dc.PushTransform(new RotateTransform(-side * 48 * spread, length * 0.24, 0));
             dc.PushClip(new RectangleGeometry(new Rect(-length * 0.52, side < 0 ? -width * 0.55 : 0, length * 0.76, width * 0.55)));
             Body();
             dc.Pop(); dc.Pop();
