@@ -20,8 +20,42 @@ internal static class ScreenSaverProbe
     [DllImport("user32.dll")] private static extern bool IsWindow(nint hwnd);
     private delegate bool EnumWindow(nint hwnd, nint data);
     [DllImport("user32.dll")] private static extern bool EnumChildWindows(nint parent, EnumWindow callback, nint data);
+    [DllImport("user32.dll")] private static extern bool EnumWindows(EnumWindow callback, nint data);
+    [DllImport("user32.dll")] private static extern bool IsWindowVisible(nint hwnd);
+    [DllImport("user32.dll")] private static extern bool PostMessage(nint hwnd, uint message, nint wparam, nint lparam);
     [DllImport("user32.dll")] private static extern uint GetWindowThreadProcessId(nint hwnd, out uint process);
     private static void Require(bool condition, string text) { if (!condition) throw new Exception(text); }
+
+    public static void RunExternalFullScreen(string executable)
+    {
+        // Exercise the exact /s command Windows sends, with the desktop mutex held.
+        using var desktopMutex = new Mutex(false, @"Local\DesktopLife.FlyPrototype");
+        var owned = desktopMutex.WaitOne(0);
+        try
+        {
+            var info = new ProcessStartInfo(Path.GetFullPath(executable)) { UseShellExecute = false };
+            info.ArgumentList.Add("/s");
+            using var process = Process.Start(info) ?? throw new Exception("Saver did not start");
+            var handles = new List<nint>();
+            try
+            {
+                var clock = Stopwatch.StartNew();
+                while (clock.Elapsed.TotalSeconds < 20 && !process.HasExited)
+                {
+                    handles.Clear();
+                    EnumWindows((hwnd, _) => { GetWindowThreadProcessId(hwnd, out var pid); if (pid == process.Id && IsWindowVisible(hwnd)) handles.Add(hwnd); return true; }, 0);
+                    if (handles.Count >= DesktopLife.Windows.MonitorService.GetDisplays().Count) break;
+                    Thread.Sleep(50);
+                }
+                Require(handles.Count == DesktopLife.Windows.MonitorService.GetDisplays().Count, "Windows /s did not open a saver for every monitor");
+                foreach (var hwnd in handles) PostMessage(hwnd, 0x0010, 0, 0);
+                Require(process.WaitForExit(10000) && process.ExitCode == 0, "Full-screen saver did not exit cleanly");
+                Console.WriteLine("PASS: Windows /s entry bypasses desktop mutex, opens every monitor, and exits cleanly.");
+            }
+            finally { if (!process.HasExited) process.Kill(); }
+        }
+        finally { if (owned) desktopMutex.ReleaseMutex(); }
+    }
 
     public static void Run(string output)
     {

@@ -6,6 +6,13 @@ namespace DesktopLife.Engine.Tests;
 public sealed class ScreenSaverTests
 {
     [Theory]
+    [InlineData("--settings", false)]
+    [InlineData("/S", true)]
+    [InlineData("/p:123", true)]
+    [InlineData("-c", true)]
+    public void MainApplicationRecognizesWindowsInvocation(string argument, bool expected) =>
+        Assert.Equal(expected, ScreenSaverArguments.IsInvocation([argument]));
+    [Theory]
     [InlineData("/s", ScreenSaverMode.Run, 0)]
     [InlineData("/S", ScreenSaverMode.Run, 0)]
     [InlineData("-s", ScreenSaverMode.Run, 0)]

@@ -1,24 +1,24 @@
 <Window x:Class="DesktopLife.App.Settings.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Icon="/DesktopLife;component/Assets/DesktopLife.ico" Title="{DynamicResource Title}" Width="540" Height="760" MinWidth="470" MinHeight="480"
+    Icon="/DesktopLife;component/Assets/DesktopLife.ico" Title="{DynamicResource Title}" Width="620" Height="800" MinWidth="470" MinHeight="480"
     WindowStartupLocation="CenterScreen" Background="#F0F4F1" Foreground="#243C33"
-    FontFamily="Microsoft YaHei UI" FontSize="12">
+    FontFamily="Microsoft YaHei UI" FontSize="12" UseLayoutRounding="True">
     <Window.Resources>
         <Style TargetType="Expander">
             <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
             <Setter Property="Padding" Value="2"/>
         </Style>
         <Style TargetType="Button">
-            <Setter Property="Padding" Value="12,5"/>
-            <Setter Property="MinHeight" Value="30"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="MinHeight" Value="36"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Background" Value="#E7EFE9"/>
             <Setter Property="Foreground" Value="#243C33"/>
             <Setter Property="BorderBrush" Value="#CBD9D0"/>
             <Setter Property="Template">
                 <Setter.Value><ControlTemplate TargetType="Button">
-                    <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                    <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True"/>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -33,7 +33,7 @@
         <Style TargetType="TextBox">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Padding" Value="6,3"/>
+            <Setter Property="Padding" Value="6,2"/>
             <Setter Property="BorderBrush" Value="#D5E0D9"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TextBox">
@@ -43,53 +43,63 @@
                 <ControlTemplate.Triggers><Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="InputBorder" Property="BorderBrush" Value="#306951"/></Trigger></ControlTemplate.Triggers>
             </ControlTemplate></Setter.Value></Setter>
         </Style>
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0,16,0,0"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabControl">
+                <Grid KeyboardNavigation.TabNavigation="Local">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <TabPanel IsItemsHost="True"/>
+                    <ContentPresenter Grid.Row="1" ContentSource="SelectedContent" Margin="{TemplateBinding Padding}"/>
+                </Grid>
+            </ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style TargetType="TabItem">
+            <Setter Property="Padding" Value="20,10"/><Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Foreground" Value="#536A5F"/><Setter Property="Background" Value="#E6EEE9"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabItem">
+                <Border x:Name="TabBorder" Background="Transparent" BorderBrush="Transparent" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                    <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.FontWeight="SemiBold"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsSelected" Value="True"><Setter TargetName="TabBorder" Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}"/><Setter TargetName="TabBorder" Property="BorderBrush" Value="#CCDAD3"/></Trigger>
+                    <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TabBorder" Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}"/></Trigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="TabBorder" Property="BorderBrush" Value="#306951"/></Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate></Setter.Value></Setter>
+        </Style>
+        <Style x:Key="Card" TargetType="Border"><Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="#D9E4DE"/><Setter Property="BorderThickness" Value="1"/><Setter Property="CornerRadius" Value="12"/><Setter Property="Padding" Value="16"/></Style>
+        <Style x:Key="SectionTitle" TargetType="TextBlock"><Setter Property="FontSize" Value="17"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Margin" Value="0,0,0,6"/></Style>
+        <Style x:Key="Description" TargetType="TextBlock"><Setter Property="Foreground" Value="#65776F"/><Setter Property="TextWrapping" Value="Wrap"/><Setter Property="LineHeight" Value="19"/></Style>
     </Window.Resources>
     <DockPanel>
-        <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Margin="18,0,18,12">
-            <TextBlock x:Name="Status" Text="{DynamicResource Hint}" TextWrapping="Wrap" Foreground="#63776C" DockPanel.Dock="Top" Margin="0,6,0,8" FontSize="12" MinHeight="32" AutomationProperties.LiveSetting="Polite"/>
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="False" Margin="22,0,22,18">
+            <Border DockPanel.Dock="Top" BorderBrush="#D5E0D9" BorderThickness="0,1,0,0" Margin="0,0,0,10" Padding="0,10,0,0">
+                <TextBlock x:Name="Status" Text="{DynamicResource Hint}" TextWrapping="Wrap" Foreground="#65776F" FontSize="11" MinHeight="30" AutomationProperties.LiveSetting="Polite"/>
+            </Border>
             <Button x:Name="PauseButton" Content="{DynamicResource Pause}" Click="PauseClicked" DockPanel.Dock="Left"/>
             <Button x:Name="ApplyButton" Content="{DynamicResource Apply}" Click="ApplyClicked" IsDefault="True" DockPanel.Dock="Right" Background="#306951" Foreground="White" BorderBrush="#306951"/>
         </DockPanel>
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-    <StackPanel Margin="18,14,18,6">
-        <DockPanel LastChildFill="True"><ComboBox x:Name="LanguagePicker" DockPanel.Dock="Right" Width="116" VerticalAlignment="Center" SelectionChanged="LanguageChanged" AutomationProperties.Name="{DynamicResource Language}"><ComboBoxItem Content="简体中文" Tag="zh-CN"/><ComboBoxItem Content="English" Tag="en-US"/></ComboBox><TextBlock Text="DesktopLife" FontFamily="Segoe UI Semibold" FontSize="23"/></DockPanel>
-        <TextBlock Text="{DynamicResource Subtitle}" Foreground="#63776C" Margin="0,4,0,18"/>
-        <TextBlock Text="{DynamicResource Appearance}" FontWeight="SemiBold" Margin="0,0,0,6"/>
-        <ComboBox x:Name="StylePicker" Height="34" Margin="0,0,0,8" SelectionChanged="StyleChanged" AutomationProperties.Name="{DynamicResource Appearance}">
-            <ComboBoxItem Content="{DynamicResource RealisticStyle}"/>
-            <ComboBoxItem Content="{DynamicResource CuteStyle}"/>
-        </ComboBox>
-        <TextBlock Text="{DynamicResource StyleHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,0,0,10"/>
-        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10">
-            <Expander x:Name="ScreenInfoExpander" IsExpanded="False">
-                <Expander.Header><StackPanel Orientation="Horizontal"><TextBlock Text="{DynamicResource Layout}" FontWeight="SemiBold"/><TextBlock x:Name="DisplaySummary" Margin="14,0,0,0" Foreground="#63776C"/></StackPanel></Expander.Header>
-            <StackPanel>
-                <Canvas x:Name="DisplayMap" Height="65" Margin="0,14,0,10" SizeChanged="MapSizeChanged"
-                    ClipToBounds="True" AutomationProperties.Name="{DynamicResource LayoutName}"/>
-                <TextBlock Text="{DynamicResource LayoutHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C"/>
-            </StackPanel>
-            </Expander>
-        </Border>
-        <TextBlock Text="{DynamicResource Counts}" FontSize="15" FontWeight="SemiBold" Margin="0,12,0,4"/>
-        <TextBlock Text="{DynamicResource CountHelp}" TextWrapping="Wrap" Foreground="#63776C" FontSize="12" Margin="0,0,0,12"/>
-        <TabControl x:Name="HabitatTabs" SelectionChanged="HabitatChanged" Background="Transparent" BorderThickness="0" Padding="0,10,0,0" AutomationProperties.Name="{DynamicResource HabitatLabel}">
-            <TabControl.Resources>
-                <Style TargetType="TabItem">
-                    <Setter Property="Padding" Value="24,9"/>
-                    <Setter Property="FontWeight" Value="SemiBold"/>
-                    <Setter Property="Background" Value="#E7EFE9"/>
-                    <Setter Property="Foreground" Value="#306951"/>
-                    <Style.Triggers><Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="White"/></Trigger></Style.Triggers>
-                </Style>
-            </TabControl.Resources>
-            <TabItem x:Name="ForestTab" Header="{DynamicResource Forest}"><StackPanel TextElement.FontWeight="Normal">
-        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <StackPanel Margin="22,16,22,12">
+                <DockPanel LastChildFill="True" Margin="0,0,0,12">
+                    <ComboBox x:Name="LanguagePicker" DockPanel.Dock="Right" Width="108" Height="30" VerticalAlignment="Center" SelectionChanged="LanguageChanged" AutomationProperties.Name="{DynamicResource Language}"><ComboBoxItem Content="简体中文" Tag="zh-CN"/><ComboBoxItem Content="English" Tag="en-US"/></ComboBox>
+                    <StackPanel><TextBlock Text="DesktopLife" FontFamily="Segoe UI Semibold" FontSize="25"/><TextBlock Text="{DynamicResource SettingsTagline}" Foreground="#65776F" Margin="0,3,12,0"/></StackPanel>
+                </DockPanel>
+                <TabControl x:Name="SettingsPages" SelectionChanged="SettingsPageChanged" AutomationProperties.Name="{DynamicResource SettingsNavigation}">
+                    <TabItem x:Name="CreaturesPage" Header="{DynamicResource CreaturesPageTitle}"><StackPanel TextElement.Foreground="#243C33">
+                        <TextBlock Text="{DynamicResource SceneIntro}" Style="{StaticResource Description}" Margin="0,0,0,12"/>
+        <TabControl x:Name="HabitatTabs" SelectionChanged="HabitatChanged" Background="Transparent" BorderThickness="0" Padding="0,12,0,0" AutomationProperties.Name="{DynamicResource HabitatLabel}">
+
+            <TabItem x:Name="ForestTab" Header="{DynamicResource Forest}" Foreground="#306951" Background="#E6EEE9"><StackPanel TextElement.FontWeight="Normal">
+        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="12" Padding="14">
             <StackPanel>
                 <TextBlock Text="{DynamicResource Fly}" FontWeight="SemiBold"/>
                 <TextBlock Text="{DynamicResource FlyHelp}" FontSize="12" TextWrapping="Wrap" Foreground="#63776C" Margin="0,4,0,0"/>
             </StackPanel>
         </Border>
-        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
+        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="12" Padding="14" Margin="0,8,0,0">
             <Expander x:Name="AdditionalSpeciesExpander" Header="{DynamicResource AdditionalSpecies}" IsExpanded="True">
                 <StackPanel>
                     <TextBlock Text="{DynamicResource AdditionalHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,6,0,10"/>
@@ -126,10 +136,10 @@
         </Border>
             </StackPanel></TabItem>
             <TabItem x:Name="OceanTab" Header="{DynamicResource Ocean}" Foreground="#1C647D" Background="#E1F0F6"><StackPanel TextElement.FontWeight="Normal">
-                <Border Background="#EAF5FA" BorderBrush="#BEDCE8" BorderThickness="1" CornerRadius="10" Padding="10">
+                <Border Background="#EAF5FA" BorderBrush="#BEDCE8" BorderThickness="1" CornerRadius="12" Padding="14">
                     <StackPanel><TextBlock Text="{DynamicResource Turtle}" FontWeight="SemiBold" Foreground="#1C647D"/><TextBlock Text="{DynamicResource TurtleHelp}" TextWrapping="Wrap" Foreground="#526F80" Margin="0,4,0,0"/></StackPanel>
                 </Border>
-                <Border Background="White" BorderBrush="#BEDCE8" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
+                <Border Background="White" BorderBrush="#BEDCE8" BorderThickness="1" CornerRadius="12" Padding="14" Margin="0,8,0,0">
                     <Expander x:Name="OceanSpeciesExpander" Header="{DynamicResource OceanSpecies}" IsExpanded="True"><StackPanel>
                         <TextBlock Text="{DynamicResource OceanHelp}" TextWrapping="Wrap" Foreground="#526F80" Margin="0,6,0,10"/>
                         <Grid Margin="0,3,0,3"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/><ColumnDefinition Width="66"/></Grid.ColumnDefinitions>
@@ -142,7 +152,47 @@
                 </Border>
             </StackPanel></TabItem>
         </TabControl>
-        <TextBlock Text="{DynamicResource HabitatHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,8,0,0"/>
+                        <TextBlock Text="{DynamicResource HabitatHelp}" Style="{StaticResource Description}" FontSize="11" Margin="0,12,0,0"/>
+                    </StackPanel></TabItem>
+                    <TabItem x:Name="SaverPage" Header="{DynamicResource SaverPageTitle}"><StackPanel TextElement.Foreground="#243C33">
+                        <TextBlock Text="{DynamicResource SaverHeading}" Style="{StaticResource SectionTitle}"/>
+                        <TextBlock Text="{DynamicResource SaverIntro}" Style="{StaticResource Description}" Margin="0,0,0,16"/>
+                        <Border Style="{StaticResource Card}"><StackPanel>
+                            <TextBlock Text="{DynamicResource SaverPreviewTitle}" FontWeight="SemiBold" FontSize="14"/>
+                            <TextBlock Text="{DynamicResource SaverPreviewHelp}" Style="{StaticResource Description}" Margin="0,6,0,12"/>
+                            <Button x:Name="SaverPreviewButton" Content="{DynamicResource SaverPreview}" Click="SaverPreviewClicked" HorizontalAlignment="Left" Background="#306951" Foreground="White" BorderBrush="#306951"/>
+                        </StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="0,10,0,0"><StackPanel>
+                            <TextBlock Text="{DynamicResource SaverContentTitle}" FontWeight="SemiBold" FontSize="14"/>
+                            <TextBlock Text="{DynamicResource SaverContentHelp}" Style="{StaticResource Description}" Margin="0,6,0,12"/>
+                            <Button x:Name="SaverContentButton" Content="{DynamicResource SaverContent}" Click="SaverContentClicked" HorizontalAlignment="Left"/>
+                        </StackPanel></Border>
+                        <Border Style="{StaticResource Card}" Margin="0,10,0,0"><StackPanel>
+                            <TextBlock Text="{DynamicResource SaverWindowsTitle}" FontWeight="SemiBold" FontSize="14"/>
+                            <TextBlock Text="{DynamicResource SaverWindowsHelp}" Style="{StaticResource Description}" Margin="0,6,0,12"/>
+                            <Button x:Name="SaverWindowsButton" Content="{DynamicResource SaverWindows}" Click="SaverWindowsClicked" HorizontalAlignment="Left"/>
+                        </StackPanel></Border>
+                        <TextBlock x:Name="SaverStatus" TextWrapping="Wrap" Foreground="#65776F" Margin="0,12,0,0" AutomationProperties.LiveSetting="Polite"/>
+                    </StackPanel></TabItem>
+                    <TabItem x:Name="PreferencesPage" Header="{DynamicResource PreferencesPageTitle}"><StackPanel TextElement.Foreground="#243C33">
+                        <TextBlock Text="{DynamicResource PreferencesHeading}" Style="{StaticResource SectionTitle}"/>
+                        <TextBlock Text="{DynamicResource PreferencesIntro}" Style="{StaticResource Description}" Margin="0,0,0,16"/>
+        <TextBlock Text="{DynamicResource Appearance}" FontWeight="SemiBold" Margin="0,0,0,6"/>
+        <ComboBox x:Name="StylePicker" Height="34" Margin="0,0,0,8" SelectionChanged="StyleChanged" AutomationProperties.Name="{DynamicResource Appearance}">
+            <ComboBoxItem Content="{DynamicResource RealisticStyle}"/>
+            <ComboBoxItem Content="{DynamicResource CuteStyle}"/>
+        </ComboBox>
+        <TextBlock Text="{DynamicResource StyleHelp}" TextWrapping="Wrap" Foreground="#63776C" Margin="0,0,0,10"/>
+        <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10">
+            <Expander x:Name="ScreenInfoExpander" IsExpanded="False">
+                <Expander.Header><StackPanel Orientation="Horizontal"><TextBlock Text="{DynamicResource Layout}" FontWeight="SemiBold"/><TextBlock x:Name="DisplaySummary" Margin="14,0,0,0" Foreground="#63776C"/></StackPanel></Expander.Header>
+            <StackPanel>
+                <Canvas x:Name="DisplayMap" Height="65" Margin="0,14,0,10" SizeChanged="MapSizeChanged"
+                    ClipToBounds="True" AutomationProperties.Name="{DynamicResource LayoutName}"/>
+                <TextBlock Text="{DynamicResource LayoutHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C"/>
+            </StackPanel>
+            </Expander>
+        </Border>
         <Border Background="White" BorderBrush="#D5E0D9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,8,0,0">
 <Expander Header="{DynamicResource Hotkeys}" IsExpanded="False"><StackPanel>
 <TextBlock Text="{DynamicResource KeyHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C" Margin="0,6,0,10"/>
@@ -159,7 +209,9 @@
 <TextBlock Text="{DynamicResource CaptureHelp}" TextWrapping="Wrap" FontSize="12" Foreground="#63776C" Margin="0,8,0,0"/>
 </StackPanel></Expander></Border>
 
-    </StackPanel>
-    </ScrollViewer>
+                    </StackPanel></TabItem>
+                </TabControl>
+            </StackPanel>
+        </ScrollViewer>
     </DockPanel>
 </Window>

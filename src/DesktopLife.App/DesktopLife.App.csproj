@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <ProjectReference Include="..\DesktopLife.ScreenSaver\DesktopLife.ScreenSaver.csproj" />
     <ProjectReference Include="..\DesktopLife.Engine\DesktopLife.Engine.csproj" />
     <ProjectReference Include="..\DesktopLife.Creatures\DesktopLife.Creatures.csproj" />
     <ProjectReference Include="..\DesktopLife.Rendering\DesktopLife.Rendering.csproj" />

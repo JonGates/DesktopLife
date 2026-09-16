@@ -7,6 +7,7 @@ using System.Windows.Media;
 using DesktopLife.Creatures.Displays;
 using DesktopLife.Engine.Creatures;
 using System.Windows.Automation;
+using System.Diagnostics;
 namespace DesktopLife.App.Settings;
 
 public partial class SettingsWindow : Window
@@ -45,7 +46,7 @@ public partial class SettingsWindow : Window
         HabitatTabs.SelectedIndex = (int)sizes.Habitat;
         RefreshHabitatTheme();
         _ready = true;
-        Height = Math.Min(880, SystemParameters.WorkArea.Height - 60);
+        Height = Math.Min(800, SystemParameters.WorkArea.Height - 60);
         RoachCount.Text = sizes.Cockroaches.ToString(CultureInfo.InvariantCulture);
         AntCount.Text = sizes.Ants.ToString(CultureInfo.InvariantCulture);
         CaterpillarCount.Text = sizes.Caterpillars.ToString(CultureInfo.InvariantCulture);
@@ -53,6 +54,7 @@ public partial class SettingsWindow : Window
         _host.StateChanged += RefreshState;
         Closed += (_, _) => { _host.LayoutChanged -= RefreshLayout; _host.StateChanged -= RefreshState; };
         Loaded += (_, _) => RefreshLayout();
+        Activated += (_, _) => RefreshSaverStatus();
         RefreshState();
         if (warning != null) SetStatus("ConfigWarning");
         if (_preferences.WarningKey != null) SetStatus(_preferences.WarningKey);
@@ -80,7 +82,62 @@ public partial class SettingsWindow : Window
         }
     }
     private void SetStatus(string key) { _statusKey = key; Status.Text = LanguageService.Get(key); }
-    private void Translate() { RefreshState(); RefreshLayout(); TranslateAdditionalRows(); SetStatus(_statusKey); }
+    private void Translate() { RefreshState(); RefreshLayout(); TranslateAdditionalRows(); SetStatus(_statusKey); RefreshSaverStatus(); }
+
+    private void RefreshSaverStatus()
+    {
+        if (SaverStatus == null) return;
+        try
+        {
+            var status = ScreenSaverLauncher.ReadRegistration();
+            SaverStatus.Text = status.Selected && status.Enabled
+                ? LanguageService.Choose("Windows 已选择 DesktopLife", "DesktopLife is selected in Windows") + (status.Seconds is > 0 ? LanguageService.Choose($" · 空闲 {status.Seconds} 秒后启动", $" · starts after {status.Seconds} idle seconds") : "")
+                : LanguageService.Choose("尚未启用 DesktopLife 自动屏保", "Automatic DesktopLife screen saver is not enabled");
+        }
+        catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException or IOException)
+        { SaverStatus.Text = LanguageService.Choose("请在 Windows 设置中确认自动启动状态", "Check automatic activation in Windows settings"); }
+    }
+    private void SettingsPageChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (!_ready || e.Source != SettingsPages) return;
+        ApplyButton.Visibility = SettingsPages.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+        SetStatus(SettingsPages.SelectedIndex == 0 ? "Hint" : SettingsPages.SelectedIndex == 1 ? "SaverIntro" : "PreferencesIntro");
+        RefreshSaverStatus();
+    }
+    private void SaverContentClicked(object sender, RoutedEventArgs e) => LaunchSaverCommand("/c");
+    private void LaunchSaverCommand(string argument)
+    {
+        try { using var process = Process.Start(ScreenSaverLauncher.SelfCommand(argument)); }
+        catch (Exception error) when (error is System.ComponentModel.Win32Exception or IOException or InvalidOperationException)
+        { SaverStatus.Text = LanguageService.Choose("无法打开屏保，请确认程序所在文件夹可访问。", "Unable to open the screen saver. Check that the app folder is accessible."); }
+    }
+    private async void SaverPreviewClicked(object sender, RoutedEventArgs e)
+    {
+        var restore = !_host.IsPaused;
+        SaverPreviewButton.IsEnabled = false;
+        try
+        {
+            if (restore) _host.TogglePause();
+            using var process = Process.Start(ScreenSaverLauncher.SelfCommand("/s")) ?? throw new IOException();
+            await process.WaitForExitAsync();
+        }
+        catch (Exception error) when (error is System.ComponentModel.Win32Exception or IOException or InvalidOperationException)
+        { SaverStatus.Text = LanguageService.Choose("无法启动屏保预览。", "Unable to start the screen saver preview."); }
+        finally { if (restore && _host.IsPaused) _host.TogglePause(); SaverPreviewButton.IsEnabled = true; }
+    }
+    private async void SaverWindowsClicked(object sender, RoutedEventArgs e)
+    {
+        SaverWindowsButton.IsEnabled = false;
+        try
+        {
+            var path = await System.Threading.Tasks.Task.Run(ScreenSaverLauncher.InstallCopy);
+            using var process = Process.Start(ScreenSaverLauncher.WindowsSettingsCommand(path));
+            SaverStatus.Text = LanguageService.Choose("请选择 DesktopLife，设置等待时间，然后点击“应用”。", "Select DesktopLife, choose a wait time, then click Apply.");
+        }
+        catch (Exception error) when (error is System.ComponentModel.Win32Exception or IOException or UnauthorizedAccessException or InvalidOperationException)
+        { SaverStatus.Text = LanguageService.Choose("无法准备屏保。请使用便携版，并确认文件夹可写。", "Unable to prepare the saver. Use the portable build and check folder permissions."); }
+        finally { SaverWindowsButton.IsEnabled = true; }
+    }
     private void BuildAdditionalRows(PopulationSettings settings)
     {
         BuildRows(InsectCatalog.Additional, settings.GetAdditional, AdditionalSpeciesPanel, _additionalRows);

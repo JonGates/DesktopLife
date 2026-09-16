@@ -57,6 +57,8 @@ internal static class StyleProbe
             var uiEncoder = new PngBitmapEncoder(); uiEncoder.Frames.Add(BitmapFrame.Create(ui));
             using (var uiStream = File.Create(Path.Combine(output, "settings-compact.png"))) uiEncoder.Save(uiStream);
             var screenInfo = (Expander)window.FindName("ScreenInfoExpander");
+            ((TabControl)window.FindName("SettingsPages")).SelectedIndex = 2;
+            window.UpdateLayout();
             if (screenInfo.IsExpanded) throw new Exception("Screen information should start collapsed");
             screenInfo.IsExpanded = true; window.UpdateLayout();
             if (((System.Windows.Controls.Canvas)window.FindName("DisplayMap")).Children.Count == 0) throw new Exception("Expanded display map missing");

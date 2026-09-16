@@ -4,6 +4,8 @@ namespace DesktopLife.Engine.ScreenSaving;
 public enum ScreenSaverMode { Invalid, Configure, Run, Preview }
 public readonly record struct ScreenSaverArguments(ScreenSaverMode Mode, long Parent = 0)
 {
+    public static bool IsInvocation(string[] args) => args.Length > 0 &&
+        args[0].Split(':', 2)[0].ToLowerInvariant() is "/s" or "-s" or "/p" or "-p" or "/c" or "-c";
     public static ScreenSaverArguments Parse(string[] args)
     {
         if (args.Length == 0) return new(ScreenSaverMode.Configure);

@@ -14,6 +14,8 @@ Windows 10/11 x64 · 13 种生物 · 写实/可爱风格 · 多显示器 · 自�
 
 > **开发预览：** 新增「森林 / 海洋」标签与独立配置，海洋包含跟随鼠标的小绿龟和 12 种鱼，支持写实与可爱风格。当前 v0.4.2 下载包尚未包含此功能。[海洋模式说明](docs/OCEAN.md)。
 
+开发预览的主程序还提供「生物 / 屏保 / 偏好」设置页面，可以直接预览屏保、调整屏保内容并打开 Windows 自动屏保设置。[使用方法](docs/SCREENSAVER.md)。
+
 ![DesktopLife Windows 桌面宠物实录：昆虫在桌面自由活动](docs/images/live-desktop.gif)
 
 > 当前 v0.4.2 为预览版。如果它让你的桌面更有生命力——或者变得更糟了一点——欢迎点亮 ⭐，并在 [Issues](https://github.com/JonGates/DesktopLife/issues) 告诉我们下一种该加入什么生物。

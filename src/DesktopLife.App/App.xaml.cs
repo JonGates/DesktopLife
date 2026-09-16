@@ -28,6 +28,14 @@ public partial class App : Application
             Shutdown(1);
         };
         AppDomain.CurrentDomain.UnhandledException += (_, args) => CrashLog.Write(args.ExceptionObject);
+        // Windows launches /s, /p and /c in a separate process, even while pets are running.
+        // Route these before the desktop single-instance mutex.
+        if (DesktopLife.Engine.ScreenSaving.ScreenSaverArguments.IsInvocation(e.Args) ||
+            string.Equals(System.IO.Path.GetExtension(Environment.ProcessPath), ".scr", StringComparison.OrdinalIgnoreCase))
+        {
+            DesktopLife.ScreenSaver.ScreenSaverEntry.Start(this, e.Args);
+            return;
+        }
         _showSettingsSignal = new EventWaitHandle(false, EventResetMode.AutoReset, @"Local\DesktopLife.ShowSettings");
         _instance = new Mutex(true, @"Local\DesktopLife.FlyPrototype", out _ownsInstance);
         if (!_ownsInstance)

@@ -32,11 +32,12 @@ DesktopLife - Windows x64 portable edition / 便携版
 1. 将整个 ZIP 解压到普通文件夹。
 2. 双击 Start-DesktopLife.cmd 启动并打开设置。
 3. 已自带 .NET 运行环境，不需要安装 .NET、SDK 或 Visual Studio。
-4. 右上角切换语言；调整生物数量与尺寸；“生物配置”中可调整全部 12 种，点击“保存数量与尺寸”。
+4. 在“生物”页选择森林或海洋，调整数量与尺寸；在“偏好”页修改风格和快捷键。
 5. 苍蝇围绕鼠标飞行，左键点击指定落点，停留 3 秒后继续飞行。
 6. 默认 Ctrl+Alt+S 启动/恢复，Ctrl+Alt+P 暂停；可在设置中修改。
 7. 关闭设置后继续运行。双击托盘图标重开设置；托盘右键“退出”结束程序。
 8. 快捷键只在程序运行期间有效。多屏排列自动跟随 Windows 显示设置。
+9. 在“屏保”页预览或配置屏保；点击“打开 Windows 屏保设置”，设定等待分钟数并应用后，才会自动触发。
 
 支持 Windows 10/11 x64。无需管理员权限，无需登录。
 设置保存在当前用户的 %AppData%\DesktopLife，升级程序时仍可保留。
@@ -45,7 +46,8 @@ DesktopLife - Windows x64 portable edition / 便携版
 English
 Extract the complete ZIP, then double-click Start-DesktopLife.cmd.
 The .NET runtime is included; no SDK, Visual Studio or .NET installation is needed.
-Choose English at the top right. Save population changes with Save population.
+Choose English at the top right. Use Creatures, Screen saver, and Preferences tabs.
+From Screen saver, preview or configure content, then open Windows settings and apply an idle timeout to enable automatic activation.
 Default shortcuts: Ctrl+Alt+S starts/resumes; Ctrl+Alt+P pauses. Both are configurable.
 Closing settings keeps the app running. Double-click its tray icon to reopen settings;
 use the tray Exit command to stop. Shortcuts only work while the app is running.
