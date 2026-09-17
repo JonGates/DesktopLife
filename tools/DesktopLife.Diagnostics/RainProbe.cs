@@ -46,6 +46,22 @@ internal static class RainProbe
                 RainGlassRenderer.Render(dc, flowing, flowLayout.Bounds, 1, 1);
             }
             Save(visual, 640, 480, Path.Combine(output, $"flow-{frame}.png"));
+            var light = new DrawingVisual();
+            using (var dc = light.RenderOpen())
+            {
+                dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, 640, 480));
+                dc.PushTransform(new ScaleTransform(2, 2));
+                RainGlassRenderer.Render(dc, flowing, flowLayout.Bounds, 1, 1);
+            }
+            if (frame == 4)
+            {
+                var pixels = new byte[640 * 480 * 4];
+                var bitmap = new RenderTargetBitmap(640, 480, 96, 96, PixelFormats.Pbgra32); bitmap.Render(light); bitmap.CopyPixels(pixels, 640 * 4, 0);
+                // The isolated wake must not darken twice at each segment's joint.
+                for (var y = 100; y < 250; y++) for (var x = 290; x < 310; x++)
+                    if (pixels[(y * 640 + x) * 4 + 2] < 234) throw new Exception("Overlapping dark trail seams on white background");
+            }
+            Save(light, 640, 480, Path.Combine(output, $"flow-light-{frame}.png"));
         }
         var variety = new DesktopLife.Engine.World.RainGlass { Enabled = true };
         for (var row = 0; row < 3; row++) for (var col = 0; col < 16; col++) variety.AddDrop(new(20 + col * 28, 22 + row * 34), new[] { 2f, 4.5f, 6.8f }[row]);

@@ -9,7 +9,7 @@ public static class RainGlassRenderer
     private static readonly Pen[] TrailPens = Enumerable.Range(0, 96).Select(i => Pen(Color.FromArgb((byte)((i / 12 + 1) * 2), 20, 40, 48), .5 + i % 12)).ToArray();
     private static readonly Pen[] TrailEdges = Enumerable.Range(0, 8).Select(i => Pen(Color.FromArgb((byte)((i + 1) * 3), 210, 231, 238), .55)).ToArray();
     private static T Freeze<T>(T value) where T : Freezable { value.Freeze(); return value; }
-    private static Pen Pen(Color color, double width) => Freeze(new Pen(new SolidColorBrush(color), width) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
+    private static Pen Pen(Color color, double width) => Freeze(new Pen(new SolidColorBrush(color), width) { StartLineCap = PenLineCap.Flat, EndLineCap = PenLineCap.Flat });
     public static void Render(DrawingContext dc, RainGlass rain, WorldBounds viewport, double dpiX, double dpiY, ImageSource? backgroundImage = null)
     {
         if (!rain.Enabled) return;
@@ -19,11 +19,11 @@ public static class RainGlassRenderer
         {
             if (!viewport.Contains(trail.Start, 50) && !viewport.Contains(trail.End, 50)) continue;
             var life = Math.Clamp(1 - (rain.Time - trail.Born) / 5.0, 0, 1);
-            var variation = .5 + .5 * Math.Sin(trail.Start.Y * .17 + trail.Start.X * .11);
+            var variation = .5 + .5 * Math.Sin(trail.Start.Y * .035 + trail.Start.X * .025);
             // Fresh broad wakes stay connected; older narrow remnants can break apart.
             if (life < .6 && trail.Width < 4 && variation < .13) continue;
             var width = trail.Width * (.45 + .55 * life) * (.8 + .2 * variation);
-            var opacity = life * (.65 + .35 * variation);
+            var opacity = life * (.9 + .1 * variation);
             var bucket = Math.Clamp((int)(opacity * 8), 0, 7);
             var start = new Point(trail.Start.X, trail.Start.Y); var end = new Point(trail.End.X, trail.End.Y);
             var pen = TrailPens[bucket * 12 + Math.Clamp((int)Math.Round(width - .5), 0, 11)];
