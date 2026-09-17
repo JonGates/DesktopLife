@@ -7,7 +7,8 @@
 - 滑落雨滴会吞并沿途雨滴，体积相加后重新计算大小，留下逐渐消失的水痕。
 - 桌面左键点击随机产生放射裂纹、蛛网裂纹或下落碎片，约 4 秒后消失；最多保留 5 处效果。点击仍会传给下面的应用，设置窗口内的点击不触发特效。
 - 暂停时隐藏画面并冻结模拟，恢复后继续；场景切换会清除雨滴和裂纹。
-- 桌面使用透明覆盖层和程序绘制的水滴高光，不抓取或扭曲桌面内容。屏保可配合背景图片使用，真实键鼠输入仍会退出屏保，雨滴和碎裂由自动交互驱动。
+- 水滴采用不规则轮廓、深色边缘、局部高光和底部聚光，细小水珠与大滴混合。细水痕逐渐淡出。
+- 桌面使用透明覆盖层，不抓取或扭曲桌面内容；屏保选择背景图片时，水滴会采样相应位置的图片，呈现近似倒像折射。真实键鼠输入仍会退出屏保，雨滴和碎裂由自动交互驱动。
 - 跨屏按物理坐标绘制；雨滴可落入相接的下方显示器，掉入屏幕外的空隙时消失。
 
 ## 验证
@@ -17,4 +18,4 @@ dotnet test DesktopLife.sln -c Release
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --rain artifacts/rain-check
 ```
 
-Rain window is a third scene available in desktop and screen saver settings. Drops stick, grow, slide under gravity, and gather smaller drops along their path. The pointer releases drops; clicks generate one of three temporary fracture effects. Screen saver input still exits normally. Glass highlights are drawn over the desktop without screen capture or true optical refraction.
+Rain window is a third scene available in desktop and screen saver settings. Drops stick, grow, slide under gravity, and gather smaller drops along their path. The pointer releases drops; clicks generate one of three temporary fracture effects. Screen saver input still exits normally. Desktop glass uses highlights without screen capture; screen saver images support an approximate inverted local lens effect.

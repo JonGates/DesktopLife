@@ -23,6 +23,19 @@ internal static class RainProbe
         simulation.SetPopulation(new(Habitat: Habitat.Rain));
         if (simulation.World.Manager.Creatures.Count != 0 || !simulation.World.Rain.Enabled) throw new Exception("Rain contains creatures");
         for (var i = 0; i < 650; i++) simulation.Update(.05f, new(-500, -500));
+        // Synthetic out-of-focus light background for checking image-based droplet optics.
+        var backdrop = new DrawingVisual();
+        using (var dc = backdrop.RenderOpen())
+        {
+            dc.DrawRectangle(new LinearGradientBrush(Color.FromRgb(9, 26, 44), Color.FromRgb(63, 101, 110), 90), null, new Rect(0, 0, 960, 600));
+            var glow = new RadialGradientBrush(new GradientStopCollection { new(Color.FromRgb(255, 223, 137), 0), new(Color.FromArgb(240, 239, 125, 30), .25), new(Color.FromArgb(120, 188, 89, 34), .55), new(Colors.Transparent, 1) });
+            dc.DrawEllipse(glow, null, new Point(370, 280), 390, 290);
+            dc.DrawRectangle(new SolidColorBrush(Color.FromArgb(180, 10, 20, 30)), null, new Rect(690, 0, 22, 600));
+        }
+        var background = new RenderTargetBitmap(960, 600, 96, 96, PixelFormats.Pbgra32); background.Render(backdrop); background.Freeze();
+        var optics = new DrawingVisual();
+        using (var dc = optics.RenderOpen()) { dc.DrawImage(background, new Rect(0, 0, 960, 600)); RainGlassRenderer.Render(dc, simulation.World.Rain, simulation.Layout.Bounds, 1, 1, background); }
+        Save(optics, 960, 600, Path.Combine(output, "rain-image-lens.png"));
         for (var frame = 0; frame < 3; frame++)
         {
             simulation.Update(.05f, new(480, 260), new MouseClick(frame + 1, new(480, 260)));

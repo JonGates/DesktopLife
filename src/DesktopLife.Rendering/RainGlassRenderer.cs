@@ -6,40 +6,26 @@ namespace DesktopLife.Rendering;
 
 public static class RainGlassRenderer
 {
-    private static readonly Brush Water = Freeze(new RadialGradientBrush(new GradientStopCollection {
-        new(Color.FromArgb(12, 210, 235, 250), .15), new(Color.FromArgb(55, 140, 178, 199), .72), new(Color.FromArgb(145, 235, 250, 255), .89), new(Color.FromArgb(100, 15, 36, 48), 1) }) { GradientOrigin = new(.32, .2) });
-    private static readonly Pen Rim = Pen(Color.FromArgb(80, 10, 25, 38), .7);
-    private static readonly Pen Shine = Pen(Color.FromArgb(220, 245, 253, 255), 1.15);
     private static readonly Pen CrackDark = Pen(Color.FromArgb(150, 10, 26, 40), 2.1);
     private static readonly Pen CrackLight = Pen(Color.FromArgb(225, 223, 246, 255), .8);
     private static readonly Brush Shard = Freeze(new SolidColorBrush(Color.FromArgb(35, 215, 241, 255)));
     private static readonly Pen[] TrailPens = Enumerable.Range(1, 10).Select(i => Pen(Color.FromArgb(22, 205, 239, 253), i)).ToArray();
     private static T Freeze<T>(T value) where T : Freezable { value.Freeze(); return value; }
     private static Pen Pen(Color color, double width) => Freeze(new Pen(new SolidColorBrush(color), width) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
-    public static void Render(DrawingContext dc, RainGlass rain, WorldBounds viewport, double dpiX, double dpiY)
+    public static void Render(DrawingContext dc, RainGlass rain, WorldBounds viewport, double dpiX, double dpiY, ImageSource? backgroundImage = null)
     {
         if (!rain.Enabled) return;
         dc.PushClip(new RectangleGeometry(new Rect(0, 0, viewport.Width / dpiX, viewport.Height / dpiY)));
         var matrix = Matrix.Identity; matrix.Translate(-viewport.Left, -viewport.Top); matrix.Scale(1 / dpiX, 1 / dpiY); dc.PushTransform(new MatrixTransform(matrix));
         foreach (var trail in rain.Trails)
         {
-            var opacity = Math.Max(0, 1 - (rain.Time - trail.Born) / 2.5);
+            var opacity = Math.Max(0, 1 - (rain.Time - trail.Born) / 5.0);
             dc.PushOpacity(opacity);
-            dc.DrawLine(TrailPens[Math.Clamp((int)trail.Width - 1, 0, 9)], new(trail.Start.X, trail.Start.Y), new(trail.End.X, trail.End.Y)); dc.Pop();
+            dc.DrawLine(TrailPens[Math.Clamp((int)(trail.Width * .35) - 1, 0, 9)], new(trail.Start.X, trail.Start.Y), new(trail.End.X, trail.End.Y)); dc.Pop();
         }
         foreach (var drop in rain.Drops)
         {
-            var p = new Point(drop.Position.X, drop.Position.Y); var r = drop.Radius;
-            var ry = r * (drop.Sliding ? 1.35 : 1.08);
-            var age = rain.Time - drop.Born;
-            if (age < .25f)
-            {
-                dc.PushOpacity((1 - age / .25) * .45);
-                dc.DrawEllipse(null, Shine, p, r * (1 + age * 3), r * (1 + age * 3)); dc.Pop();
-            }
-            dc.DrawEllipse(Water, Rim, p, r, ry);
-            dc.DrawEllipse(null, Shine, new Point(p.X - r * .25, p.Y - ry * .38), r * .28, r * .12);
-            dc.DrawEllipse(Brushes.White, null, new Point(p.X + r * .3, p.Y + ry * .56), .65, .5);
+            RainDropOptics.Draw(dc, drop, rain.Time, viewport, backgroundImage);
         }
         foreach (var fracture in rain.Fractures)
         {

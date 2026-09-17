@@ -61,7 +61,7 @@ public sealed class RainGlass(int seed = 73)
                     pick -= candidate.Bounds.Width * candidate.Bounds.Height;
                     if (pick <= 0) { display = candidate; break; }
                 }
-                AddDrop(new(display.Bounds.Left + (float)_random.NextDouble() * display.Bounds.Width, display.Bounds.Top + (float)_random.NextDouble() * display.Bounds.Height), 2 + (float)_random.NextDouble() * 5);
+                AddDrop(new(display.Bounds.Left + (float)_random.NextDouble() * display.Bounds.Width, display.Bounds.Top + (float)_random.NextDouble() * display.Bounds.Height), 1.3f + MathF.Pow((float)_random.NextDouble(), 2.1f) * 8.5f);
             }
             _spawn = System.Math.Min(_spawn, 1);
         }
@@ -87,7 +87,7 @@ public sealed class RainGlass(int seed = 73)
             if (!layout.Contains(drop.Position)) _drops.Remove(drop);
         }
         _drops.RemoveAll(d => !layout.Contains(d.Position));
-        _trails.RemoveAll(t => Time - t.Born > 2.5f);
+        _trails.RemoveAll(t => Time - t.Born > 5f);
         if (_trails.Count > 3500) _trails.RemoveRange(0, _trails.Count - 3500);
         _fractures.RemoveAll(f => Time - f.Born > 4);
         _previousCursor = cursor;
