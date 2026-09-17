@@ -10,22 +10,22 @@ internal static class RainDropOptics
 {
     private static readonly Geometry[] Shapes = Enumerable.Range(0, 12).Select(Shape).ToArray();
     private static readonly Brush Body = Freeze(new LinearGradientBrush(new GradientStopCollection {
-        new(Color.FromArgb(220, 6, 15, 22), 0), new(Color.FromArgb(165, 8, 19, 28), .22),
-        new(Color.FromArgb(20, 125, 157, 174), .5), new(Color.FromArgb(95, 203, 221, 228), .77),
-        new(Color.FromArgb(175, 10, 27, 38), 1) }, 90));
+        new(Color.FromArgb(155, 6, 15, 22), 0), new(Color.FromArgb(45, 8, 19, 28), .22),
+        new(Color.FromArgb(5, 125, 157, 174), .5), new(Color.FromArgb(30, 203, 221, 228), .77),
+        new(Color.FromArgb(115, 10, 27, 38), 1) }, 105));
     private static readonly Brush Glint = Freeze(new RadialGradientBrush(Color.FromArgb(210, 245, 251, 253), Colors.Transparent));
-    private static readonly Brush Caustic = Freeze(new RadialGradientBrush(Color.FromArgb(155, 213, 237, 248), Colors.Transparent));
-    private static readonly Pen Edge = Freeze(new Pen(new SolidColorBrush(Color.FromArgb(190, 6, 17, 25)), .12));
+    private static readonly Brush Caustic = Freeze(new RadialGradientBrush(Color.FromArgb(90, 213, 237, 248), Colors.Transparent));
+    private static readonly Pen Edge = Freeze(new Pen(new SolidColorBrush(Color.FromArgb(135, 6, 17, 25)), .06));
     private static readonly Pen Lip = Freeze(new Pen(new SolidColorBrush(Color.FromArgb(115, 228, 245, 252)), .045));
-    private static readonly Lazy<BitmapSource[]> Sprites = new(() => Shapes.Select(shape =>
+    private static readonly Lazy<BitmapSource[]> Sprites = new(() => Shapes.Select((shape, index) =>
     {
         var visual = new DrawingVisual();
         using (var dc = visual.RenderOpen())
         {
             dc.PushTransform(new TranslateTransform(32, 32)); dc.PushTransform(new ScaleTransform(24, 24));
             dc.DrawGeometry(Body, Edge, shape);
-            dc.DrawEllipse(Caustic, null, new(.1, .65), .58, .19);
-            dc.DrawEllipse(Glint, null, new(-.32, -.61), .17, .08);
+            dc.DrawEllipse(Caustic, null, new(.22 - index % 3 * .12, .65), .25 + index % 4 * .06, .1);
+            dc.DrawEllipse(Glint, null, new(-.35 + index % 3 * .12, -.61), .07 + index % 3 * .03, .04);
             dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72)); dc.Pop(); dc.Pop();
         }
         var bitmap = new RenderTargetBitmap(64, 64, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual); bitmap.Freeze();
@@ -34,13 +34,13 @@ internal static class RainDropOptics
     private static T Freeze<T>(T value) where T : Freezable { value.Freeze(); return value; }
     private static Geometry Shape(int index)
     {
-        var lean = (index % 4 - 1.5) * .09;
-        var shoulder = .55 + index % 3 * .12;
+        var lean = (index % 4 - 1.5) * .18;
+        var shoulder = .25 + index % 3 * .16;
         var geometry = new StreamGeometry();
         using (var c = geometry.Open())
         {
             c.BeginFigure(new(lean, -1), true, true);
-            c.BezierTo(new(.52 + lean, -1.04), new(.98, -shoulder), new(.93, .12), true, false);
+            c.BezierTo(new(.32 + lean, -.94), new(.88, -shoulder), new(.93, .12), true, false);
             c.BezierTo(new(1.02, .74), new(.43, 1.06), new(-.12, .96), true, false);
             c.BezierTo(new(-.9, .93), new(-1.02, .33), new(-.81, -.18), true, false);
             c.BezierTo(new(-.65, -.65), new(-.46 + lean, -.95), new(lean, -1), true, false);
@@ -49,11 +49,11 @@ internal static class RainDropOptics
     }
     public static void Draw(DrawingContext dc, GlassDrop drop, float time, WorldBounds viewport, ImageSource? image)
     {
-        var index = (int)(drop.Born * 117) % Shapes.Length;
+        var index = drop.ShapeIndex % Shapes.Length;
         var shape = Shapes[index];
         var r = (double)drop.Radius;
         var impact = Math.Clamp((time - drop.Born) / .2, 0, 1);
-        var stretch = drop.Sliding ? 1.2 + Math.Min(.6, drop.Speed / 700) : .95 + index % 3 * .08;
+        var stretch = .88 + index % 4 * .07 + Math.Min(.4, drop.Speed / 600);
         if (image == null || r < 4)
         {
             var rx = r * (1.13 - impact * .13) * 4 / 3;

@@ -6,6 +6,21 @@ namespace DesktopLife.Engine.Tests;
 
 public class RainGlassTests
 {
+    [Fact] public void ReleasedDropBrieflyPinsThenResumes()
+    {
+        var rain = new RainGlass { Enabled = true };
+        var layout = new DesktopLayout([new("tall", new(0, 0, 800, 10000), true)]);
+        var drop = rain.AddDrop(new(200, 100), 6);
+        rain.Update(.05f, layout, drop.Position, null, false);
+        var stopped = false; var resumed = false;
+        for (var i = 0; i < 200; i++)
+        {
+            rain.Update(.05f, layout, new(-999, -999), null, false);
+            if (drop.Speed == 0) stopped = true;
+            if (stopped && drop.Speed > 0) resumed = true;
+        }
+        Assert.True(stopped); Assert.True(resumed); Assert.True(drop.Position.Y > 100);
+    }
     [Fact] public void FracturesExpireAfterThreeRealSecondsEvenAtLowFrameRate()
     {
         var rain = new RainGlass { Enabled = true };
