@@ -82,7 +82,7 @@ public partial class SettingsWindow : Window
         }
     }
     private void SetStatus(string key) { _statusKey = key; Status.Text = LanguageService.Get(key); }
-    private void Translate() { RefreshState(); RefreshLayout(); TranslateAdditionalRows(); SetStatus(_statusKey); RefreshSaverStatus(); }
+    private void Translate() { RefreshState(); RefreshLayout(); TranslateAdditionalRows(); SetStatus(_statusKey); RefreshSaverStatus(); RefreshHabitatTheme(); }
 
     private void RefreshSaverStatus()
     {
@@ -100,7 +100,7 @@ public partial class SettingsWindow : Window
     private void SettingsPageChanged(object sender, SelectionChangedEventArgs e)
     {
         if (!_ready || e.Source != SettingsPages) return;
-        ApplyButton.Visibility = SettingsPages.SelectedIndex == 0 ? Visibility.Visible : Visibility.Collapsed;
+        ApplyButton.Visibility = SettingsPages.SelectedIndex == 0 && HabitatTabs.SelectedIndex != 2 ? Visibility.Visible : Visibility.Collapsed;
         SetStatus(SettingsPages.SelectedIndex == 0 ? "Hint" : SettingsPages.SelectedIndex == 1 ? "SaverIntro" : "PreferencesIntro");
         RefreshSaverStatus();
     }
@@ -226,6 +226,7 @@ public partial class SettingsWindow : Window
     }
     private void RefreshHabitatTheme()
     {
+        ApplyButton.Visibility = SettingsPages.SelectedIndex == 0 && HabitatTabs.SelectedIndex != 2 ? Visibility.Visible : Visibility.Collapsed;
         var ocean = HabitatTabs.SelectedIndex == 1;
         Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ocean ? "#EFF5F8" : "#F0F4F1"));
         ApplyButton.Background = ApplyButton.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ocean ? "#1C647D" : "#306951"));

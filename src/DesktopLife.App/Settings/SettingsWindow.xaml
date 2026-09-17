@@ -87,6 +87,12 @@
                     </StackPanel></Expander>
                 </Border>
             </StackPanel></TabItem>
+            <TabItem Header="{DynamicResource Rain}" Foreground="#42657D" Background="#E2ECF4">
+                <Border Style="{StaticResource Card}"><StackPanel>
+                    <TextBlock Text="{DynamicResource RainTitle}" Style="{StaticResource SectionTitle}"/>
+                    <TextBlock Text="{DynamicResource RainHelp}" Style="{StaticResource Description}"/>
+                </StackPanel></Border>
+            </TabItem>
         </TabControl>
                         <TextBlock Text="{DynamicResource HabitatHelp}" Style="{StaticResource Description}" FontSize="11" Margin="0,12,0,0"/>
                     </StackPanel></TabItem>

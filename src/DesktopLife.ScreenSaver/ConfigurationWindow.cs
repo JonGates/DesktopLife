@@ -96,6 +96,11 @@ public sealed class ConfigurationWindow : Window
         var forest = new StackPanel(); var ocean = new StackPanel();
         var forestTab = new TabItem { Content = forest, Background = Brush("#E6EEE9"), Foreground = Brush("#306951") }; var oceanTab = new TabItem { Content = ocean, Background = Brush("#E1F0F6"), Foreground = Brush("#1C647D") };
         Translate(() => { forestTab.Header = Text("森林", "Forest"); oceanTab.Header = Text("海洋", "Ocean"); }); tabs.Items.Add(forestTab); tabs.Items.Add(oceanTab); tabs.SelectedIndex = (int)settings.Habitat;
+        var rainContent = new StackPanel();
+        rainContent.Children.Add(Label("屏幕上的雨窗", "Rain on your screen", true));
+        rainContent.Children.Add(Label("雨滴会积聚、滑落并吞并沿途雨滴。屏保中自动演出；真实鼠标或键盘输入仍会退出。桌面雨窗模式支持鼠标拨动和点击碎裂。", "Drops gather, slide and merge. The screen saver plays automatically; real mouse or keyboard input exits. Desktop rain supports pointer interaction and click fractures."));
+        var rainTab = new TabItem { Content = Card(rainContent), Background = Brush("#E2ECF4"), Foreground = Brush("#42657D") };
+        Translate(() => rainTab.Header = Text("雨窗", "Rain window")); tabs.Items.Add(rainTab); tabs.SelectedIndex = (int)settings.Habitat;
         void Theme() { var sea = tabs.SelectedIndex == 1; Background = Brush(sea ? "#EFF5F8" : "#F0F4F1"); save.Background = save.BorderBrush = Brush(sea ? "#1C647D" : "#306951"); }
         tabs.SelectionChanged += (_, e) => { if (e.Source == tabs) Theme(); }; Theme();
         Grid Row(StackPanel table)

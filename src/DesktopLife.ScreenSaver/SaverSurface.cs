@@ -23,9 +23,14 @@ public sealed class SaverSurface(DisplaySimulation simulation, WorldBounds viewp
             dc.PushTransform(new TranslateTransform((ActualWidth - viewport.Width * scale) / 2, (ActualHeight - viewport.Height * scale) / 2));
             dc.PushTransform(new ScaleTransform(scale, scale));
             _renderer.Render(dc, simulation.World.Manager.Creatures, viewport, simulation.World.TotalTime, 1, 1);
+            RainGlassRenderer.Render(dc, simulation.World.Rain, viewport, 1, 1);
             dc.Pop(); dc.Pop();
         }
-        else _renderer.Render(dc, simulation.World.Manager.Creatures, viewport, simulation.World.TotalTime, dpi.DpiScaleX, dpi.DpiScaleY);
+        else
+        {
+            _renderer.Render(dc, simulation.World.Manager.Creatures, viewport, simulation.World.TotalTime, dpi.DpiScaleX, dpi.DpiScaleY);
+            RainGlassRenderer.Render(dc, simulation.World.Rain, viewport, dpi.DpiScaleX, dpi.DpiScaleY);
+        }
         dc.Pop();
     }
 }

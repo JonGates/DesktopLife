@@ -19,6 +19,7 @@ public sealed class RenderSurface(SimulationWorld world) : FrameworkElement
     {
         var dpi = VisualTreeHelper.GetDpi(this);
         _renderer.Render(dc, world.Manager.Creatures, Viewport, world.TotalTime, dpi.DpiScaleX, dpi.DpiScaleY);
+        RainGlassRenderer.Render(dc, world.Rain, Viewport, dpi.DpiScaleX, dpi.DpiScaleY);
 #if DEBUG
         _hud.Draw(dc, ActualWidth, Seconds, Fps, UpdateMs, world.Mouse.State, StateLabel, CockroachCount, VisibleCount, dpi.PixelsPerDip);
 #endif

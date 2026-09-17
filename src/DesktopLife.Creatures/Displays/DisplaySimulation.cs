@@ -59,7 +59,7 @@ public sealed class DisplaySimulation(int seed)
                 Resize(definition.Kind, previous.MinPercent, previous.MaxPercent, configured.MinPercent, configured.MaxPercent);
             }
         }
-        else
+        else if (settings.Habitat == Habitat.Forest)
         {
             Add(CreatureKind.Fly, 1, () => new FlyCreature(SpawnPoint(outside: true)));
             Add(CreatureKind.Cockroach, settings.Cockroaches, () => new CockroachCreature(SpawnPoint(), initiallyHidden: true, scale: World.Random.NextFloat(settings.RoachMin / 100f, settings.RoachMax / 100f)));
@@ -77,6 +77,8 @@ public sealed class DisplaySimulation(int seed)
                 Resize(definition.Kind, previous.MinPercent, previous.MaxPercent, configured.MinPercent, configured.MaxPercent);
             }
         }
+        if (Settings.Habitat != settings.Habitat) World.Rain.Clear();
+        World.Rain.Enabled = settings.Habitat == Habitat.Rain;
         Settings = settings;
         World.Manager.Replace(population);
         TotalCockroachCount = settings.Habitat == Habitat.Forest ? settings.Cockroaches : 0;
@@ -111,5 +113,5 @@ public sealed class DisplaySimulation(int seed)
         if (Worlds.Count > 0) World.Update(elapsedSeconds, cursor, click);
     }
 
-    public void ResetInput() => World.Mouse.Reset();
+    public void ResetInput() { World.Mouse.Reset(); World.Rain.ResetInput(); }
 }
