@@ -84,7 +84,8 @@ public partial class OverlayWindow : Window
         for (var i = 0; i < creatures.Count; i++)
             if (creatures[i].IsVisible && Session.Display.Bounds.Contains(creatures[i].Position, 40)) visibleCount++;
         _surface.VisibleCount = visibleCount;
-        var anyVisible = visibleCount > 0;
+        // Rain has no creatures but still animates drops, trails and fracture fades.
+        var anyVisible = visibleCount > 0 || Session.World.Rain.Enabled;
         var redraw = anyVisible || _wasVisible;
 #if DEBUG
         if (time.TotalTime >= _nextIdleDraw) { redraw = true; _nextIdleDraw = time.TotalTime + 0.25; }

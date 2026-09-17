@@ -38,6 +38,19 @@ internal static class RainProbe
         simulation.SetPopulation(new(Habitat: Habitat.Forest));
         if (simulation.World.Rain.Enabled || simulation.World.Rain.Drops.Count != 0) throw new Exception("Rain state survived switching away");
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        // Exercise the production window's redraw decision, not only the renderer.
+        var live = new DisplaySimulation(74);
+        live.Synchronize([new("offscreen", new(-10000, -10000, 960, 600), true)]);
+        live.SetPopulation(new(Habitat: Habitat.Rain));
+        var overlay = new DesktopLife.App.Overlay.OverlayWindow(live.Worlds[0]);
+        overlay.Show(); overlay.UpdateLayout();
+        var surface = (FrameworkElement)overlay.Content;
+        live.World.Rain.AddDrop(new(-9950, -9950), 8);
+        overlay.PresentFrame(new(.016f, .016f, 1), 0);
+        if (surface.IsArrangeValid) throw new Exception("Rain-only frame did not invalidate the production overlay");
+        surface.UpdateLayout();
+        if (VisualTreeHelper.GetDrawing(surface)?.Bounds.IsEmpty != false) throw new Exception("Rain overlay drawing is empty");
+        overlay.Close();
         var store = new SettingsStore(Path.GetFullPath(Path.Combine(output, "desktop.json")));
         store.SavePreferences(new(StartHotkey: "", PauseHotkey: ""));
         using var host = new DesktopHost(app.Dispatcher, () => [new("probe", new(0, 0, 960, 600), true)], false);
