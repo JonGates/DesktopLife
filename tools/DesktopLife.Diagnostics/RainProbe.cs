@@ -33,8 +33,30 @@ internal static class RainProbe
             dc.DrawRectangle(new SolidColorBrush(Color.FromArgb(180, 10, 20, 30)), null, new Rect(690, 0, 22, 600));
         }
         var background = new RenderTargetBitmap(960, 600, 96, 96, PixelFormats.Pbgra32); background.Render(backdrop); background.Freeze();
+        // Cached backdrop and position-sensitive lens regression with a high-contrast image.
+        if (!ReferenceEquals(RainImageOptics.SoftBackground(background), RainImageOptics.SoftBackground(background))) throw new Exception("Backdrop cache missed");
+        var checkRain = new DesktopLife.Engine.World.RainGlass { Enabled = true };
+        checkRain.AddDrop(new(360, 280), 18);
+        byte[] RenderLens(ImageSource? source)
+        {
+            var visual = new DrawingVisual();
+            using (var dc = visual.RenderOpen()) RainGlassRenderer.Render(dc, checkRain, simulation.Layout.Bounds, 1, 1, source);
+            var bitmap = new RenderTargetBitmap(960, 600, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual);
+            var data = new byte[960 * 600 * 4]; bitmap.CopyPixels(data, 960 * 4, 0); return data;
+        }
+        var alternateVisual = new DrawingVisual();
+        using (var dc = alternateVisual.RenderOpen()) dc.DrawRectangle(Brushes.CornflowerBlue, null, new Rect(0, 0, 240, 480));
+        var alternate = new RenderTargetBitmap(240, 480, 96, 96, PixelFormats.Pbgra32); alternate.Render(alternateVisual); alternate.Freeze();
+        var softPortrait = RainImageOptics.SoftBackground(alternate);
+        if (Math.Abs(softPortrait.Width / softPortrait.Height - .5) > .01) throw new Exception("Soft backdrop changed aspect ratio");
+        var withLens = RenderLens(background);
+        if (withLens.SequenceEqual(RenderLens(alternate))) throw new Exception("Lens ignored source image changes");
+        if (withLens.SequenceEqual(RenderLens(null))) throw new Exception("Background refraction has no effect");
+        if (!withLens.SequenceEqual(RenderLens(background))) throw new Exception("Cached lens changed while stationary");
+        checkRain.Update(.05f, simulation.Layout, new(-999, -999), null, false);
+        if (withLens.SequenceEqual(RenderLens(background))) throw new Exception("Moving lens did not update");
         var optics = new DrawingVisual();
-        using (var dc = optics.RenderOpen()) { dc.DrawImage(background, new Rect(0, 0, 960, 600)); RainGlassRenderer.Render(dc, simulation.World.Rain, simulation.Layout.Bounds, 1, 1, background); }
+        using (var dc = optics.RenderOpen()) { dc.DrawImage(RainImageOptics.SoftBackground(background), new Rect(0, 0, 960, 600)); RainGlassRenderer.Render(dc, simulation.World.Rain, simulation.Layout.Bounds, 1, 1, background); }
         Save(optics, 960, 600, Path.Combine(output, "rain-image-lens.png"));
         for (var frame = 0; frame < 3; frame++)
         {

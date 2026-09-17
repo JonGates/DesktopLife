@@ -10,11 +10,17 @@ public sealed class SaverSurface(DisplaySimulation simulation, WorldBounds viewp
     private readonly WpfCreatureRenderer _renderer = new() { Style = style };
     private readonly Brush _background = new SolidColorBrush(light ? Color.FromRgb(231, 240, 233) : Color.FromRgb(29, 42, 49));
     private readonly Brush? _imageBackground = backgroundImage == null ? null : new ImageBrush(backgroundImage) { Stretch = Stretch.UniformToFill };
+    private Brush? _rainBackground;
     protected override void OnRender(DrawingContext dc)
     {
         base.OnRender(dc);
         dc.DrawRectangle(_background, null, new Rect(RenderSize));
-        if (_imageBackground != null) dc.DrawRectangle(_imageBackground, null, new Rect(RenderSize));
+        if (_imageBackground != null)
+        {
+            if (simulation.World.Rain.Enabled && backgroundImage != null)
+                _rainBackground ??= new ImageBrush(RainImageOptics.SoftBackground(backgroundImage)) { Stretch = Stretch.UniformToFill };
+            dc.DrawRectangle(simulation.World.Rain.Enabled ? _rainBackground : _imageBackground, null, new Rect(RenderSize));
+        }
         dc.PushClip(new RectangleGeometry(new Rect(RenderSize)));
         var dpi = VisualTreeHelper.GetDpi(this);
         if (preview)

@@ -55,34 +55,11 @@ internal static class RainDropOptics
         var r = (double)drop.Radius;
         var impact = Math.Clamp((time - drop.Born) / .2, 0, 1);
         var stretch = .82 + index % 4 * .06 + Math.Min(.48, drop.Speed / 500);
-        if (image == null || r < 4)
-        {
-            var rx = r * (1.13 - impact * .13) * 4 / 3;
-            var ry = r * stretch * 4 / 3;
-            dc.DrawImage(Sprites.Value[index], new Rect(drop.Position.X - rx, drop.Position.Y - ry, rx * 2, ry * 2));
-            return;
-        }
-        dc.PushTransform(new TranslateTransform(drop.Position.X, drop.Position.Y));
-        dc.PushTransform(new ScaleTransform(r * (1.13 - impact * .13), r * stretch));
-        dc.DrawGeometry(Body, Edge, shape);
-        if (image != null && image.Width > 0 && image.Height > 0)
-        {
-            var cover = Math.Max(viewport.Width / image.Width, viewport.Height / image.Height);
-            var u = .5 + (drop.Position.X - viewport.Center.X) / (cover * image.Width);
-            var v = .5 + (drop.Position.Y - viewport.Center.Y) / (cover * image.Height);
-            var w = Math.Min(1, r * 7 / (cover * image.Width));
-            var h = Math.Min(1, r * 7 * stretch / (cover * image.Height));
-            var lens = new ImageBrush(image) {
-                Viewbox = new Rect(Math.Clamp(u - w / 2, 0, 1 - w), Math.Clamp(v - h / 2, 0, 1 - h), w, h),
-                ViewboxUnits = BrushMappingMode.RelativeToBoundingBox, Stretch = Stretch.Fill,
-                RelativeTransform = new ScaleTransform(-1, -1, .5, .5)
-            };
-            dc.PushOpacity(.85); dc.DrawGeometry(lens, null, shape); dc.Pop();
-            dc.PushOpacity(.48); dc.DrawGeometry(Body, Edge, shape); dc.Pop();
-        }
-        dc.DrawEllipse(Caustic, null, new(.1, .65), .58, .19);
-        dc.DrawEllipse(Glint, null, new(-.32, -.61), .17, .08);
-        dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72));
-        dc.Pop(); dc.Pop();
+        var rx = r * (1.13 - impact * .13);
+        var ry = r * stretch;
+        if (image != null && r >= 4 && image.Width > 0 && image.Height > 0)
+            dc.DrawImage(RainImageOptics.LensImage(image, drop, viewport, shape), new Rect(drop.Position.X - rx, drop.Position.Y - ry, rx * 2, ry * 2));
+        // Reuse the same baked edge/glint layer as desktop mode: no per-drop opacity groups.
+        dc.DrawImage(Sprites.Value[index], new Rect(drop.Position.X - rx * 4 / 3, drop.Position.Y - ry * 4 / 3, rx * 8 / 3, ry * 8 / 3));
     }
 }
