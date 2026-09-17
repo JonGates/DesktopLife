@@ -6,6 +6,16 @@ namespace DesktopLife.Engine.Tests;
 
 public class RainGlassTests
 {
+    [Fact] public void LargeDropsLeaveWiderTrailsThanSmallDrops()
+    {
+        var rain = new RainGlass { Enabled = true };
+        rain.AddDrop(new(100, 100), 2); rain.AddDrop(new(500, 100), 9);
+        rain.Update(.05f, Layout, new(100, 100), null, false);
+        for (var i = 0; i < 10; i++) rain.Update(.05f, Layout, new(-999, -999), null, false);
+        var small = rain.Trails.Where(t => t.Start.X < 200).Max(t => t.Width);
+        var large = rain.Trails.Where(t => t.Start.X > 400).Max(t => t.Width);
+        Assert.True(large > small * 3); Assert.InRange(large, 9, 11);
+    }
     [Fact] public void RepeatedMergesCannotProduceOversizedDrops()
     {
         var rain = new RainGlass { Enabled = true };

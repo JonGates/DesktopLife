@@ -108,7 +108,7 @@ public sealed class RainGlass(int seed = 73)
             }
             if (Vector2.DistanceSquared(drop.TrailStart, drop.Position) >= 100 || Time - drop.TrailTime >= .1f)
             {
-                _trails.Add(new(drop.TrailStart, drop.Position, System.Math.Min(drop.Radius * .65f, 10), Time));
+                _trails.Add(new(drop.TrailStart, drop.Position, System.Math.Min(drop.Radius * 1.1f, 11), Time));
                 drop.TrailStart = drop.Position; drop.TrailTime = Time;
             }
             if (!layout.Contains(drop.Position)) _drops.Remove(drop);

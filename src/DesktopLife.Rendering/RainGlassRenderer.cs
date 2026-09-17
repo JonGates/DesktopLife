@@ -6,7 +6,8 @@ namespace DesktopLife.Rendering;
 
 public static class RainGlassRenderer
 {
-    private static readonly Pen[] TrailPens = Enumerable.Range(0, 24).Select(i => Pen(Color.FromArgb((byte)((i / 3 + 1) * 2), 193, 212, 220), .4 + i % 3 * .65)).ToArray();
+    private static readonly Pen[] TrailPens = Enumerable.Range(0, 96).Select(i => Pen(Color.FromArgb((byte)((i / 12 + 1) * 2), 20, 40, 48), .5 + i % 12)).ToArray();
+    private static readonly Pen[] TrailEdges = Enumerable.Range(0, 8).Select(i => Pen(Color.FromArgb((byte)((i + 1) * 3), 210, 231, 238), .55)).ToArray();
     private static T Freeze<T>(T value) where T : Freezable { value.Freeze(); return value; }
     private static Pen Pen(Color color, double width) => Freeze(new Pen(new SolidColorBrush(color), width) { StartLineCap = PenLineCap.Round, EndLineCap = PenLineCap.Round });
     public static void Render(DrawingContext dc, RainGlass rain, WorldBounds viewport, double dpiX, double dpiY, ImageSource? backgroundImage = null)
@@ -17,12 +18,23 @@ public static class RainGlassRenderer
         foreach (var trail in rain.Trails)
         {
             if (!viewport.Contains(trail.Start, 50) && !viewport.Contains(trail.End, 50)) continue;
-            // Stable variation along the path, with occasional dry gaps; never random per frame.
+            var life = Math.Clamp(1 - (rain.Time - trail.Born) / 5.0, 0, 1);
             var variation = .5 + .5 * Math.Sin(trail.Start.Y * .17 + trail.Start.X * .11);
-            if (variation < .13) continue;
-            var opacity = Math.Max(0, 1 - (rain.Time - trail.Born) / 5.0) * (.35 + .65 * variation);
+            // Fresh broad wakes stay connected; older narrow remnants can break apart.
+            if (life < .6 && trail.Width < 4 && variation < .13) continue;
+            var width = trail.Width * (.45 + .55 * life) * (.8 + .2 * variation);
+            var opacity = life * (.65 + .35 * variation);
             var bucket = Math.Clamp((int)(opacity * 8), 0, 7);
-            dc.DrawLine(TrailPens[bucket * 3 + Math.Clamp((int)(trail.Width * (.18 + .3 * variation)) - 1, 0, 2)], new(trail.Start.X, trail.Start.Y), new(trail.End.X, trail.End.Y));
+            var start = new Point(trail.Start.X, trail.Start.Y); var end = new Point(trail.End.X, trail.End.Y);
+            var pen = TrailPens[bucket * 12 + Math.Clamp((int)Math.Round(width - .5), 0, 11)];
+            dc.DrawLine(pen, start, end);
+            var direction = end - start;
+            if (direction.LengthSquared > .01)
+            {
+                direction.Normalize();
+                var edgeOffset = new Vector(-direction.Y, direction.X) * pen.Thickness * .42;
+                dc.DrawLine(TrailEdges[bucket], start + edgeOffset, end + edgeOffset);
+            }
         }
         foreach (var drop in rain.Drops)
         {
