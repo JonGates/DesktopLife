@@ -8,11 +8,16 @@ namespace DesktopLife.Rendering;
 /// <summary>Cached glass silhouettes and an approximate inverted local image lens.</summary>
 internal static class RainDropOptics
 {
-    private static readonly Geometry[] Shapes = Enumerable.Range(0, 12).Select(Shape).ToArray();
+    private static readonly Geometry[] Shapes = Enumerable.Range(0, 12).Select(Shape).Concat(Enumerable.Range(0, 12).Select(RestingShape)).ToArray();
     private static readonly Brush Body = Freeze(new LinearGradientBrush(new GradientStopCollection {
         new(Color.FromArgb(155, 6, 15, 22), 0), new(Color.FromArgb(45, 8, 19, 28), .22),
         new(Color.FromArgb(5, 125, 157, 174), .5), new(Color.FromArgb(30, 203, 221, 228), .77),
         new(Color.FromArgb(115, 10, 27, 38), 1) }, 105));
+    private static readonly Brush RestingBody = Freeze(new LinearGradientBrush(new GradientStopCollection {
+        new(Color.FromArgb(95, 9, 19, 23), 0), new(Color.FromArgb(130, 12, 23, 27), .15),
+        new(Color.FromArgb(20, 40, 58, 64), .38), new(Color.FromArgb(3, 150, 178, 185), .58),
+        new(Color.FromArgb(35, 218, 235, 239), .82), new(Color.FromArgb(85, 15, 29, 34), 1) }, 100));
+    private static readonly Pen RestingEdge = Freeze(new Pen(new SolidColorBrush(Color.FromArgb(92, 8, 20, 25)), .035));
     private static readonly Brush Glint = Freeze(new RadialGradientBrush(Color.FromArgb(210, 245, 251, 253), Colors.Transparent));
     private static readonly Brush Caustic = Freeze(new RadialGradientBrush(Color.FromArgb(90, 213, 237, 248), Colors.Transparent));
     private static readonly Pen Edge = Freeze(new Pen(new SolidColorBrush(Color.FromArgb(135, 6, 17, 25)), .06));
@@ -23,10 +28,14 @@ internal static class RainDropOptics
         using (var dc = visual.RenderOpen())
         {
             dc.PushTransform(new TranslateTransform(32, 32)); dc.PushTransform(new ScaleTransform(24, 24));
-            dc.DrawGeometry(Body, Edge, shape);
+            var resting = index >= 12;
+            dc.DrawGeometry(resting ? RestingBody : Body, resting ? RestingEdge : Edge, shape);
+            if (resting) dc.PushClip(shape);
             dc.DrawEllipse(Caustic, null, new(.22 - index % 3 * .12, .65), .25 + index % 4 * .06, .1);
             dc.DrawEllipse(Glint, null, new(-.35 + index % 3 * .12, -.61), .07 + index % 3 * .03, .04);
-            dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72)); dc.Pop(); dc.Pop();
+            if (!resting) dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72));
+            if (resting) dc.Pop();
+            dc.Pop(); dc.Pop();
         }
         var bitmap = new RenderTargetBitmap(64, 64, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual); bitmap.Freeze();
         return (BitmapSource)bitmap;
@@ -48,15 +57,37 @@ internal static class RainDropOptics
         }
         return Freeze(geometry);
     }
+    private static Geometry RestingShape(int index)
+    {
+        // Pinned contact lines vary: broad shoulders, a soft crown and a heavier lower lobe.
+        // Stable variants avoid a flickering outline while a bead slowly grows.
+        var lean = (index % 4 - 1.5) * .12;
+        var crown = -.65 - index % 3 * .09;
+        var right = .72 + index % 3 * .08;
+        var left = -.74 - index % 4 * .045;
+        var bottom = .75 + index % 3 * .08;
+        var g = new StreamGeometry();
+        using (var c = g.Open())
+        {
+            c.BeginFigure(new(lean - .18, crown), true, true);
+            c.BezierTo(new(lean + .08, crown + .04), new(right - .14, crown - .16), new(right, -.33), true, false);
+            c.BezierTo(new(right + .1, .06), new(right - .02, .49), new(.3 + lean, bottom), true, false);
+            c.BezierTo(new(.02, bottom + .13), new(left + .18, bottom + .05), new(left, .35), true, false);
+            c.BezierTo(new(left - .08, .08), new(left + .14, -.15), new(left + .1, -.35), true, false);
+            c.BezierTo(new(left + .06, -.67), new(lean - .46, crown - .08), new(lean - .18, crown), true, false);
+        }
+        return Freeze(g);
+    }
     public static void Draw(DrawingContext dc, GlassDrop drop, float time, WorldBounds viewport, ImageSource? image)
     {
-        var index = drop.ShapeIndex % Shapes.Length;
+        var index = drop.ShapeIndex % 12 + (drop.Sliding ? 0 : 12);
         var shape = Shapes[index];
         var r = (double)drop.Radius;
         var impact = Math.Clamp((time - drop.Born) / .2, 0, 1);
         var stretch = .82 + index % 4 * .06 + Math.Min(.48, drop.Speed / 500);
         var rx = r * (1.13 - impact * .13);
         var ry = r * stretch;
+        if (!drop.Sliding) { rx *= .9 + index % 4 * .07; ry *= .94 + index % 3 * .05; }
         if (image != null && r >= 4 && image.Width > 0 && image.Height > 0)
             dc.DrawImage(RainImageOptics.LensImage(image, drop, viewport, shape), new Rect(drop.Position.X - rx, drop.Position.Y - ry, rx * 2, ry * 2));
         // Reuse the same baked edge/glint layer as desktop mode: no per-drop opacity groups.

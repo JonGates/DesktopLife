@@ -18,6 +18,20 @@ internal static class RainProbe
     public static void Run(string output)
     {
         Directory.CreateDirectory(output);
+        foreach (var sliding in new[] { false, true })
+        {
+            var beads = new DesktopLife.Engine.World.RainGlass { Enabled = true };
+            for (var i = 0; i < 12; i++) beads.AddDrop(new(30 + i * 48, 55), sliding ? 9 : 6);
+            if (sliding) beads.Update(.05f, new DesktopLife.Engine.World.DesktopLayout([new("gallery", new(0, 0, 640, 160), true)]), new(-999, -999), null, false);
+            var gallery = new DrawingVisual();
+            using (var dc = gallery.RenderOpen())
+            {
+                dc.DrawRectangle(new LinearGradientBrush(Colors.SlateGray, Colors.LightGray, 0), null, new Rect(0, 0, 1280, 320));
+                dc.PushTransform(new ScaleTransform(2, 2));
+                RainGlassRenderer.Render(dc, beads, new(0, 0, 640, 160), 1, 1);
+            }
+            Save(gallery, 1280, 320, Path.Combine(output, sliding ? "moving-beads.png" : "resting-beads.png"));
+        }
         var simulation = new DisplaySimulation(43);
         simulation.Synchronize([new("rain", new(0, 0, 960, 600), true)]);
         simulation.SetPopulation(new(Habitat: Habitat.Rain));

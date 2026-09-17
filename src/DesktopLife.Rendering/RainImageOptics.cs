@@ -23,6 +23,7 @@ public static class RainImageOptics
     private sealed class Lens
     {
         public BitmapSource? Bitmap;
+        public Geometry? Shape;
         public Vector2 Position;
         public float Radius;
         public WorldBounds Viewport;
@@ -50,7 +51,7 @@ public static class RainImageOptics
     {
         var source = Sources.GetValue(image, Prepare);
         var lens = source.Lenses.GetOrCreateValue(drop);
-        if (lens.Bitmap != null && lens.Viewport == viewport && Vector2.DistanceSquared(lens.Position, drop.Position) < 16 && Math.Abs(lens.Radius - drop.Radius) < .35f)
+        if (lens.Bitmap != null && ReferenceEquals(lens.Shape, shape) && lens.Viewport == viewport && Vector2.DistanceSquared(lens.Position, drop.Position) < 16 && Math.Abs(lens.Radius - drop.Radius) < .35f)
             return lens.Bitmap;
         if (!Masks.TryGetValue(shape, out var mask))
         {
@@ -90,7 +91,7 @@ public static class RainImageOptics
             }
         }
         lens.Bitmap = BitmapSource.Create(Size, Size, 96, 96, PixelFormats.Pbgra32, null, pixels, Size * 4);
-        lens.Bitmap.Freeze(); lens.Position = drop.Position; lens.Radius = drop.Radius; lens.Viewport = viewport;
+        lens.Bitmap.Freeze(); lens.Shape = shape; lens.Position = drop.Position; lens.Radius = drop.Radius; lens.Viewport = viewport;
         return lens.Bitmap;
     }
 }
