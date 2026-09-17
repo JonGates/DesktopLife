@@ -1,6 +1,6 @@
 ﻿param(
     [ValidatePattern('^v?\d+\.\d+\.\d+(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$')]
-    [string]$Version = '0.5.0',
+    [string]$Version = '0.5.1',
     [string]$RuntimeVersion = '10.0.12',
     [string]$NuGetSource
 )
@@ -32,7 +32,7 @@ DesktopLife - Windows x64 portable edition / 便携版
 1. 将整个 ZIP 解压到普通文件夹。
 2. 双击 Start-DesktopLife.cmd 启动并打开设置。
 3. 已自带 .NET 运行环境，不需要安装 .NET、SDK 或 Visual Studio。
-4. 在“生物”页选择森林或海洋，调整数量与尺寸；在“偏好”页修改风格和快捷键。
+4. 在“生物”页选择森林、海洋或雨窗，调整数量与尺寸；在“偏好”页修改风格和快捷键。
 5. 苍蝇围绕鼠标飞行，左键点击指定落点，停留 3 秒后继续飞行。
 6. 默认 Ctrl+Alt+S 启动/恢复，Ctrl+Alt+P 暂停；可在设置中修改。
 7. 关闭设置后继续运行。双击托盘图标重开设置；托盘右键“退出”结束程序。

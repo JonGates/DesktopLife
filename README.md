@@ -6,19 +6,19 @@
 
 Flies chase your cursor, spiders escape on silk, and a green turtle swims among 12 fish species. Switch between Forest and Ocean, across your monitors or as a native Windows screen saver.
 
-[**Download DesktopLife v0.5.0**](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-Portable-win-x64-v0.5.0.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
+[**Download DesktopLife v0.5.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.5.1/DesktopLife-Portable-win-x64-v0.5.1.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
 
 Windows 10/11 x64 · 26 creature types across two scenes · Realistic and cute styles · Multi-monitor · Portable
 
 </div>
 
-> **New in v0.5.0:** Forest / Ocean scenes, a cursor-following turtle and 12 fish species, improved spider silk, and redesigned bilingual settings. The main app now includes screen saver preview, configuration and Windows setup. [Release notes](docs/RELEASE_v0.5.0.md).
+> **New in v0.5.1:** Interactive Rain Window joins Forest and Ocean. Five rain levels, sliding and merging drops, temporary glass fractures, and screen saver background images with approximate refraction. [Release notes](docs/RELEASE_v0.5.1.md).
 
-**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** v0.5.0 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
+**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** v0.5.1 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
 
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
-> DesktopLife v0.5.0 is a stable release. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
+> DesktopLife v0.5.1 is a stable release. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
 
 ## What lives on your desktop?
 
@@ -93,7 +93,7 @@ Realistic mode combines generated macro-style body textures with program-driven 
 
 ### Live insects and bilingual settings
 
-This recording shows the earlier settings layout; the current v0.5.0 interface is shown above.
+This recording shows the earlier settings layout; the current v0.5.1 interface is shown above.
 
 ![DesktopLife settings with live insects and Chinese-English language switching](docs/images/live-settings.gif)
 
@@ -124,7 +124,7 @@ Desktop settings are stored under **`%AppData%\DesktopLife`**. The desktop app a
 
 ### Is this a finished release?
 
-**v0.5.0 is a stable release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
+**v0.5.1 is a stable release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
 
 ## Build from source
 
@@ -141,7 +141,7 @@ dotnet run --project src/DesktopLife.App -- --settings
 Create a self-contained Windows x64 package:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.1
 ```
 
 For implementation details, packaging commands and diagnostics, see the [development and packaging guide](docs/DEVELOPMENT_AND_PACKAGING.md). Motion and size behavior are documented in [locomotion](docs/LOCOMOTION.md) and [species and proportions](docs/INSECTS.md).
@@ -163,6 +163,6 @@ When reporting a problem, include:
 
 **If DesktopLife earned a permanent place on your desktop, consider giving it a ⭐.**
 
-[Download v0.5.0](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.0) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
+[Download v0.5.1](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.1) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
 
 </div>

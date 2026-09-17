@@ -6,19 +6,19 @@
 
 森林里，苍蝇围绕鼠标飞行，昆虫跨屏爬行；海洋里，小绿龟跟随鼠标，12 种鱼自由游动。电脑闲置时，也可以作为 Windows 屏保运行。
 
-**[下载 DesktopLife v0.5.0 主程序包](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/DesktopLife-Portable-win-x64-v0.5.0.zip)**
+**[下载 DesktopLife v0.5.1 主程序包](https://github.com/JonGates/DesktopLife/releases/download/v0.5.1/DesktopLife-Portable-win-x64-v0.5.1.zip)**
 
 Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 · 多屏通行 · 自带运行环境
 
-> **v0.5.0 正式版：** 新增海洋场景、小绿龟与 12 种鱼，改进蜘蛛丝网，并统一主程序和屏保设置界面。[完整更新说明](docs/RELEASE_v0.5.0.md)。
+> **v0.5.1 正式版：** 新增雨窗场景、五档雨量、雨滴滑落与吞并、短暂玻璃裂纹，以及屏保背景图与近似折射。[完整更新说明](docs/RELEASE_v0.5.1.md)。
 >
-> **推荐只下载主程序包：已包含桌面宠物和屏保功能。** v0.5.0 统一发布一个主程序包。
+> **推荐只下载主程序包：已包含桌面宠物和屏保功能。** v0.5.1 统一发布一个主程序包。
 
 ![主屏实录：昆虫在桌面自由活动](docs/images/live-desktop.gif)
 
 ## 下载与开始使用
 
-1. 在 [Release 页面](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.0) 展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.5.0.zip`。
+1. 在 [Release 页面](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.1) 展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.5.1.zip`。
 2. 完整解压，双击 **`Start-DesktopLife.cmd`** 启动并打开设置；也可运行 `DesktopLife.exe`。
 3. 在「生物」页切换「森林／海洋」，调整数量和尺寸并保存；在「偏好」页设置风格、快捷键和录屏选项。
 4. 关闭设置后生物继续运行。双击托盘图标重开设置，右键托盘选择「退出」结束程序。
@@ -27,8 +27,8 @@ Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 ·
 
 | Release 附件 | 用途 |
 | --- | --- |
-| `DesktopLife-Portable-win-x64-v0.5.0.zip` | 推荐：主程序，包含桌面宠物、屏保预览、配置与安装入口。 |
-| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.5.0/SHA256SUMS.txt) | 主程序 ZIP 的 SHA256 校验值。 |
+| `DesktopLife-Portable-win-x64-v0.5.1.zip` | 推荐：主程序，包含桌面宠物、屏保预览、配置与安装入口。 |
+| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.5.1/SHA256SUMS.txt) | 主程序 ZIP 的 SHA256 校验值。 |
 | Tags 的 `zip` / `tar.gz` 或 `Source code` | 项目源码，不能直接当作便携程序运行。 |
 
 ## 从主程序设置 Windows 屏保
@@ -94,9 +94,9 @@ cd DesktopLife
 dotnet build DesktopLife.sln
 dotnet test DesktopLife.sln
 dotnet run --project src/DesktopLife.App -- --settings
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.0
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.1
 ```
 
-[开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)。v0.5.0 为正式版；不同 GPU、实际混合系统缩放与高数量性能仍需要更多设备验证。
+[开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)。v0.5.1 为正式版；不同 GPU、实际混合系统缩放与高数量性能仍需要更多设备验证。
 
 欢迎在 [Issues](https://github.com/JonGates/DesktopLife/issues) 提交反馈，并附上 Windows 版本、DesktopLife 版本、显示器排列和复现步骤。如果喜欢这个小生态，欢迎点亮 ⭐。
