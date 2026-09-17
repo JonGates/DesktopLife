@@ -35,3 +35,7 @@ Rain window is a third scene available in desktop and screen saver settings. Dro
 中雨、大雨、暴雨的生成速度分别提高至每百万屏幕像素每秒 22、36、55 颗（原为 13、18、23）。毛毛雨和小雨保持不变。数量上限是所有屏幕共享的总量。
 
 滑落水滴采用上窄下宽的圆润轮廓，短细尾衔接水痕，随速度增加轻微拉长；吞并后短暂变宽并平缓收拢。只调整视觉，速度、轨迹和吞并体积规则保持不变。
+
+## 实拍参考后的滑落修订
+
+参考 ROMAN ODINTSOV 的玻璃雨滴视频：https://www.pexels.com/video/close-up-of-water-droplets-on-a-glass-window-6520303/ 。仅用作观察参考，未打包视频素材。滑落绘制改为圆润前端水团、独立的伸缩水颈和粗细断续的淡水痕；下缘反光增强。水颈纹理预先缓存，运动继续保持连续。此版本仍为简化模拟，不是流体求解或完整光线追踪。

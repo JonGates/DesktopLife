@@ -12,7 +12,7 @@ internal static class RainDropOptics
     private static readonly Brush Body = Freeze(new LinearGradientBrush(new GradientStopCollection {
         new(Color.FromArgb(155, 6, 15, 22), 0), new(Color.FromArgb(45, 8, 19, 28), .22),
         new(Color.FromArgb(5, 125, 157, 174), .5), new(Color.FromArgb(30, 203, 221, 228), .77),
-        new(Color.FromArgb(115, 10, 27, 38), 1) }, 105));
+        new(Color.FromArgb(190, 232, 245, 250), .91), new(Color.FromArgb(110, 10, 27, 38), 1) }, 105));
     private static readonly Brush RestingBody = Freeze(new LinearGradientBrush(new GradientStopCollection {
         new(Color.FromArgb(95, 9, 19, 23), 0), new(Color.FromArgb(130, 12, 23, 27), .15),
         new(Color.FromArgb(20, 40, 58, 64), .38), new(Color.FromArgb(3, 150, 178, 185), .58),
@@ -46,7 +46,7 @@ internal static class RainDropOptics
             {
                 dc.DrawEllipse(Caustic, null, new(.22 - index % 3 * .12, .65), .25 + index % 4 * .06, .1);
                 dc.DrawEllipse(Glint, null, new(-.22 + index % 3 * .07, -.12), .07 + index % 3 * .03, .04);
-                dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72));
+                dc.DrawEllipse(Glint, null, new(.02, .79), .43, .1);
             }
             dc.Pop();
             dc.Pop(); dc.Pop();
@@ -54,22 +54,41 @@ internal static class RainDropOptics
         var bitmap = new RenderTargetBitmap(64, 64, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual); bitmap.Freeze();
         return (BitmapSource)bitmap;
     }).ToArray());
+    private static readonly Lazy<BitmapSource[]> Necks = new(() => Enumerable.Range(0, 12).Select(index =>
+    {
+        var shape = new StreamGeometry();
+        var bend = (index % 4 - 1.5) * 2;
+        using (var c = shape.Open())
+        {
+            c.BeginFigure(new(12 + bend, 0), true, true);
+            c.BezierTo(new(12 + bend, 20), new(19, 39), new(22, 64), true, false);
+            c.LineTo(new(2, 64), true, false);
+            c.BezierTo(new(9, 38), new(9 + bend, 18), new(12 + bend, 0), true, false);
+        }
+        var visual = new DrawingVisual();
+        using (var dc = visual.RenderOpen())
+        {
+            var brush = new LinearGradientBrush(new GradientStopCollection {
+                new(Color.FromArgb(12, 35, 51, 57), 0), new(Color.FromArgb(90, 16, 32, 39), .32),
+                new(Color.FromArgb(32, 157, 185, 195), .64), new(Color.FromArgb(68, 207, 231, 238), 1) }, 0);
+            dc.DrawGeometry(brush, null, shape);
+        }
+        var bitmap = new RenderTargetBitmap(24, 64, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual); bitmap.Freeze();
+        return (BitmapSource)bitmap;
+    }).ToArray());
     private static T Freeze<T>(T value) where T : Freezable { value.Freeze(); return value; }
     private static Geometry Shape(int index)
     {
         var lean = (index % 4 - 1.5) * .07;
-        var neck = .11 + index % 3 * .025;
         var geometry = new StreamGeometry();
         using (var c = geometry.Open())
         {
-            // A short narrow upper neck joins the trail; the heavy lower lobe stays round.
-            c.BeginFigure(new(lean, -.99), true, true);
-            c.BezierTo(new(lean + neck, -.99), new(.2 + lean, -.58), new(.47, -.22), true, false);
-            c.BezierTo(new(.76, .08), new(.95, .36), new(.81, .65), true, false);
-            c.BezierTo(new(.66, .96), new(.26, .99), new(-.04, .98), true, false);
-            c.BezierTo(new(-.43, .97), new(-.83, .85), new(-.86, .51), true, false);
-            c.BezierTo(new(-.89, .15), new(-.46 + lean, -.23), new(-.25 + lean, -.57), true, false);
-            c.BezierTo(new(lean - neck, -.82), new(lean - neck, -.99), new(lean, -.99), true, false);
+            // The moving front is a rounded liquid bead, not a pointed droplet icon.
+            c.BeginFigure(new(lean, -.78), true, true);
+            c.BezierTo(new(.48 + lean, -.8), new(.83, -.38), new(.86, .12), true, false);
+            c.BezierTo(new(.91, .65), new(.55, .98), new(.02, .98), true, false);
+            c.BezierTo(new(-.51, .99), new(-.86, .7), new(-.88, .18), true, false);
+            c.BezierTo(new(-.9, -.28), new(-.52 + lean, -.75), new(lean, -.78), true, false);
         }
         return Freeze(geometry);
     }
@@ -115,10 +134,14 @@ internal static class RainDropOptics
         if (!drop.Sliding) { rx *= .9 + index % 4 * .07; ry *= .94 + index % 3 * .05; }
         else
         {
-            var elongation = Math.Min(.28, drop.Speed / 900);
+            var phase = time * 2.3 + drop.ShapeIndex * 1.71;
             var swelling = 1 + .16 * drop.MergePulse;
-            rx *= swelling / Math.Sqrt(1 + elongation);
-            ry *= (1 + elongation) / Math.Sqrt(swelling);
+            var tension = .5 + .5 * Math.Sin(phase);
+            rx = r * swelling * (.94 + .025 * Math.Sin(phase * .73));
+            ry = r * (1.02 + Math.Min(.18, drop.Speed / 1200)) / Math.Sqrt(swelling);
+            var neckLength = r * (.45 + Math.Min(2.8, drop.Speed / 75)) * (.85 + .15 * tension);
+            var neckWidth = r * (.3 + .07 * tension);
+            dc.DrawImage(Necks.Value[drop.ShapeIndex % 12], new Rect(drop.Position.X - neckWidth / 2, drop.Position.Y - ry * .45 - neckLength, neckWidth, neckLength));
         }
         if (image != null && r >= 4 && image.Width > 0 && image.Height > 0)
             dc.DrawImage(RainImageOptics.LensImage(image, drop, viewport, shape), new Rect(drop.Position.X - rx, drop.Position.Y - ry, rx * 2, ry * 2));

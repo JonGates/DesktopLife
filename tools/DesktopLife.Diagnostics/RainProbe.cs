@@ -32,6 +32,21 @@ internal static class RainProbe
             }
             Save(gallery, 1280, 320, Path.Combine(output, sliding ? "moving-beads.png" : "resting-beads.png"));
         }
+        var flowing = new DesktopLife.Engine.World.RainGlass { Enabled = true };
+        flowing.AddDrop(new(150, 40), 9);
+        var flowLayout = new DesktopLife.Engine.World.DesktopLayout([new("flow", new(0, 0, 320, 240), true)]);
+        for (var frame = 0; frame < 6; frame++)
+        {
+            for (var tick = 0; tick < 4; tick++) flowing.Update(.05f, flowLayout, new(-999, -999), null, false);
+            var visual = new DrawingVisual();
+            using (var dc = visual.RenderOpen())
+            {
+                dc.DrawRectangle(new LinearGradientBrush(Colors.DarkSlateGray, Colors.SlateGray, 90), null, new Rect(0, 0, 640, 480));
+                dc.PushTransform(new ScaleTransform(2, 2));
+                RainGlassRenderer.Render(dc, flowing, flowLayout.Bounds, 1, 1);
+            }
+            Save(visual, 640, 480, Path.Combine(output, $"flow-{frame}.png"));
+        }
         var variety = new DesktopLife.Engine.World.RainGlass { Enabled = true };
         for (var row = 0; row < 3; row++) for (var col = 0; col < 16; col++) variety.AddDrop(new(20 + col * 28, 22 + row * 34), new[] { 2f, 4.5f, 6.8f }[row]);
         var sheet = new DrawingVisual();
