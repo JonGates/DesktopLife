@@ -39,3 +39,5 @@ Rain window is a third scene available in desktop and screen saver settings. Dro
 ## 实拍参考后的滑落修订
 
 参考 ROMAN ODINTSOV 的玻璃雨滴视频：https://www.pexels.com/video/close-up-of-water-droplets-on-a-glass-window-6520303/ 。仅用作观察参考，未打包视频素材。滑落绘制改为圆润前端水团、独立的伸缩水颈和粗细断续的淡水痕；下缘反光增强。水颈纹理预先缓存，运动继续保持连续。此版本仍为简化模拟，不是流体求解或完整光线追踪。
+
+雨滴基础半径限制为 10 个物理像素，生成、积大和吞并均受限制；渲染仍有轻微拉伸和鼓起。达到上限仍清除吞并到的雨滴，简化模拟不保留超出的体积。滑落目标速度随半径平方增加，最低 4、最高 180 像素/秒；小水珠连续缓慢滑动，大滴更快。

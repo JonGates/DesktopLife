@@ -23,6 +23,7 @@ public sealed record GlassFracture(Vector2 Center, int Style, int Seed, float Bo
 /// <summary>Physical pixel coordinates shared by every monitor. Radius cubed represents water volume.</summary>
 public sealed class RainGlass(int seed = 73)
 {
+    public const float MaximumDropRadius = 10;
     private readonly Random _random = new(seed);
     private readonly List<GlassDrop> _drops = [];
     private readonly List<GlassTrail> _trails = [];
@@ -46,6 +47,7 @@ public sealed class RainGlass(int seed = 73)
     public GlassDrop AddDrop(Vector2 position, float radius)
     {
         if (!float.IsFinite(radius) || radius <= 0 || radius > 50 || !float.IsFinite(position.X) || !float.IsFinite(position.Y)) throw new ArgumentOutOfRangeException(nameof(radius));
+        radius = MathF.Min(radius, MaximumDropRadius);
         var drop = new GlassDrop(position, radius) { Born = Time, ShapeIndex = _random.Next(12), ReleaseRadius = 7 + (float)_random.NextDouble() * 1.6f };
         var family = radius < 2.8f ? 0 : radius < 6 ? 1 + drop.ShapeIndex % 3 : 3;
         drop.RestingShapeIndex = family * 12 + drop.ShapeIndex;
@@ -88,10 +90,10 @@ public sealed class RainGlass(int seed = 73)
             var drop = _drops[i]; var start = drop.Position;
             drop.MergePulse *= MathF.Exp(-8 * dt);
             if (DistanceToSegment(start, _previousCursor ?? cursor, cursor) < drop.Radius + 7) drop.Sliding = true;
-            drop.Radius = MathF.Cbrt(drop.Radius * drop.Radius * drop.Radius + dt * 5);
+            drop.Radius = MathF.Min(MaximumDropRadius, MathF.Cbrt(drop.Radius * drop.Radius * drop.Radius + dt * 5));
             if (drop.Radius >= drop.ReleaseRadius) drop.Sliding = true;
             if (!drop.Sliding) continue;
-            var targetSpeed = System.Math.Clamp(drop.Radius * 18 - 15, 35, 300);
+            var targetSpeed = System.Math.Clamp(1.8f * drop.Radius * drop.Radius, 4, 180);
             drop.Speed += (targetSpeed - drop.Speed) * (1 - MathF.Exp(-7 * dt));
             drop.Position += new Vector2(MathF.Sin(Time * .6f + drop.ShapeIndex) * 3 * dt, drop.Speed * dt);
             // Sweep the whole travelled segment: fast droplets must not skip smaller drops.
@@ -100,7 +102,8 @@ public sealed class RainGlass(int seed = 73)
                 var other = _drops[j]; if (ReferenceEquals(drop, other)) continue;
                 if (DistanceToSegment(other.Position, start, drop.Position) > drop.Radius + other.Radius) continue;
                 drop.MergePulse = MathF.Min(1, drop.MergePulse + other.Radius / drop.Radius);
-                drop.Radius = MathF.Cbrt(MathF.Pow(drop.Radius, 3) + MathF.Pow(other.Radius, 3));
+                // Visual size cap: excess merged volume is not retained by this simplified simulation.
+                drop.Radius = MathF.Min(MaximumDropRadius, MathF.Cbrt(MathF.Pow(drop.Radius, 3) + MathF.Pow(other.Radius, 3)));
                 _drops.RemoveAt(j); if (j < i) i--;
             }
             if (Vector2.DistanceSquared(drop.TrailStart, drop.Position) >= 100 || Time - drop.TrailTime >= .1f)

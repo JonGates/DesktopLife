@@ -6,6 +6,31 @@ namespace DesktopLife.Engine.Tests;
 
 public class RainGlassTests
 {
+    [Fact] public void RepeatedMergesCannotProduceOversizedDrops()
+    {
+        var rain = new RainGlass { Enabled = true };
+        var drop = rain.AddDrop(new(200, 100), 50);
+        Assert.InRange(drop.Radius, 0, 10);
+        for (var frame = 0; frame < 60; frame++)
+        {
+            for (var i = 0; i < 5; i++) rain.AddDrop(drop.Position, 3);
+            rain.Update(.05f, Layout, new(-999, -999), null, false);
+            Assert.InRange(drop.Radius, 0, 10);
+        }
+    }
+    [Fact] public void SmallReleasedDropsFallMuchMoreSlowlyThanLargeDrops()
+    {
+        var rain = new RainGlass { Enabled = true };
+        var small = rain.AddDrop(new(100, 100), 2);
+        var medium = rain.AddDrop(new(350, 100), 5);
+        var large = rain.AddDrop(new(600, 100), 9);
+        foreach (var d in new[] { small, medium, large }) rain.Update(.01f, Layout, d.Position, null, false);
+        for (var frame = 0; frame < 20; frame++) rain.Update(.05f, Layout, new(-999, -999), null, false);
+        Assert.InRange(small.Speed, 0.01f, 15);
+        Assert.True(medium.Speed > small.Speed * 3);
+        Assert.True(large.Speed > medium.Speed * 2);
+        Assert.True(small.Position.Y > 100);
+    }
     [Fact] public void RestingProfilesDependOnInitialSizeAndRemainStable()
     {
         var rain = new RainGlass { Enabled = true };
