@@ -11,6 +11,7 @@ public sealed class GlassDrop(Vector2 position, float radius)
     public bool Sliding { get; internal set; }
     public float Born { get; internal set; }
     public int ShapeIndex { get; internal set; }
+    public int RestingShapeIndex { get; internal set; }
     internal float ReleaseRadius { get; set; } = 7.8f;
     internal Vector2 TrailStart { get; set; } = position;
     internal float TrailTime { get; set; }
@@ -45,6 +46,8 @@ public sealed class RainGlass(int seed = 73)
     {
         if (!float.IsFinite(radius) || radius <= 0 || radius > 50 || !float.IsFinite(position.X) || !float.IsFinite(position.Y)) throw new ArgumentOutOfRangeException(nameof(radius));
         var drop = new GlassDrop(position, radius) { Born = Time, ShapeIndex = _random.Next(12), ReleaseRadius = 7 + (float)_random.NextDouble() * 1.6f };
+        var family = radius < 2.8f ? 0 : radius < 6 ? 1 + drop.ShapeIndex % 3 : 3;
+        drop.RestingShapeIndex = family * 12 + drop.ShapeIndex;
         if (_drops.Count < DropLimit) _drops.Add(drop); return drop;
     }
     public void ResetInput() => _previousCursor = null;

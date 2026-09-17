@@ -32,6 +32,16 @@ internal static class RainProbe
             }
             Save(gallery, 1280, 320, Path.Combine(output, sliding ? "moving-beads.png" : "resting-beads.png"));
         }
+        var variety = new DesktopLife.Engine.World.RainGlass { Enabled = true };
+        for (var row = 0; row < 3; row++) for (var col = 0; col < 16; col++) variety.AddDrop(new(20 + col * 28, 22 + row * 34), new[] { 2f, 4.5f, 6.8f }[row]);
+        var sheet = new DrawingVisual();
+        using (var dc = sheet.RenderOpen())
+        {
+            dc.DrawRectangle(new LinearGradientBrush(Colors.SlateGray, Colors.LightGray, 0), null, new Rect(0, 0, 1440, 360));
+            dc.PushTransform(new ScaleTransform(3, 3));
+            RainGlassRenderer.Render(dc, variety, new(0, 0, 480, 120), 1, 1);
+        }
+        Save(sheet, 1440, 360, Path.Combine(output, "resting-variety.png"));
         var simulation = new DisplaySimulation(43);
         simulation.Synchronize([new("rain", new(0, 0, 960, 600), true)]);
         simulation.SetPopulation(new(Habitat: Habitat.Rain));

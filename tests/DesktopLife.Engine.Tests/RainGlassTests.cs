@@ -6,6 +6,19 @@ namespace DesktopLife.Engine.Tests;
 
 public class RainGlassTests
 {
+    [Fact] public void RestingProfilesDependOnInitialSizeAndRemainStable()
+    {
+        var rain = new RainGlass { Enabled = true };
+        var small = rain.AddDrop(new(100, 100), 2);
+        var medium = Enumerable.Range(0, 30).Select(i => rain.AddDrop(new(200 + i * 20, 150), 4)).ToArray();
+        var large = rain.AddDrop(new(100, 300), 7);
+        Assert.InRange(small.RestingShapeIndex, 0, 11);
+        Assert.InRange(large.RestingShapeIndex, 36, 47);
+        Assert.Equal(3, medium.Select(d => d.RestingShapeIndex / 12).Distinct().Count());
+        var profiles = rain.Drops.Select(d => d.RestingShapeIndex).ToArray();
+        rain.Update(.05f, Layout, new(-999, -999), null, false);
+        Assert.Equal(profiles, rain.Drops.Select(d => d.RestingShapeIndex).ToArray());
+    }
     [Fact] public void ReleasedDropContinuesSlidingWithoutPauses()
     {
         var rain = new RainGlass { Enabled = true };

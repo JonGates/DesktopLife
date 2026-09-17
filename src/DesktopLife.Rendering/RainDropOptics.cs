@@ -8,7 +8,7 @@ namespace DesktopLife.Rendering;
 /// <summary>Cached glass silhouettes and an approximate inverted local image lens.</summary>
 internal static class RainDropOptics
 {
-    private static readonly Geometry[] Shapes = Enumerable.Range(0, 12).Select(Shape).Concat(Enumerable.Range(0, 12).Select(RestingShape)).ToArray();
+    private static readonly Geometry[] Shapes = Enumerable.Range(0, 12).Select(Shape).Concat(Enumerable.Range(0, 48).Select(RestingShape)).ToArray();
     private static readonly Brush Body = Freeze(new LinearGradientBrush(new GradientStopCollection {
         new(Color.FromArgb(155, 6, 15, 22), 0), new(Color.FromArgb(45, 8, 19, 28), .22),
         new(Color.FromArgb(5, 125, 157, 174), .5), new(Color.FromArgb(30, 203, 221, 228), .77),
@@ -31,9 +31,23 @@ internal static class RainDropOptics
             var resting = index >= 12;
             dc.DrawGeometry(resting ? RestingBody : Body, resting ? RestingEdge : Edge, shape);
             if (resting) dc.PushClip(shape);
-            dc.DrawEllipse(Caustic, null, new(.22 - index % 3 * .12, .65), .25 + index % 4 * .06, .1);
-            dc.DrawEllipse(Glint, null, new(-.35 + index % 3 * .12, -.61), .07 + index % 3 * .03, .04);
-            if (!resting) dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72));
+            if (resting)
+            {
+                var bounds = shape.Bounds;
+                var variant = (index - 12) % 12;
+                var gx = bounds.Left + bounds.Width * (.22 + variant % 4 * .13);
+                var gy = bounds.Top + bounds.Height * (.18 + variant % 3 * .055);
+                dc.PushOpacity(.48 + variant % 4 * .16);
+                dc.DrawEllipse(Glint, null, new(gx, gy), .055 + variant % 4 * .045, .025 + variant % 3 * .016);
+                dc.DrawEllipse(Caustic, null, new(bounds.Left + bounds.Width * (.32 + variant % 3 * .13), bounds.Bottom - .14), .14 + variant % 5 * .055, .055 + variant % 3 * .02);
+                dc.Pop();
+            }
+            else
+            {
+                dc.DrawEllipse(Caustic, null, new(.22 - index % 3 * .12, .65), .25 + index % 4 * .06, .1);
+                dc.DrawEllipse(Glint, null, new(-.35 + index % 3 * .12, -.61), .07 + index % 3 * .03, .04);
+                dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72));
+            }
             if (resting) dc.Pop();
             dc.Pop(); dc.Pop();
         }
@@ -59,28 +73,37 @@ internal static class RainDropOptics
     }
     private static Geometry RestingShape(int index)
     {
-        // Pinned contact lines vary: broad shoulders, a soft crown and a heavier lower lobe.
-        // Stable variants avoid a flickering outline while a bead slowly grows.
-        var lean = (index % 4 - 1.5) * .12;
-        var crown = -.65 - index % 3 * .09;
-        var right = .72 + index % 3 * .08;
-        var left = -.74 - index % 4 * .045;
-        var bottom = .75 + index % 3 * .08;
-        var g = new StreamGeometry();
-        using (var c = g.Open())
+        var family = index / 12;
+        var variant = index % 12;
+        var phase = variant * 2.39996;
+        var points = new Point[12];
+        for (var i = 0; i < points.Length; i++)
         {
-            c.BeginFigure(new(lean - .18, crown), true, true);
-            c.BezierTo(new(lean + .08, crown + .04), new(right - .14, crown - .16), new(right, -.33), true, false);
-            c.BezierTo(new(right + .1, .06), new(right - .02, .49), new(.3 + lean, bottom), true, false);
-            c.BezierTo(new(.02, bottom + .13), new(left + .18, bottom + .05), new(left, .35), true, false);
-            c.BezierTo(new(left - .08, .08), new(left + .14, -.15), new(left + .1, -.35), true, false);
-            c.BezierTo(new(left + .06, -.67), new(lean - .46, crown - .08), new(lean - .18, crown), true, false);
+            var angle = i * Math.PI * 2 / points.Length;
+            var x = Math.Cos(angle); var y = Math.Sin(angle);
+            var wobble = 1 + (.025 + family * .022) * Math.Sin(3 * angle + phase);
+            // Distinct contact-line families, not differently scaled copies of one oval.
+            var width = family switch { 0 => .84, 1 => .62 + .2 * y, 2 => .96, _ => .76 + .14 * Math.Cos(2 * angle + phase) };
+            var height = family switch { 0 => .84, 1 => .96, 2 => .57 + variant % 3 * .05, _ => .77 };
+            var lean = family == 0 ? .015 : (variant % 2 == 0 ? .18 : -.18);
+            points[i] = new(Math.Clamp(x * width * wobble + lean * y, -.98, .98), Math.Clamp(y * height * wobble, -.98, .98));
         }
-        return Freeze(g);
+        var geometry = new StreamGeometry();
+        using (var c = geometry.Open())
+        {
+            c.BeginFigure(points[0], true, true);
+            for (var i = 0; i < points.Length; i++)
+            {
+                var previous = points[(i + points.Length - 1) % points.Length];
+                var start = points[i]; var end = points[(i + 1) % points.Length]; var next = points[(i + 2) % points.Length];
+                c.BezierTo(start + (end - previous) / 6, end - (next - start) / 6, end, true, false);
+            }
+        }
+        return Freeze(geometry);
     }
     public static void Draw(DrawingContext dc, GlassDrop drop, float time, WorldBounds viewport, ImageSource? image)
     {
-        var index = drop.ShapeIndex % 12 + (drop.Sliding ? 0 : 12);
+        var index = drop.Sliding ? drop.ShapeIndex % 12 : 12 + drop.RestingShapeIndex % 48;
         var shape = Shapes[index];
         var r = (double)drop.Radius;
         var impact = Math.Clamp((time - drop.Born) / .2, 0, 1);
