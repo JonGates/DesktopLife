@@ -20,6 +20,7 @@ public sealed class DesktopHost : IDisposable
     private readonly Stopwatch _clock = new();
     private readonly GameLoop _loop = new();
     private bool _subscribed;
+    private double _lastRainFrame = double.NegativeInfinity;
     private bool _started;
     private bool _disposed;
     private bool _reconciling;
@@ -154,7 +155,15 @@ public sealed class DesktopHost : IDisposable
             if (_lastRenderingTime == rendering.RenderingTime) return;
             _lastRenderingTime = rendering.RenderingTime;
         }
-        var time = _loop.Tick(_clock.Elapsed.TotalSeconds);
+        var now = _clock.Elapsed.TotalSeconds;
+        if (Simulation.World.Rain.Enabled)
+        {
+            // Transparent full-screen WPF surfaces need not run at the monitor's 144/240 Hz.
+            if (now - _lastRainFrame < 1.0 / 30) return;
+            _lastRainFrame = now;
+        }
+        else _lastRainFrame = double.NegativeInfinity;
+        var time = _loop.Tick(now);
         if (time.DeltaTime <= 0 || !CursorService.TryGetPosition(out var cursor)) return;
         var start = Stopwatch.GetTimestamp();
         Simulation.Update(time.ElapsedSeconds, cursor, Clicks.TakeLatest());

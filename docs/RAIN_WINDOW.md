@@ -13,6 +13,10 @@
 
 ## 验证
 
+性能优化：桌面水滴高光预绘制为 12 张小纹理并复用；只绘制当前屏幕范围内的效果。水痕按距离与时间采样，总量限制为 1,000 段。桌面雨窗目标刷新上限为 30 次／秒，森林和海洋不受此限制。
+
+`--rain-performance` 使用双 1080p 布局模拟，并离屏绘制其中一屏；本机约 580 颗总雨滴、1,000 段水痕时，单屏软件绘制中位数约 15.5 ms。此结果不代表实际桌面 FPS；多屏透明窗口合成、GPU 和显示分辨率仍会影响流畅度。
+
 ```powershell
 dotnet test DesktopLife.sln -c Release
 dotnet run --project tools/DesktopLife.Diagnostics -c Release -- --rain artifacts/rain-check

@@ -10,6 +10,8 @@ public sealed class GlassDrop(Vector2 position, float radius)
     public float Speed { get; internal set; }
     public bool Sliding { get; internal set; }
     public float Born { get; internal set; }
+    internal Vector2 TrailStart { get; set; } = position;
+    internal float TrailTime { get; set; }
 }
 public sealed record GlassTrail(Vector2 Start, Vector2 End, float Width, float Born);
 public sealed record GlassFracture(Vector2 Center, int Style, int Seed, float Born);
@@ -83,12 +85,16 @@ public sealed class RainGlass(int seed = 73)
                 drop.Radius = MathF.Cbrt(MathF.Pow(drop.Radius, 3) + MathF.Pow(other.Radius, 3));
                 _drops.RemoveAt(j); if (j < i) i--;
             }
-            _trails.Add(new(start, drop.Position, System.Math.Min(drop.Radius * .65f, 10), Time));
+            if (Vector2.DistanceSquared(drop.TrailStart, drop.Position) >= 100 || Time - drop.TrailTime >= .1f)
+            {
+                _trails.Add(new(drop.TrailStart, drop.Position, System.Math.Min(drop.Radius * .65f, 10), Time));
+                drop.TrailStart = drop.Position; drop.TrailTime = Time;
+            }
             if (!layout.Contains(drop.Position)) _drops.Remove(drop);
         }
         _drops.RemoveAll(d => !layout.Contains(d.Position));
         _trails.RemoveAll(t => Time - t.Born > 5f);
-        if (_trails.Count > 3500) _trails.RemoveRange(0, _trails.Count - 3500);
+        if (_trails.Count > 1000) _trails.RemoveRange(0, _trails.Count - 1000);
         _fractures.RemoveAll(f => Time - f.Born > 4);
         _previousCursor = cursor;
     }

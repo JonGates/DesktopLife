@@ -13,6 +13,7 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
+        if (args.Length > 0 && args[0] == "--rain-performance") { RainPerformanceProbe.Run(); return; }
         if (args.Length > 0 && args[0] == "--rain") { RainProbe.Run(args.Length > 1 ? args[1] : "artifacts/rain-check"); return; }
         if (args.Length > 0 && args[0] == "--saver-settings-ui") { SaverSettingsUiProbe.Run(args.Length > 1 ? args[1] : "artifacts/saver-ui/check"); return; }
         if (args.Length > 1 && args[0] == "--screensaver-run-check") { ScreenSaverProbe.RunExternalFullScreen(args[1]); return; }
