@@ -6,6 +6,15 @@ namespace DesktopLife.Engine.Tests;
 
 public class RainGlassTests
 {
+    [Fact] public void FracturesExpireAfterThreeRealSecondsEvenAtLowFrameRate()
+    {
+        var rain = new RainGlass { Enabled = true };
+        rain.Update(.016f, Layout, new(-999, -999), new(1, new(200, 200)), false);
+        rain.Update(2.9f, Layout, new(-999, -999), null, false);
+        Assert.Single(rain.Fractures);
+        rain.Update(.11f, Layout, new(-999, -999), null, false);
+        Assert.Empty(rain.Fractures);
+    }
     private static readonly DesktopLayout Layout = new([new("screen", new(0, 0, 800, 600), true)]);
     [Fact] public void LargeDropSlidesAndSweepsSmallerDrops()
     {

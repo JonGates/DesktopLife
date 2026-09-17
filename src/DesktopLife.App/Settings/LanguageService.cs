@@ -30,7 +30,7 @@ public static class LanguageService
         ["Ocean"] = ("海洋", "Ocean"),
         ["Rain"] = ("雨窗", "Rain window"),
         ["RainTitle"] = ("把屏幕变成一扇雨窗", "A rain-covered pane of glass"),
-        ["RainHelp"] = ("雨滴在玻璃上积聚，变大后自然滑落。鼠标碰到雨滴会让它下滑，沿途的小雨滴会合并。点击随机出现放射、蛛网或碎片效果，4 秒后消失。点击仍会传给下面的窗口；暂停可冻结整个场景。", "Drops grow on the glass and slide under their own weight. Touch a drop with the pointer to release it; it gathers smaller drops along its path. Click for one of three fracture effects, fading after four seconds. Clicks still reach windows underneath. Pause freezes the scene."),
+        ["RainHelp"] = ("雨滴在玻璃上积聚，变大后自然滑落。鼠标碰到雨滴会让它下滑，沿途的小雨滴会合并。点击随机出现放射、蛛网或碎片效果，3 秒后消失。点击仍会传给下面的窗口；暂停可冻结整个场景。", "Drops grow on the glass and slide under their own weight. Touch a drop with the pointer to release it; it gathers smaller drops along its path. Click for one of three fracture effects, fading after three seconds. Clicks still reach windows underneath. Pause freezes the scene."),
         ["HabitatLabel"] = ("桌面场景", "Desktop scene"),
         ["HabitatHelp"] = ("切换场景立即生效，森林与海洋的数量配置分别保留。", "Scenes switch immediately; Forest and Ocean populations are retained."),
         ["HabitatSaved"] = ("场景已切换，配置已保存。", "Scene changed. Settings saved."),

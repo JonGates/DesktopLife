@@ -33,7 +33,7 @@ public static class RainGlassRenderer
         {
             if (!viewport.Contains(fracture.Center, 1200)) continue;
             var age = rain.Time - fracture.Born;
-            dc.PushOpacity(Math.Clamp((4 - age) / 1.4, 0, 1));
+            dc.PushOpacity(Math.Clamp((3 - age) / .7, 0, 1));
             var random = new Random(fracture.Seed);
             var center = new Point(fracture.Center.X, fracture.Center.Y);
             var spokes = fracture.Style == 0 ? 9 : fracture.Style == 1 ? 15 : 11;
@@ -42,7 +42,7 @@ public static class RainGlassRenderer
             for (var i = 0; i < spokes; i++)
             {
                 var angle = Math.PI * 2 * (i + random.NextDouble() * .55) / spokes;
-                var length = (90 + random.NextDouble() * 180) * growth;
+                var length = (40 + random.NextDouble() * 80) * growth;
                 ends[i] = new(center.X + Math.Cos(angle) * length, center.Y + Math.Sin(angle) * length);
                 var previous = center;
                 for (var step = 1; step <= 5; step++)
@@ -65,7 +65,7 @@ public static class RainGlassRenderer
                     }
                 if (fracture.Style == 2)
                 {
-                    var fall = age * age * 55;
+                    var fall = age * age * 12;
                     var geometry = new StreamGeometry();
                     using (var context = geometry.Open())
                     {

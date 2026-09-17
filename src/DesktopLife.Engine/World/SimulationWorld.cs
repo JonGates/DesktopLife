@@ -18,7 +18,7 @@ public sealed class SimulationWorld(WorldBounds bounds, IRandomSource random, IE
         Mouse.Update(cursor, elapsedSeconds, click);
         var dt = MathF.Min(elapsedSeconds, 0.05f);
         TotalTime += dt;
-        if (Layout != null) Rain.Update(dt, Layout, cursor, click);
+        if (Layout != null) Rain.Update(elapsedSeconds, Layout, cursor, click);
         var context = new CreatureContext(Mouse.State, Bounds, TotalTime, Random, Layout: Layout, ElapsedSeconds: elapsedSeconds);
         Manager.Update(dt, in context);
     }

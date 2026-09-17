@@ -81,7 +81,8 @@ public sealed class SaverSession : IDisposable
     {
         if (_disposed) return;
         var elapsed = _clock.Elapsed.TotalSeconds;
-        var delta = Math.Min(elapsed - _previous, .05); _previous = elapsed;
+        var frameElapsed = elapsed - _previous;
+        var delta = Math.Min(frameElapsed, .05); _previous = elapsed;
         if (_parent != 0)
         {
             if (!SaverNative.IsWindow(_parent) || _preview == null || !SaverNative.IsWindow(_preview.Handle)) { _app.Shutdown(); return; }
@@ -106,7 +107,7 @@ public sealed class SaverSession : IDisposable
         var cycle = (long)(elapsed / 16);
         MouseClick? click = cycle > _lastLanding ? new MouseClick(cycle, target) : null;
         _lastLanding = cycle;
-        Simulation.Update((float)delta, target, click);
+        Simulation.Update((float)frameElapsed, target, click);
         foreach (var surface in _surfaces) surface.InvalidateVisual();
     }
     private void ResizePreview()

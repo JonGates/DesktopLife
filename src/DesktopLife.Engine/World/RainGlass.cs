@@ -41,7 +41,7 @@ public sealed class RainGlass(int seed = 73)
     public void Update(float elapsed, DesktopLayout layout, Vector2 cursor, MouseClick? click, bool spawn = true)
     {
         if (!Enabled || !float.IsFinite(elapsed) || elapsed <= 0) return;
-        var dt = MathF.Min(elapsed, .05f); Time += dt;
+        var dt = MathF.Min(elapsed, .05f); Time += elapsed;
         if (click != null && click.Sequence != _lastClick && layout.Contains(click.Position))
         {
             _lastClick = click.Sequence;
@@ -95,7 +95,7 @@ public sealed class RainGlass(int seed = 73)
         _drops.RemoveAll(d => !layout.Contains(d.Position));
         _trails.RemoveAll(t => Time - t.Born > 5f);
         if (_trails.Count > 1000) _trails.RemoveRange(0, _trails.Count - 1000);
-        _fractures.RemoveAll(f => Time - f.Born > 4);
+        _fractures.RemoveAll(f => Time - f.Born >= 3);
         _previousCursor = cursor;
     }
     private static float DistanceToSegment(Vector2 p, Vector2 a, Vector2 b)
