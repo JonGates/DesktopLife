@@ -91,6 +91,12 @@
                 <Border Style="{StaticResource Card}"><StackPanel>
                     <TextBlock Text="{DynamicResource RainTitle}" Style="{StaticResource SectionTitle}"/>
                     <TextBlock Text="{DynamicResource RainHelp}" Style="{StaticResource Description}"/>
+                    <TextBlock Text="{DynamicResource RainAmount}" Margin="0,16,0,6" FontWeight="SemiBold"/>
+                    <ComboBox x:Name="RainLevelPicker" SelectedIndex="2" Height="34">
+                        <ComboBoxItem Content="{DynamicResource RainLevel1}"/><ComboBoxItem Content="{DynamicResource RainLevel2}"/>
+                        <ComboBoxItem Content="{DynamicResource RainLevel3}"/><ComboBoxItem Content="{DynamicResource RainLevel4}"/><ComboBoxItem Content="{DynamicResource RainLevel5}"/>
+                    </ComboBox>
+                    <Button x:Name="RainApplyButton" Content="{DynamicResource RainApply}" Click="ApplyClicked" HorizontalAlignment="Left" Margin="0,10,0,0"/>
                 </StackPanel></Border>
             </TabItem>
         </TabControl>

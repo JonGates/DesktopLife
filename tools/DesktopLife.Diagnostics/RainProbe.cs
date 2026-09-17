@@ -70,12 +70,17 @@ internal static class RainProbe
         var window = new SettingsWindow(host, store) { Left = -10000, Top = -10000, ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
         window.Show(); ((TabControl)window.FindName("HabitatTabs")).SelectedIndex = 2; window.UpdateLayout();
         if (store.Load(out _).Habitat != Habitat.Rain || !host.Simulation.World.Rain.Enabled) throw new Exception("Desktop rain tab did not persist/apply");
+        ((ComboBox)window.FindName("RainLevelPicker")).SelectedIndex = 4;
+        ((Button)window.FindName("RainApplyButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        if (store.Load(out _).RainLevel != 5 || host.Simulation.World.Rain.Level != 5) throw new Exception("Desktop intensity not applied");
         Save(window, (int)window.ActualWidth, (int)window.ActualHeight, Path.Combine(output, "rain-settings.png")); window.Close();
         var saverStore = new SaverSettingsStore(Path.GetFullPath(Path.Combine(output, "saver.json")));
         var saver = new ConfigurationWindow(saverStore);
         ((TabControl)saver.FindName("HabitatTabs")).SelectedIndex = 2;
+        ((ComboBox)saver.FindName("RainLevelPicker")).SelectedIndex = 0;
         ((Button)saver.FindName("SaveButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         if (saverStore.Load(out _).Habitat != Habitat.Rain) throw new Exception("Screen saver rain selection did not persist");
+        if (saverStore.Load(out _).Population.RainLevel != 1 || store.Load(out _).RainLevel != 5) throw new Exception("Rain intensity persistence is not independent");
         app.Shutdown();
         Console.WriteLine("PASS: rain render, creature isolation, scene cleanup, desktop switching/persistence, screen saver third scene.");
     }

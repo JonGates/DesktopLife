@@ -13,6 +13,7 @@ internal static class RainPerformanceProbe
     {
         var layout = new DesktopLayout([new("left", new(0, 0, 1920, 1080), true), new("right", new(1920, 0, 1920, 1080), false)]);
         var rain = new RainGlass { Enabled = true };
+        rain.SetLevel(5);
         for (var i = 0; i < 300; i++) rain.Update(1f / 30, layout, new(-999, -999), null);
         Console.WriteLine($"Prepared {rain.Drops.Count} drops, {rain.Trails.Count} trails");
         var target = new RenderTargetBitmap(1920, 1080, 96, 96, PixelFormats.Pbgra32);

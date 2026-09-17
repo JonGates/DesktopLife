@@ -79,6 +79,7 @@ public sealed class DisplaySimulation(int seed)
         }
         if (Settings.Habitat != settings.Habitat) World.Rain.Clear();
         World.Rain.Enabled = settings.Habitat == Habitat.Rain;
+        World.Rain.SetLevel(settings.RainLevel);
         Settings = settings;
         World.Manager.Replace(population);
         TotalCockroachCount = settings.Habitat == Habitat.Forest ? settings.Cockroaches : 0;

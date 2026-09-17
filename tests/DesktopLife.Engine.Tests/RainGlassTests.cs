@@ -6,20 +6,31 @@ namespace DesktopLife.Engine.Tests;
 
 public class RainGlassTests
 {
-    [Fact] public void ReleasedDropBrieflyPinsThenResumes()
+    [Fact] public void ReleasedDropContinuesSlidingWithoutPauses()
     {
         var rain = new RainGlass { Enabled = true };
         var layout = new DesktopLayout([new("tall", new(0, 0, 800, 10000), true)]);
         var drop = rain.AddDrop(new(200, 100), 6);
         rain.Update(.05f, layout, drop.Position, null, false);
-        var stopped = false; var resumed = false;
+        var previousY = drop.Position.Y;
         for (var i = 0; i < 200; i++)
         {
             rain.Update(.05f, layout, new(-999, -999), null, false);
-            if (drop.Speed == 0) stopped = true;
-            if (stopped && drop.Speed > 0) resumed = true;
+            Assert.True(drop.Speed > 0);
+            Assert.True(drop.Position.Y > previousY); previousY = drop.Position.Y;
         }
-        Assert.True(stopped); Assert.True(resumed); Assert.True(drop.Position.Y > 100);
+        Assert.True(drop.Position.Y > 100);
+    }
+    [Theory]
+    [InlineData(1, 100)] [InlineData(2, 220)] [InlineData(3, 360)] [InlineData(4, 480)] [InlineData(5, 600)]
+    public void RainLevelControlsCapacity(int level, int limit)
+    {
+        var rain = new RainGlass(); rain.SetLevel(level);
+        for (var i = 0; i < 700; i++) rain.AddDrop(new(i, 100), 2);
+        Assert.Equal(limit, rain.Drops.Count);
+        rain.SetLevel(1); Assert.Equal(100, rain.Drops.Count);
+        Assert.Throws<ArgumentOutOfRangeException>(() => rain.SetLevel(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => rain.SetLevel(6));
     }
     [Fact] public void FracturesExpireAfterThreeRealSecondsEvenAtLowFrameRate()
     {

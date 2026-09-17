@@ -99,6 +99,18 @@ public sealed class ConfigurationWindow : Window
         var rainContent = new StackPanel();
         rainContent.Children.Add(Label("屏幕上的雨窗", "Rain on your screen", true));
         rainContent.Children.Add(Label("雨滴会积聚、滑落并吞并沿途雨滴。屏保中自动演出；真实鼠标或键盘输入仍会退出。桌面雨窗模式支持鼠标拨动和点击碎裂。", "Drops gather, slide and merge. The screen saver plays automatically; real mouse or keyboard input exits. Desktop rain supports pointer interaction and click fractures."));
+        rainContent.Children.Add(Label("雨量", "Rain intensity"));
+        var rainLevel = new ComboBox { SelectedIndex = settings.RainLevel - 1, Height = 34, Margin = new Thickness(0, 6, 0, 8) };
+        RegisterName("RainLevelPicker", rainLevel);
+        var rainNames = new[] { ("毛毛雨", "Drizzle"), ("小雨", "Light rain"), ("中雨", "Moderate rain"), ("大雨", "Heavy rain"), ("暴雨", "Downpour") };
+        foreach (var names in rainNames)
+        {
+            var item = new ComboBoxItem();
+            Translate(() => item.Content = _english ? names.Item2 : names.Item1);
+            rainLevel.Items.Add(item);
+        }
+        rainLevel.SelectedIndex = settings.RainLevel - 1;
+        rainContent.Children.Add(rainLevel);
         var rainTab = new TabItem { Content = Card(rainContent), Background = Brush("#E2ECF4"), Foreground = Brush("#42657D") };
         Translate(() => rainTab.Header = Text("雨窗", "Rain window")); tabs.Items.Add(rainTab); tabs.SelectedIndex = (int)settings.Habitat;
         void Theme() { var sea = tabs.SelectedIndex == 1; Background = Brush(sea ? "#EFF5F8" : "#F0F4F1"); save.Background = save.BorderBrush = Brush(sea ? "#1C647D" : "#306951"); }
@@ -156,7 +168,7 @@ public sealed class ConfigurationWindow : Window
             try
             {
                 store.Save(new(theme.SelectedIndex == 1, r.Count, a.Count, c.Count, (CreatureStyle)style.SelectedIndex, r.MinPercent, r.MaxPercent, a.MinPercent, a.MaxPercent, c.MinPercent, c.MaxPercent,
-                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _english ? "en-US" : "zh-CN", SaverBackground.Import(backgroundPath, store.Path))); Close();
+                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _english ? "en-US" : "zh-CN", SaverBackground.Import(backgroundPath, store.Path), rainLevel.SelectedIndex + 1)); Close();
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException)
             { status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text("无法保存，请检查配置文件夹是否可写。", "Unable to save. Check that the settings folder is writable."); statusMessage(); }

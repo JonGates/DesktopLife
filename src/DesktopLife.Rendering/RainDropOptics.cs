@@ -34,16 +34,17 @@ internal static class RainDropOptics
     private static T Freeze<T>(T value) where T : Freezable { value.Freeze(); return value; }
     private static Geometry Shape(int index)
     {
-        var lean = (index % 4 - 1.5) * .18;
-        var shoulder = .25 + index % 3 * .16;
+        var lean = (index % 4 - 1.5) * .07;
+        var shoulder = .48 + index % 3 * .08;
         var geometry = new StreamGeometry();
         using (var c = geometry.Open())
         {
-            c.BeginFigure(new(lean, -1), true, true);
-            c.BezierTo(new(.32 + lean, -.94), new(.88, -shoulder), new(.93, .12), true, false);
-            c.BezierTo(new(1.02, .74), new(.43, 1.06), new(-.12, .96), true, false);
-            c.BezierTo(new(-.9, .93), new(-1.02, .33), new(-.81, -.18), true, false);
-            c.BezierTo(new(-.65, -.65), new(-.46 + lean, -.95), new(lean, -1), true, false);
+            // Broad, rounded crown: beads adhering to glass have no pointed tip.
+            c.BeginFigure(new(lean, -.88), true, true);
+            c.BezierTo(new(.58 + lean, -.91), new(.94, -shoulder), new(.94, .08), true, false);
+            c.BezierTo(new(.99, .69), new(.49, .98), new(-.06, .94), true, false);
+            c.BezierTo(new(-.68, .97), new(-.98, .54), new(-.93, -.04), true, false);
+            c.BezierTo(new(-.91, -.57), new(-.5 + lean, -.9), new(lean, -.88), true, false);
         }
         return Freeze(geometry);
     }
@@ -53,7 +54,7 @@ internal static class RainDropOptics
         var shape = Shapes[index];
         var r = (double)drop.Radius;
         var impact = Math.Clamp((time - drop.Born) / .2, 0, 1);
-        var stretch = .88 + index % 4 * .07 + Math.Min(.4, drop.Speed / 600);
+        var stretch = .82 + index % 4 * .06 + Math.Min(.48, drop.Speed / 500);
         if (image == null || r < 4)
         {
             var rx = r * (1.13 - impact * .13) * 4 / 3;

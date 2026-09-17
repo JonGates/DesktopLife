@@ -4,7 +4,7 @@ namespace DesktopLife.Creatures.Displays;
 
 public sealed record SpeciesPopulation(int Count = 0, int MinPercent = 80, int MaxPercent = 120);
 
-public sealed record PopulationSettings(int Cockroaches = 20, int Ants = 20, int Caterpillars = 3, int RoachMin = 60, int RoachMax = 180, int AntMin = 60, int AntMax = 120, int CaterpillarMin = 60, int CaterpillarMax = 140, Dictionary<CreatureKind, SpeciesPopulation>? Additional = null, Habitat Habitat = Habitat.Forest, Dictionary<CreatureKind, SpeciesPopulation>? Ocean = null)
+public sealed record PopulationSettings(int Cockroaches = 20, int Ants = 20, int Caterpillars = 3, int RoachMin = 60, int RoachMax = 180, int AntMin = 60, int AntMax = 120, int CaterpillarMin = 60, int CaterpillarMax = 140, Dictionary<CreatureKind, SpeciesPopulation>? Additional = null, Habitat Habitat = Habitat.Forest, Dictionary<CreatureKind, SpeciesPopulation>? Ocean = null, int RainLevel = 3)
 {
     public SpeciesPopulation GetAdditional(CreatureKind kind) =>
         Additional is not null && Additional.TryGetValue(kind, out var value) ? value : new();
@@ -21,6 +21,7 @@ public sealed record PopulationSettings(int Cockroaches = 20, int Ants = 20, int
     }
     public void Validate()
     {
+        if (RainLevel is < 1 or > 5) throw new ArgumentOutOfRangeException(nameof(RainLevel));
         if (!Enum.IsDefined(Habitat)) throw new ArgumentOutOfRangeException(nameof(Habitat));
         ValidateRange(RoachMin, RoachMax);
         ValidateRange(AntMin, AntMax);

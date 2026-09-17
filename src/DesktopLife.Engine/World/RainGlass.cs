@@ -12,9 +12,6 @@ public sealed class GlassDrop(Vector2 position, float radius)
     public float Born { get; internal set; }
     public int ShapeIndex { get; internal set; }
     internal float ReleaseRadius { get; set; } = 7.8f;
-    internal float RunLength { get; set; }
-    internal float Travelled { get; set; }
-    internal float HoldUntil { get; set; }
     internal Vector2 TrailStart { get; set; } = position;
     internal float TrailTime { get; set; }
 }
@@ -32,6 +29,14 @@ public sealed class RainGlass(int seed = 73)
     private long _lastClick;
     private Vector2? _previousCursor;
     public bool Enabled { get; set; }
+    public int Level { get; private set; } = 3;
+    public int DropLimit => Level switch { 1 => 100, 2 => 220, 3 => 360, 4 => 480, _ => 600 };
+    public void SetLevel(int level)
+    {
+        if (level is < 1 or > 5) throw new ArgumentOutOfRangeException(nameof(level));
+        Level = level;
+        if (_drops.Count > DropLimit) _drops.RemoveRange(DropLimit, _drops.Count - DropLimit);
+    }
     public float Time { get; private set; }
     public IReadOnlyList<GlassDrop> Drops => _drops;
     public IReadOnlyList<GlassTrail> Trails => _trails;
@@ -39,8 +44,8 @@ public sealed class RainGlass(int seed = 73)
     public GlassDrop AddDrop(Vector2 position, float radius)
     {
         if (!float.IsFinite(radius) || radius <= 0 || radius > 50 || !float.IsFinite(position.X) || !float.IsFinite(position.Y)) throw new ArgumentOutOfRangeException(nameof(radius));
-        var drop = new GlassDrop(position, radius) { Born = Time, ShapeIndex = _random.Next(12), ReleaseRadius = 7 + (float)_random.NextDouble() * 1.6f, RunLength = 30 + (float)_random.NextDouble() * 70 };
-        if (_drops.Count < 600) _drops.Add(drop); return drop;
+        var drop = new GlassDrop(position, radius) { Born = Time, ShapeIndex = _random.Next(12), ReleaseRadius = 7 + (float)_random.NextDouble() * 1.6f };
+        if (_drops.Count < DropLimit) _drops.Add(drop); return drop;
     }
     public void ResetInput() => _previousCursor = null;
     public void Clear() { _drops.Clear(); _trails.Clear(); _fractures.Clear(); _spawn = 0; ResetInput(); }
@@ -58,8 +63,8 @@ public sealed class RainGlass(int seed = 73)
         if (spawn)
         {
             var area = layout.Displays.Sum(d => d.Bounds.Width * d.Bounds.Height);
-            _spawn += area / 1_000_000f * 18 * dt;
-            while (_spawn >= 1 && _drops.Count < 600 && layout.Displays.Count > 0)
+            _spawn += area / 1_000_000f * (Level * 5 - 2) * dt;
+            while (_spawn >= 1 && _drops.Count < DropLimit && layout.Displays.Count > 0)
             {
                 _spawn--;
                 var pick = (float)_random.NextDouble() * area;
@@ -81,16 +86,9 @@ public sealed class RainGlass(int seed = 73)
             drop.Radius = MathF.Cbrt(drop.Radius * drop.Radius * drop.Radius + dt * 5);
             if (drop.Radius >= drop.ReleaseRadius) drop.Sliding = true;
             if (!drop.Sliding) continue;
-            if (Time < drop.HoldUntil) continue;
             var targetSpeed = System.Math.Clamp(drop.Radius * 18 - 15, 35, 300);
             drop.Speed += (targetSpeed - drop.Speed) * (1 - MathF.Exp(-7 * dt));
             drop.Position += new Vector2(MathF.Sin(Time * .6f + drop.ShapeIndex) * 3 * dt, drop.Speed * dt);
-            drop.Travelled += Vector2.Distance(start, drop.Position);
-            if (drop.Travelled >= drop.RunLength && drop.Radius < 12)
-            {
-                drop.HoldUntil = Time + .08f + (float)_random.NextDouble() * .3f;
-                drop.Travelled = 0; drop.Speed = 0;
-            }
             // Sweep the whole travelled segment: fast droplets must not skip smaller drops.
             for (var j = _drops.Count - 1; j >= 0; j--)
             {

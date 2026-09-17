@@ -39,6 +39,7 @@ public partial class SettingsWindow : Window
         _preferences.CaptureFailed += CaptureError;
         Closed += (_, _) => _preferences.CaptureFailed -= CaptureError;
         var sizes = host.Simulation.Settings;
+        RainLevelPicker.SelectedIndex = sizes.RainLevel - 1;
         RoachMin.Text = sizes.RoachMin.ToString(); RoachMax.Text = sizes.RoachMax.ToString();
         AntMin.Text = sizes.AntMin.ToString(); AntMax.Text = sizes.AntMax.ToString();
         CaterpillarMin.Text = sizes.CaterpillarMin.ToString(); CaterpillarMax.Text = sizes.CaterpillarMax.ToString();
@@ -257,7 +258,7 @@ public partial class SettingsWindow : Window
                 (OceanCatalog.IsOcean(row.Definition.Kind) ? ocean : additional).Add(row.Definition.Kind, new(count, min, max));
             }
             var settings = new PopulationSettings(roaches, ants, caterpillars, rMin, rMax, aMin, aMax, cMin, cMax,
-                additional.Values.All(value => value == new SpeciesPopulation()) ? null : additional, habitat, ocean);
+                additional.Values.All(value => value == new SpeciesPopulation()) ? null : additional, habitat, ocean, RainLevelPicker.SelectedIndex + 1);
             try { settings.Validate(); } catch (ArgumentOutOfRangeException) { SetStatus("InvalidSizes"); return false; }
             _store.Save(settings);
             _host.SetPopulation(settings);
