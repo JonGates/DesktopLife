@@ -31,7 +31,7 @@ public sealed class RainGlass(int seed = 73)
     private Vector2? _previousCursor;
     public bool Enabled { get; set; }
     public int Level { get; private set; } = 3;
-    public int DropLimit => Level switch { 1 => 100, 2 => 220, 3 => 360, 4 => 480, _ => 600 };
+    public int DropLimit => Level switch { 1 => 100, 2 => 220, 3 => 600, 4 => 900, _ => 1200 };
     public void SetLevel(int level)
     {
         if (level is < 1 or > 5) throw new ArgumentOutOfRangeException(nameof(level));
@@ -66,7 +66,7 @@ public sealed class RainGlass(int seed = 73)
         if (spawn)
         {
             var area = layout.Displays.Sum(d => d.Bounds.Width * d.Bounds.Height);
-            _spawn += area / 1_000_000f * (Level * 5 - 2) * dt;
+            _spawn += area / 1_000_000f * (Level switch { 1 => 3, 2 => 8, 3 => 22, 4 => 36, _ => 55 }) * dt;
             while (_spawn >= 1 && _drops.Count < DropLimit && layout.Displays.Count > 0)
             {
                 _spawn--;

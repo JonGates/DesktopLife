@@ -35,15 +35,26 @@ public class RainGlassTests
         Assert.True(drop.Position.Y > 100);
     }
     [Theory]
-    [InlineData(1, 100)] [InlineData(2, 220)] [InlineData(3, 360)] [InlineData(4, 480)] [InlineData(5, 600)]
+    [InlineData(1, 100)] [InlineData(2, 220)] [InlineData(3, 600)] [InlineData(4, 900)] [InlineData(5, 1200)]
     public void RainLevelControlsCapacity(int level, int limit)
     {
         var rain = new RainGlass(); rain.SetLevel(level);
-        for (var i = 0; i < 700; i++) rain.AddDrop(new(i, 100), 2);
+        for (var i = 0; i < 1400; i++) rain.AddDrop(new(i, 100), 2);
         Assert.Equal(limit, rain.Drops.Count);
         rain.SetLevel(1); Assert.Equal(100, rain.Drops.Count);
         Assert.Throws<ArgumentOutOfRangeException>(() => rain.SetLevel(0));
         Assert.Throws<ArgumentOutOfRangeException>(() => rain.SetLevel(6));
+    }
+    [Fact] public void HigherLevelsProduceProgressivelyDenserRain()
+    {
+        var counts = new List<int>();
+        for (var level = 1; level <= 5; level++)
+        {
+            var rain = new RainGlass { Enabled = true }; rain.SetLevel(level);
+            for (var frame = 0; frame < 40; frame++) rain.Update(.05f, Layout, new(-999, -999), null);
+            counts.Add(rain.Drops.Count);
+        }
+        for (var i = 1; i < counts.Count; i++) Assert.True(counts[i] > counts[i - 1]);
     }
     [Fact] public void FracturesExpireAfterThreeRealSecondsEvenAtLowFrameRate()
     {
