@@ -74,6 +74,16 @@ public class RainGlassTests
         for (var i = 0; i < 20; i++) rain.Update(.05f, Layout, new(-999, -999), null, false);
         Assert.Single(rain.Drops); Assert.True(large.Position.Y > 125); Assert.True(large.Radius > 9); Assert.NotEmpty(rain.Trails);
     }
+    [Fact] public void MergeSwellingSettlesWhileDropKeepsFalling()
+    {
+        var rain = new RainGlass { Enabled = true };
+        var drop = rain.AddDrop(new(200, 100), 9); rain.AddDrop(new(200, 105), 3);
+        rain.Update(.05f, Layout, new(-999, -999), null, false);
+        var pulse = drop.MergePulse; var position = drop.Position.Y;
+        Assert.True(pulse > 0); Assert.Single(rain.Drops);
+        for (var i = 0; i < 20; i++) rain.Update(.05f, Layout, new(-999, -999), null, false);
+        Assert.True(drop.MergePulse < pulse * .01f); Assert.True(drop.Position.Y > position);
+    }
     [Fact] public void PointerSweepReleasesSmallPinnedDrop()
     {
         var rain = new RainGlass { Enabled = true }; var drop = rain.AddDrop(new(200, 100), 3);

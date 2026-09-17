@@ -8,6 +8,7 @@ public sealed class GlassDrop(Vector2 position, float radius)
     public Vector2 Position { get; internal set; } = position;
     public float Radius { get; internal set; } = radius;
     public float Speed { get; internal set; }
+    public float MergePulse { get; internal set; }
     public bool Sliding { get; internal set; }
     public float Born { get; internal set; }
     public int ShapeIndex { get; internal set; }
@@ -85,6 +86,7 @@ public sealed class RainGlass(int seed = 73)
         {
             if (i >= _drops.Count) continue;
             var drop = _drops[i]; var start = drop.Position;
+            drop.MergePulse *= MathF.Exp(-8 * dt);
             if (DistanceToSegment(start, _previousCursor ?? cursor, cursor) < drop.Radius + 7) drop.Sliding = true;
             drop.Radius = MathF.Cbrt(drop.Radius * drop.Radius * drop.Radius + dt * 5);
             if (drop.Radius >= drop.ReleaseRadius) drop.Sliding = true;
@@ -97,6 +99,7 @@ public sealed class RainGlass(int seed = 73)
             {
                 var other = _drops[j]; if (ReferenceEquals(drop, other)) continue;
                 if (DistanceToSegment(other.Position, start, drop.Position) > drop.Radius + other.Radius) continue;
+                drop.MergePulse = MathF.Min(1, drop.MergePulse + other.Radius / drop.Radius);
                 drop.Radius = MathF.Cbrt(MathF.Pow(drop.Radius, 3) + MathF.Pow(other.Radius, 3));
                 _drops.RemoveAt(j); if (j < i) i--;
             }

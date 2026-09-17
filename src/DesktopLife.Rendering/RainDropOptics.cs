@@ -30,7 +30,7 @@ internal static class RainDropOptics
             dc.PushTransform(new TranslateTransform(32, 32)); dc.PushTransform(new ScaleTransform(24, 24));
             var resting = index >= 12;
             dc.DrawGeometry(resting ? RestingBody : Body, resting ? RestingEdge : Edge, shape);
-            if (resting) dc.PushClip(shape);
+            dc.PushClip(shape);
             if (resting)
             {
                 var bounds = shape.Bounds;
@@ -45,10 +45,10 @@ internal static class RainDropOptics
             else
             {
                 dc.DrawEllipse(Caustic, null, new(.22 - index % 3 * .12, .65), .25 + index % 4 * .06, .1);
-                dc.DrawEllipse(Glint, null, new(-.35 + index % 3 * .12, -.61), .07 + index % 3 * .03, .04);
+                dc.DrawEllipse(Glint, null, new(-.22 + index % 3 * .07, -.12), .07 + index % 3 * .03, .04);
                 dc.DrawLine(Lip, new(-.62, .48), new(-.37, .72));
             }
-            if (resting) dc.Pop();
+            dc.Pop();
             dc.Pop(); dc.Pop();
         }
         var bitmap = new RenderTargetBitmap(64, 64, 96, 96, PixelFormats.Pbgra32); bitmap.Render(visual); bitmap.Freeze();
@@ -58,16 +58,18 @@ internal static class RainDropOptics
     private static Geometry Shape(int index)
     {
         var lean = (index % 4 - 1.5) * .07;
-        var shoulder = .48 + index % 3 * .08;
+        var neck = .11 + index % 3 * .025;
         var geometry = new StreamGeometry();
         using (var c = geometry.Open())
         {
-            // Broad, rounded crown: beads adhering to glass have no pointed tip.
-            c.BeginFigure(new(lean, -.88), true, true);
-            c.BezierTo(new(.58 + lean, -.91), new(.94, -shoulder), new(.94, .08), true, false);
-            c.BezierTo(new(.99, .69), new(.49, .98), new(-.06, .94), true, false);
-            c.BezierTo(new(-.68, .97), new(-.98, .54), new(-.93, -.04), true, false);
-            c.BezierTo(new(-.91, -.57), new(-.5 + lean, -.9), new(lean, -.88), true, false);
+            // A short narrow upper neck joins the trail; the heavy lower lobe stays round.
+            c.BeginFigure(new(lean, -.99), true, true);
+            c.BezierTo(new(lean + neck, -.99), new(.2 + lean, -.58), new(.47, -.22), true, false);
+            c.BezierTo(new(.76, .08), new(.95, .36), new(.81, .65), true, false);
+            c.BezierTo(new(.66, .96), new(.26, .99), new(-.04, .98), true, false);
+            c.BezierTo(new(-.43, .97), new(-.83, .85), new(-.86, .51), true, false);
+            c.BezierTo(new(-.89, .15), new(-.46 + lean, -.23), new(-.25 + lean, -.57), true, false);
+            c.BezierTo(new(lean - neck, -.82), new(lean - neck, -.99), new(lean, -.99), true, false);
         }
         return Freeze(geometry);
     }
@@ -111,6 +113,13 @@ internal static class RainDropOptics
         var rx = r * (1.13 - impact * .13);
         var ry = r * stretch;
         if (!drop.Sliding) { rx *= .9 + index % 4 * .07; ry *= .94 + index % 3 * .05; }
+        else
+        {
+            var elongation = Math.Min(.28, drop.Speed / 900);
+            var swelling = 1 + .16 * drop.MergePulse;
+            rx *= swelling / Math.Sqrt(1 + elongation);
+            ry *= (1 + elongation) / Math.Sqrt(swelling);
+        }
         if (image != null && r >= 4 && image.Width > 0 && image.Height > 0)
             dc.DrawImage(RainImageOptics.LensImage(image, drop, viewport, shape), new Rect(drop.Position.X - rx, drop.Position.Y - ry, rx * 2, ry * 2));
         // Reuse the same baked edge/glint layer as desktop mode: no per-drop opacity groups.
