@@ -61,6 +61,36 @@ public sealed class ConfigurationWindow : Window
         }
         var theme = Picker("ThemePicker", settings.Light ? 1 : 0, "屏保背景", "Background", "深色", "Dark", "浅色", "Light", 0);
         var style = Picker("StylePicker", (int)settings.Style, "生物风格", "Creature style", "写实", "Realistic", "可爱", "Cute", 1); panel.Children.Add(Card(appearance));
+        string? backgroundPath = settings.BackgroundImage;
+        var imagePanel = new StackPanel();
+        imagePanel.Children.Add(Label("背景图片", "Background image", true));
+        var imagePreview = new Image { Height = 90, Stretch = Stretch.UniformToFill, Margin = new Thickness(0, 0, 0, 8) };
+        imagePanel.Children.Add(imagePreview);
+        var imageName = Label("", ""); imageName.TextWrapping = TextWrapping.NoWrap; imageName.TextTrimming = TextTrimming.CharacterEllipsis; imagePanel.Children.Add(imageName);
+        void UpdateImage()
+        {
+            imagePreview.Source = SaverBackground.Load(backgroundPath);
+            imagePreview.Visibility = imagePreview.Source == null ? Visibility.Collapsed : Visibility.Visible;
+            imageName.Text = string.IsNullOrWhiteSpace(backgroundPath) ? Text("使用纯色背景", "Using a solid background") : imagePreview.Source == null ? Text("图片不可用，屏保将使用纯色背景。", "Image unavailable; the screen saver will use a solid background.") : Path.GetFileName(backgroundPath);
+        }
+        Translate(UpdateImage);
+        var imageActions = new WrapPanel(); imagePanel.Children.Add(imageActions);
+        var chooseImage = new Button { Name = "ChooseBackgroundButton", Margin = new Thickness(0, 0, 8, 0) };
+        var clearImage = new Button { Name = "ClearBackgroundButton" };
+        RegisterName(chooseImage.Name, chooseImage); RegisterName(clearImage.Name, clearImage);
+        Translate(() => { chooseImage.Content = Text("选择图片…", "Choose image…"); clearImage.Content = Text("恢复纯色", "Use solid color"); });
+        imageActions.Children.Add(chooseImage); imageActions.Children.Add(clearImage);
+        imagePanel.Children.Add(Label("每屏等比填充，超出部分裁切；保存时复制图片，移动原图不会影响屏保。", "Fills each screen without distortion, cropping the edges. Saving keeps a copy of the image."));
+        chooseImage.Click += (_, _) =>
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp", CheckFileExists = true };
+            if (dialog.ShowDialog(this) != true) return;
+            if (SaverBackground.Load(dialog.FileName) == null)
+            { status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text("无法读取图片，请选择有效的 PNG、JPG 或 BMP。", "Cannot read the image. Choose a valid PNG, JPG or BMP."); statusMessage(); return; }
+            backgroundPath = dialog.FileName; UpdateImage();
+        };
+        clearImage.Click += (_, _) => { backgroundPath = null; UpdateImage(); };
+        panel.Children.Add(Card(imagePanel));
         var tabs = new TabControl { Name = "HabitatTabs", Padding = new Thickness(0, 12, 0, 0) }; RegisterName(tabs.Name, tabs); panel.Children.Add(tabs);
         var rows = new List<(CreatureKind Kind, int Limit, TextBox Count, TextBox Min, TextBox Max)>();
         var forest = new StackPanel(); var ocean = new StackPanel();
@@ -121,7 +151,7 @@ public sealed class ConfigurationWindow : Window
             try
             {
                 store.Save(new(theme.SelectedIndex == 1, r.Count, a.Count, c.Count, (CreatureStyle)style.SelectedIndex, r.MinPercent, r.MaxPercent, a.MinPercent, a.MaxPercent, c.MinPercent, c.MaxPercent,
-                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _english ? "en-US" : "zh-CN")); Close();
+                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _english ? "en-US" : "zh-CN", SaverBackground.Import(backgroundPath, store.Path))); Close();
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException)
             { status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text("无法保存，请检查配置文件夹是否可写。", "Unable to save. Check that the settings folder is writable."); statusMessage(); }

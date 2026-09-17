@@ -21,6 +21,20 @@ internal static class SaverSettingsUiProbe
         store.Load(out warning); Require(warning != null, "Invalid language accepted");
         store.Save(new(Language: "zh-CN"));
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        var sourceImage = Path.GetFullPath(Path.Combine(output, "background-source.png"));
+        var pixels = BitmapSource.Create(2, 1, 96, 96, PixelFormats.Bgra32, null, new byte[] { 20, 40, 180, 255, 160, 80, 20, 255 }, 8);
+        var png = new PngBitmapEncoder(); png.Frames.Add(BitmapFrame.Create(pixels));
+        using (var stream = File.Create(sourceImage)) png.Save(stream);
+        var imported = SaverBackground.Import(sourceImage, store.Path);
+        Require(imported != sourceImage && SaverBackground.Load(imported) != null, "Background import failed");
+        File.Delete(sourceImage);
+        Require(SaverBackground.Load(imported) != null && SaverBackground.Load(sourceImage) == null, "Background copy or missing-file fallback failed");
+        var surface = new SaverSurface(new DesktopLife.Creatures.Displays.DisplaySimulation(42), new(0, 0, 300, 150), false, backgroundImage: SaverBackground.Load(imported));
+        surface.Measure(new Size(300, 150)); surface.Arrange(new Rect(0, 0, 300, 150));
+        var backgroundRender = new RenderTargetBitmap(300, 150, 96, 96, PixelFormats.Pbgra32); backgroundRender.Render(surface);
+        var sample = new byte[4]; backgroundRender.CopyPixels(new Int32Rect(10, 75, 1, 1), sample, 4, 0);
+        Require(sample[2] > sample[0] && sample[3] == 255, "Background image not rendered behind creatures");
+        store.Save(new(Language: "zh-CN", BackgroundImage: imported));
         var window = new ConfigurationWindow(store) { WindowStartupLocation = WindowStartupLocation.Manual, Left = -10000, Top = -10000, ShowActivated = false, ShowInTaskbar = false };
         window.Show();
         TextBox Field(string name) => (TextBox)window.FindName(name);
@@ -52,11 +66,16 @@ internal static class SaverSettingsUiProbe
         save.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         var loaded = store.Load(out warning);
         Require(warning == null && loaded.Language == "en-US" && loaded.Light && loaded.Cockroaches == 41 && loaded.Population.GetOcean(CreatureKind.Clownfish).Count == 9, "Save round-trip failed");
+        Require(loaded.BackgroundImage == imported, "Background path was lost on save");
         var reopened = new ConfigurationWindow(store);
         Require(((ComboBox)reopened.FindName("LanguagePicker")).SelectedIndex == 1, "Language did not persist");
         before = File.ReadAllText(store.Path);
         ((TextBox)reopened.FindName("CockroachCount")).Text = "22"; reopened.Close();
         Require(File.ReadAllText(store.Path) == before, "Closing without save mutated settings");
+        var clearWindow = new ConfigurationWindow(store);
+        ((Button)clearWindow.FindName("ClearBackgroundButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        ((Button)clearWindow.FindName("SaveButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Require(store.Load(out _).BackgroundImage == null, "Restore solid color failed");
         app.Shutdown();
         Console.WriteLine("PASS: legacy/invalid language, 8 bilingual/resizable UI captures, unsaved edits, hidden validation, language/theme/population persistence, cancel.");
     }

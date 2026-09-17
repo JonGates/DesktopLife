@@ -27,6 +27,12 @@ internal static class ControlCenterProbe
             ((ComboBox)window.FindName("LanguagePicker")).SelectedIndex = language == "en-US" ? 1 : 0;
             LanguageService.Apply(language); window.Width = size.Item1; window.Height = size.Item2;
             pages.SelectedIndex = page; window.UpdateLayout();
+            foreach (TabItem item in pages.Items)
+            {
+                var border = (Border)item.Template.FindName("TabBorder", item);
+                if (Math.Abs(border.ActualWidth - (item.ActualWidth)) > 1)
+                    throw new Exception("Tab border exceeds allocated header width");
+            }
             var scroll = ((DockPanel)window.Content).Children.OfType<ScrollViewer>().Single(); scroll.ScrollToTop(); window.UpdateLayout();
             foreach (var name in new[] { "PauseButton", "ApplyButton" })
             {

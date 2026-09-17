@@ -43,7 +43,7 @@
             <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabControl">
                 <Grid KeyboardNavigation.TabNavigation="Local">
                     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                    <TabPanel IsItemsHost="True"/>
+                    <StackPanel IsItemsHost="True" Orientation="Horizontal"/>
                     <ContentPresenter Grid.Row="1" ContentSource="SelectedContent" Margin="{TemplateBinding Padding}"/>
                 </Grid>
             </ControlTemplate></Setter.Value></Setter>

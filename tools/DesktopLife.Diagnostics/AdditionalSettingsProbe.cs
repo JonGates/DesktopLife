@@ -91,7 +91,7 @@ internal static class AdditionalSettingsProbe
             { yield return child; foreach (var descendant in Descendants(child)) yield return descendant; }
         }
         var fields = Descendants(saver).OfType<TextBox>().ToArray();
-        var button = Descendants(saver).OfType<Button>().Single();
+        var button = (Button)saver.FindName("SaveButton");
         var ladybug = fields.Single(field => field.Name == "LadybugCount");
         fields.Single(field => field.Name == "SpiderCount").Text = "5";
         fields.Single(field => field.Name == "SpiderMin").Text = "60";

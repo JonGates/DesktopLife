@@ -41,6 +41,7 @@ public sealed class SaverSession : IDisposable
         if (displays.Count == 0) throw new InvalidOperationException("No displays available");
         Simulation.Synchronize(displays);
         Simulation.SetPopulation(settings.Population);
+        var backgroundImage = SaverBackground.Load(settings.BackgroundImage);
         _autoCursor = _target = displays[0].Bounds.Center;
         try
         {
@@ -48,7 +49,7 @@ public sealed class SaverSession : IDisposable
             {
                 foreach (var display in displays)
                 {
-                    var surface = new SaverSurface(Simulation, display.Bounds, settings.Light, style: settings.Style);
+                    var surface = new SaverSurface(Simulation, display.Bounds, settings.Light, style: settings.Style, backgroundImage: backgroundImage);
                     var window = new SaverWindow(display.Bounds, surface);
                     window.Closed += WindowClosed;
                     _windows.Add(window); _surfaces.Add(surface); window.Show();
@@ -67,7 +68,7 @@ public sealed class SaverSession : IDisposable
                     { ParentWindow = previewParent, WindowStyle = 0x40000000 | 0x10000000, Width = 1, Height = 1 });
                 }
                 finally { if (context != 0) SaverNative.SetThreadDpiAwarenessContext(context); }
-                var surface = new SaverSurface(Simulation, displays[0].Bounds, settings.Light, preview: true, style: settings.Style);
+                var surface = new SaverSurface(Simulation, displays[0].Bounds, settings.Light, preview: true, style: settings.Style, backgroundImage: backgroundImage);
                 _surfaces.Add(surface); _preview.RootVisual = surface;
                 ResizePreview();
             }
