@@ -4,23 +4,23 @@
 
 **Turn your Windows desktop into a tiny ecosystem.**
 
-Flies chase your cursor, spiders escape on silk, and a green turtle swims among 12 fish species. Switch between Forest and Ocean, across your monitors or as a native Windows screen saver.
+Flies chase your cursor, spiders escape on silk, and a green turtle swims among 12 fish species. Choose **Forest, Ocean or Rain window**: roaming creatures, swimming fish, or raindrops gathering and sliding down your screen. Enjoy all three scenes on your desktop or as a native Windows screen saver.
 
 [**Download DesktopLife v0.6.0**](https://github.com/JonGates/DesktopLife/releases/download/v0.6.0/DesktopLife-Portable-win-x64-v0.6.0.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
 
-Windows 10/11 x64 · 26 creature types across two scenes · Realistic and cute styles · Multi-monitor · Portable
+Windows 10/11 x64 · 3 scenes · 26 creature types · Realistic and cute styles · Multi-monitor · Portable
 
 </div>
 
 > **New in v0.6.0:** Five interface languages across the desktop app and screen saver: 简体中文, English, 繁體中文, 日本語 and 한국어. Includes localized creature names, tray menus and validation messages. [Release notes](docs/RELEASE_v0.6.0.md).
 
-**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** v0.6.0 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
+**Recommended: download the DesktopLife Portable ZIP. It includes desktop creatures, Rain window and screen saver functionality.** v0.6.0 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
 
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
 > DesktopLife v0.6.0 is a stable release. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
 
-## What lives on your desktop?
+## Three scenes: Forest, Ocean and Rain window
 
 DesktopLife is both a **Windows desktop pet app** and a native **`.scr` screen saver**. Choose realistic insects, cute companions, or a mix of both:
 
@@ -34,17 +34,29 @@ Ocean adds **Green turtle · Clownfish · Blue tang · Yellow tang · Butterflyf
 | Reactive crawlers | Roaming insects turn, pause and escape when the cursor gets too close. |
 | Ocean companions | The turtle follows your cursor; click to send it to a spot where it withdraws into its shell for three seconds. Fish swim head-first with animated fins and tails. |
 | Species-specific motion | Crickets and grasshoppers jump. Ladybugs open their wings, take off and land. |
+| Rain window | Drops gather on the glass, slide, merge and leave fading trails. Pointer contact releases drops; clicks create temporary glass fractures. |
 | Realistic or cute | Switch the visual style without resetting populations, sizes or positions. |
 | True multi-monitor movement | Creatures cross the edges where monitors touch, including stacked, offset and negative-coordinate layouts. |
-| Per-species controls | Forest and Ocean keep separate populations and size ranges. Set a species to zero to hide it. Each scene has one fixed cursor companion. |
+| Per-species controls | Forest and Ocean keep separate populations and size ranges. Set a species to zero to hide it. Each creature scene has one fixed cursor companion. |
+
+### Rain window
+
+Turn your screen into a rain-covered pane of glass:
+
+- **Five intensity levels:** Drizzle, Light rain, Moderate rain, Heavy rain and Downpour.
+- **Moving water:** varied drop shapes, slower small drops, size-limited merging and trails that fade behind sliding drops.
+- **Mouse interaction on the desktop:** touch a drop to make it slide; click for one of three glass fracture patterns that disappear after about three seconds. Clicks still reach the windows underneath.
+- **Screen saver backgrounds:** choose your own image for a soft-focus backdrop and approximate refraction inside the drops. The transparent desktop overlay does not capture or refract your desktop.
+
+To try it, open **Creatures → Rain window**, choose an intensity and click **Save rain intensity**. Screen saver rain intensity is configured and saved separately. Rain window is a third scene; **Realistic / Cute** are appearance styles for creatures.
 
 ## Choose your mode
 
-| | Desktop pets | Screen saver |
+| | Desktop scenes | Screen saver |
 | --- | --- | --- |
-| Best for | Creatures that stay with you while you work | An animated ecosystem while the PC is idle |
-| Interaction | Mouse-following fly or turtle, cursor reactions, pause/resume hotkeys | Autonomous movement; mouse or keyboard exits |
-| Display | Transparent overlay across your desktop | Native Windows `.scr` with dark or light background |
+| Best for | Creatures or rain while you work | Creatures or rain while the PC is idle |
+| Interaction | Mouse-following companions, interactive rain, pause/resume hotkeys | Autonomous movement; mouse or keyboard exits |
+| Display | Transparent overlay across your desktop | Native Windows `.scr` with dark/light or custom image background |
 
 Both modes support **Windows 10/11 x64**, include the .NET runtime, and keep their settings separate. No SDK, Visual Studio or separate .NET installation is required.
 
@@ -55,13 +67,13 @@ Both modes support **Windows 10/11 x64**, include the .NET runtime, and keep the
 1. Download the **DesktopLife Portable** ZIP above.
 2. Extract the entire ZIP into a folder.
 3. Double-click **`Start-DesktopLife.cmd`**.
-4. On **Creatures**, choose **Forest / Ocean**, adjust counts and sizes, then save. Use **Preferences** for style and hotkeys.
+4. On **Creatures**, choose **Forest / Ocean / Rain window**. Save creature counts and sizes, or choose and save rain intensity. Use **Preferences** for style and hotkeys.
 
 Closing the settings window keeps DesktopLife running in the system tray. Right-click the tray icon and choose **Exit** to stop it.
 
 ### Windows screen saver
 
-1. In the main app, open **Screen saver** and configure its scene, dark/light background, style and populations.
+1. In the main app, open **Screen saver** and choose **Forest / Ocean / Rain window**, a dark/light or custom image background, and creature populations or rain intensity.
 2. Preview it immediately; mouse or keyboard input exits.
 3. Open **Windows screen saver settings**, select DesktopLife, choose an idle timeout and click **Apply**.
 
@@ -103,7 +115,8 @@ This recording shows the earlier settings layout; the current v0.6.0 interface i
 - **Resume everything:** `Ctrl+Alt+S`
 - **Change shortcuts:** open settings and edit the Global hotkeys section
 - **Change language:** choose 简体中文, English, 繁體中文, 日本語 or 한국어 in settings
-- **Change populations or sizes:** save the Insect settings; existing creatures keep their positions where possible
+- **Change rain intensity:** Creatures → Rain window → choose one of five levels → Save rain intensity
+- **Change populations or sizes:** save the Creatures settings; existing creatures keep their positions where possible
 - **Quit:** right-click the DesktopLife tray icon and select Exit
 
 The shortcuts work only while DesktopLife is running. The app allows one instance at a time.
