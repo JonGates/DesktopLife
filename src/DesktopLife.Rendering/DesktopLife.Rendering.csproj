@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <EmbeddedResource Include="Localization/translations.tsv" />
+    <EmbeddedResource Include="Localization/zh-TW.json" />
     <EmbeddedResource Include="Assets\ocean-*.png" />
     <EmbeddedResource Include="Assets\spider-body.png" LogicalName="DesktopLife.Rendering.Assets.spider-body.png" />
     <EmbeddedResource Include="Assets\small-insect-bodies.png" LogicalName="DesktopLife.Rendering.Assets.small-insect-bodies.png" />

@@ -20,11 +20,23 @@ internal static class ControlCenterProbe
         var window = new SettingsWindow(host, store) { Left = -10000, Top = -10000, ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual };
         window.Show();
         var pages = (TabControl)window.FindName("SettingsPages");
-        foreach (var language in new[] { "zh-CN", "en-US" })
+        var count = (TextBox)window.FindName("RoachCount");
+        var picker = (ComboBox)window.FindName("LanguagePicker");
+        count.Text = "-1";
+        ((Button)window.FindName("ApplyButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        foreach (var option in DesktopLife.Rendering.Localization.UiLanguage.Supported)
+        {
+            picker.SelectedIndex = DesktopLife.Rendering.Localization.UiLanguage.IndexOf(option.Code);
+            if (count.Text != "-1" || ((TextBlock)window.FindName("Status")).Text != LanguageService.Get("InvalidCounts"))
+                throw new Exception("Language switch discarded invalid input or its translated validation message");
+        }
+        count.Text = "41";
+        foreach (var language in DesktopLife.Rendering.Localization.UiLanguage.Supported.Select(l => l.Code))
         foreach (var size in new[] { (620, 800), (470, 600) })
         for (var page = 0; page < 3; page++)
         {
-            ((ComboBox)window.FindName("LanguagePicker")).SelectedIndex = language == "en-US" ? 1 : 0;
+            ((ComboBox)window.FindName("LanguagePicker")).SelectedIndex = DesktopLife.Rendering.Localization.UiLanguage.IndexOf(language);
+            if (store.LoadPreferences(out var invalid).Language != language || invalid) throw new Exception("Language was not saved");
             LanguageService.Apply(language); window.Width = size.Item1; window.Height = size.Item2;
             pages.SelectedIndex = page; window.UpdateLayout();
             foreach (TabItem item in pages.Items)
@@ -59,6 +71,6 @@ internal static class ControlCenterProbe
         if (command.ArgumentList.Count != 2 || command.ArgumentList[1] != target || command.UseShellExecute) throw new Exception("Windows installer arguments unsafe");
         foreach (var mode in new[] { "/s", "/c" })
             if (ScreenSaverLauncher.SelfCommand(mode).ArgumentList.Single() != mode) throw new Exception("Wrong saver command");
-        Console.WriteLine("PASS: three settings pages, both languages at 470/620px, visible footer, stable installed copy, safe process arguments; system registration unchanged.");
+        Console.WriteLine("PASS: three settings pages, all five languages at 470/620px, visible footer, stable installed copy, safe process arguments; system registration unchanged.");
     }
 }

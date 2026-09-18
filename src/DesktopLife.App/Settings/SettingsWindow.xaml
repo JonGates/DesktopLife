@@ -20,7 +20,7 @@
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <StackPanel Margin="22,16,22,12">
                 <DockPanel LastChildFill="True" Margin="0,0,0,12">
-                    <ComboBox x:Name="LanguagePicker" DockPanel.Dock="Right" Width="108" Height="30" VerticalAlignment="Center" SelectionChanged="LanguageChanged" AutomationProperties.Name="{DynamicResource Language}"><ComboBoxItem Content="简体中文" Tag="zh-CN"/><ComboBoxItem Content="English" Tag="en-US"/></ComboBox>
+                    <ComboBox x:Name="LanguagePicker" DockPanel.Dock="Right" Width="108" Height="30" VerticalAlignment="Center" SelectionChanged="LanguageChanged" AutomationProperties.Name="{DynamicResource Language}"><ComboBoxItem Content="简体中文" Tag="zh-CN"/><ComboBoxItem Content="English" Tag="en-US"/><ComboBoxItem Content="繁體中文" Tag="zh-TW"/><ComboBoxItem Content="日本語" Tag="ja-JP"/><ComboBoxItem Content="한국어" Tag="ko-KR"/></ComboBox>
                     <StackPanel><TextBlock Text="DesktopLife" FontFamily="Segoe UI Semibold" FontSize="25"/><TextBlock Text="{DynamicResource SettingsTagline}" Foreground="#65776F" Margin="0,3,12,0"/></StackPanel>
                 </DockPanel>
                 <TabControl x:Name="SettingsPages" SelectionChanged="SettingsPageChanged" AutomationProperties.Name="{DynamicResource SettingsNavigation}">

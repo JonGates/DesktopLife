@@ -1,6 +1,6 @@
 ﻿param(
     [ValidatePattern('^v?\d+\.\d+\.\d+(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$')]
-    [string]$Version = '0.5.1',
+    [string]$Version = '0.6.0',
     [string]$RuntimeVersion = '10.0.12',
     [string]$NuGetSource
 )
@@ -46,7 +46,7 @@ DesktopLife - Windows x64 portable edition / 便携版
 English
 Extract the complete ZIP, then double-click Start-DesktopLife.cmd.
 The .NET runtime is included; no SDK, Visual Studio or .NET installation is needed.
-Choose English at the top right. Use Creatures, Screen saver, and Preferences tabs.
+Choose 简体中文 / English / 繁體中文 / 日本語 / 한국어 at the top right. Use Creatures, Screen saver, and Preferences tabs.
 From Screen saver, preview or configure content, then open Windows settings and apply an idle timeout to enable automatic activation.
 Default shortcuts: Ctrl+Alt+S starts/resumes; Ctrl+Alt+P pauses. Both are configurable.
 Closing settings keeps the app running. Double-click its tray icon to reopen settings;

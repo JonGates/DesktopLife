@@ -1,4 +1,5 @@
 using System.Globalization;
+using DesktopLife.Rendering.Localization;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -14,14 +15,14 @@ namespace DesktopLife.ScreenSaver;
 public sealed class ConfigurationWindow : Window
 {
     private readonly List<Action> _translations = [];
-    private bool _english;
-    private string Text(string zh, string en) => _english ? en : zh;
+    private string _language;
+    private string Text(string zh, string en) => UiLanguage.Text(_language, zh, en);
     private void Translate(Action update) { _translations.Add(update); update(); }
 
     public ConfigurationWindow(SaverSettingsStore store)
     {
         var settings = store.Load(out var warning);
-        _english = (settings.Language ?? DesktopLanguage()) == "en-US";
+        _language = settings.Language ?? DesktopLanguage();
         Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/DesktopLife.Rendering;component/Themes/SettingsTheme.xaml", UriKind.Relative) });
         NameScope.SetNameScope(this, new NameScope());
         Translate(() => Title = Text("DesktopLife · 屏保设置", "DesktopLife · Screen saver settings"));
@@ -47,8 +48,8 @@ public sealed class ConfigurationWindow : Window
         }
         Border Card(UIElement content) => new() { Style = (Style)FindResource("Card"), Child = content, Margin = new Thickness(0, 0, 0, 10) };
         var top = new DockPanel { Margin = new Thickness(0, 0, 0, 18) }; panel.Children.Add(top);
-        var language = new ComboBox { Name = "LanguagePicker", Width = 108, Height = 30, VerticalAlignment = VerticalAlignment.Center, ItemsSource = new[] { "简体中文", "English" }, SelectedIndex = _english ? 1 : 0 };
-        RegisterName(language.Name, language); DockPanel.SetDock(language, Dock.Right); top.Children.Add(language); AutomationProperties.SetName(language, "语言 / Language");
+        var language = new ComboBox { Name = "LanguagePicker", Width = 108, Height = 30, VerticalAlignment = VerticalAlignment.Center, ItemsSource = UiLanguage.Supported.Select(l => l.Name).ToArray(), SelectedIndex = UiLanguage.IndexOf(_language) };
+        RegisterName(language.Name, language); DockPanel.SetDock(language, Dock.Right); top.Children.Add(language); Translate(() => AutomationProperties.SetName(language, Text("语言", "Language")));
         var brand = new StackPanel(); top.Children.Add(brand);
         brand.Children.Add(new TextBlock { Text = "DesktopLife", FontFamily = new FontFamily("Segoe UI Semibold"), FontSize = 25 }); brand.Children.Add(Label("让闲置屏幕也有生机", "Bring your idle screen to life"));
         var appearance = new Grid(); appearance.ColumnDefinitions.Add(new ColumnDefinition()); appearance.ColumnDefinitions.Add(new ColumnDefinition());
@@ -83,7 +84,7 @@ public sealed class ConfigurationWindow : Window
         imagePanel.Children.Add(Label("每屏等比填充，超出部分裁切；保存时复制图片，移动原图不会影响屏保。", "Fills each screen without distortion, cropping the edges. Saving keeps a copy of the image."));
         chooseImage.Click += (_, _) =>
         {
-            var dialog = new Microsoft.Win32.OpenFileDialog { Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp", CheckFileExists = true };
+            var dialog = new Microsoft.Win32.OpenFileDialog { Filter = Text("图片", "Images") + "|*.png;*.jpg;*.jpeg;*.bmp", CheckFileExists = true };
             if (dialog.ShowDialog(this) != true) return;
             if (SaverBackground.Load(dialog.FileName) == null)
             { status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text("无法读取图片，请选择有效的 PNG、JPG 或 BMP。", "Cannot read the image. Choose a valid PNG, JPG or BMP."); statusMessage(); return; }
@@ -106,7 +107,7 @@ public sealed class ConfigurationWindow : Window
         foreach (var names in rainNames)
         {
             var item = new ComboBoxItem();
-            Translate(() => item.Content = _english ? names.Item2 : names.Item1);
+            Translate(() => item.Content = Text(names.Item1, names.Item2));
             rainLevel.Items.Add(item);
         }
         rainLevel.SelectedIndex = settings.RainLevel - 1;
@@ -148,10 +149,10 @@ public sealed class ConfigurationWindow : Window
         var oceanTable = SpeciesTable(ocean, true);
         foreach (var d in OceanCatalog.Fish) AddRow(oceanTable, d.Kind, d.ChineseName, d.EnglishName, d.MaxCount, settings.Population.GetOcean(d.Kind));
         panel.Children.Add(Label("自动启动的等待时间与恢复登录选项，请在 Windows 屏保设置中调整。", "Choose the automatic activation delay and sign-in option in Windows screen saver settings."));
-        language.SelectionChanged += (_, _) => { _english = language.SelectedIndex == 1; foreach (var update in _translations) update(); };
-        void Error(TextBox field, CreatureKind kind, string zh, string en)
+        language.SelectionChanged += (_, _) => { _language = UiLanguage.Supported[language.SelectedIndex].Code; foreach (var update in _translations) update(); };
+        void Error(TextBox field, CreatureKind kind, string zh, string en, params object[] values)
         {
-            tabs.SelectedIndex = OceanCatalog.IsOcean(kind) ? 1 : 0; status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text(zh, en); statusMessage(); field.BringIntoView(); field.Focus(); field.SelectAll();
+            tabs.SelectedIndex = OceanCatalog.IsOcean(kind) ? 1 : 0; status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = string.Format(CultureInfo.InvariantCulture, Text(zh, en), values); statusMessage(); field.BringIntoView(); field.Focus(); field.SelectAll();
         }
         save.Click += (_, _) =>
         {
@@ -159,7 +160,7 @@ public sealed class ConfigurationWindow : Window
             foreach (var row in rows)
             {
                 if (!int.TryParse(row.Count.Text, out var count) || count < 0 || count > row.Limit)
-                { Error(row.Count, row.Kind, $"数量请输入 0–{row.Limit} 的整数。", $"Enter a whole count from 0 to {row.Limit}."); return; }
+                { Error(row.Count, row.Kind, "数量请输入 0–{0} 的整数。", "Enter a whole count from 0 to {0}.", row.Limit); return; }
                 if (!int.TryParse(row.Min.Text, out var min) || !int.TryParse(row.Max.Text, out var max) || min < 10 || max > 300 || min > max)
                 { Error(row.Min, row.Kind, "尺寸范围 10–300%，最小值不能大于最大值。", "Sizes must be 10–300%, with minimum no greater than maximum."); return; }
                 values.Add(row.Kind, new(count, min, max));
@@ -168,7 +169,7 @@ public sealed class ConfigurationWindow : Window
             try
             {
                 store.Save(new(theme.SelectedIndex == 1, r.Count, a.Count, c.Count, (CreatureStyle)style.SelectedIndex, r.MinPercent, r.MaxPercent, a.MinPercent, a.MaxPercent, c.MinPercent, c.MaxPercent,
-                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _english ? "en-US" : "zh-CN", SaverBackground.Import(backgroundPath, store.Path), rainLevel.SelectedIndex + 1)); Close();
+                    InsectCatalog.Additional.ToDictionary(d => d.Kind, d => values[d.Kind]), (Habitat)tabs.SelectedIndex, OceanCatalog.Fish.ToDictionary(d => d.Kind, d => values[d.Kind]), _language, SaverBackground.Import(backgroundPath, store.Path), rainLevel.SelectedIndex + 1)); Close();
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException)
             { status.Foreground = Brushes.Firebrick; statusMessage = () => status.Text = Text("无法保存，请检查配置文件夹是否可写。", "Unable to save. Check that the settings folder is writable."); statusMessage(); }
@@ -183,7 +184,7 @@ public sealed class ConfigurationWindow : Window
             if (File.Exists(path))
             {
                 using var json = JsonDocument.Parse(File.ReadAllText(path));
-                if (json.RootElement.TryGetProperty("Language", out var value) && value.GetString() == "en-US") return "en-US";
+                if (json.RootElement.TryGetProperty("Language", out var value) && UiLanguage.IsSupported(value.GetString())) return value.GetString()!;
             }
         }
         catch (Exception e) when (e is IOException or UnauthorizedAccessException or JsonException or InvalidOperationException) { }

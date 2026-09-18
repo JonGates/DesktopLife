@@ -1,4 +1,5 @@
 using System.Windows;
+using DesktopLife.Rendering.Localization;
 using DesktopLife.Engine.Creatures;
 namespace DesktopLife.App.Settings;
 public static class LanguageService
@@ -108,11 +109,12 @@ public static class LanguageService
         ["Settings"] = ("设置…", "Settings…"),
         ["Exit"] = ("退出", "Exit"),
     };
-    public static string Get(string key) => Current == "en-US" ? Texts[key].En : Texts[key].Zh;
-    public static string Choose(string zh, string en) => Current == "en-US" ? en : zh;
+    public static string Get(string key) => Choose(Texts[key].Zh, Texts[key].En);
+    public static string Choose(string zh, string en) => UiLanguage.Text(Current, zh, en);
+    public static string Format(string zh, string en, params object[] values) => UiLanguage.Format(Current, zh, en, values);
     public static void Apply(string language)
     {
-        Current = language == "en-US" ? "en-US" : "zh-CN";
+        Current = UiLanguage.IsSupported(language) ? language : "zh-CN";
         if (Application.Current != null)
             foreach (var key in Texts.Keys) Application.Current.Resources[key] = Get(key);
         Changed?.Invoke();

@@ -22,7 +22,7 @@ public sealed class SaverSettingsStore(string? path = null)
             if (!File.Exists(Path)) return new();
             var settings = JsonSerializer.Deserialize<SaverSettings>(File.ReadAllText(Path)) ?? throw new JsonException();
             settings.Population.Validate();
-            if (settings.Language is not (null or "zh-CN" or "en-US")) throw new ArgumentOutOfRangeException(nameof(settings.Language));
+            if (settings.Language != null && !DesktopLife.Rendering.Localization.UiLanguage.IsSupported(settings.Language)) throw new ArgumentOutOfRangeException(nameof(settings.Language));
             if (!Enum.IsDefined(settings.Style)) throw new ArgumentOutOfRangeException(nameof(settings.Style));
             return settings;
         }
@@ -35,7 +35,7 @@ public sealed class SaverSettingsStore(string? path = null)
     public void Save(SaverSettings settings)
     {
         settings.Population.Validate();
-        if (settings.Language is not (null or "zh-CN" or "en-US")) throw new ArgumentOutOfRangeException(nameof(settings.Language));
+        if (settings.Language != null && !DesktopLife.Rendering.Localization.UiLanguage.IsSupported(settings.Language)) throw new ArgumentOutOfRangeException(nameof(settings.Language));
         if (!Enum.IsDefined(settings.Style)) throw new ArgumentOutOfRangeException(nameof(settings.Style));
         Directory.CreateDirectory(System.IO.Path.GetDirectoryName(System.IO.Path.GetFullPath(Path))!);
         var temporary = Path + "." + Guid.NewGuid().ToString("N") + ".tmp";

@@ -6,19 +6,19 @@
 
 森林里，苍蝇围绕鼠标飞行，昆虫跨屏爬行；海洋里，小绿龟跟随鼠标，12 种鱼自由游动。电脑闲置时，也可以作为 Windows 屏保运行。
 
-**[下载 DesktopLife v0.5.1 主程序包](https://github.com/JonGates/DesktopLife/releases/download/v0.5.1/DesktopLife-Portable-win-x64-v0.5.1.zip)**
+**[下载 DesktopLife v0.6.0 主程序包](https://github.com/JonGates/DesktopLife/releases/download/v0.6.0/DesktopLife-Portable-win-x64-v0.6.0.zip)**
 
 Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 · 多屏通行 · 自带运行环境
 
-> **v0.5.1 正式版：** 新增雨窗场景、五档雨量、雨滴滑落与吞并、短暂玻璃裂纹，以及屏保背景图与近似折射。[完整更新说明](docs/RELEASE_v0.5.1.md)。
+> **v0.6.0 正式版：** 新增繁体中文、日语、韩语，共支持五种界面语言，覆盖主程序、托盘、屏保设置、生物名称与错误提示。[完整更新说明](docs/RELEASE_v0.6.0.md)。
 >
-> **推荐只下载主程序包：已包含桌面宠物和屏保功能。** v0.5.1 统一发布一个主程序包。
+> **推荐只下载主程序包：已包含桌面宠物和屏保功能。** v0.6.0 统一发布一个主程序包。
 
 ![主屏实录：昆虫在桌面自由活动](docs/images/live-desktop.gif)
 
 ## 下载与开始使用
 
-1. 在 [Release 页面](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.1) 展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.5.1.zip`。
+1. 在 [Release 页面](https://github.com/JonGates/DesktopLife/releases/tag/v0.6.0) 展开 **Assets**，下载 `DesktopLife-Portable-win-x64-v0.6.0.zip`。
 2. 完整解压，双击 **`Start-DesktopLife.cmd`** 启动并打开设置；也可运行 `DesktopLife.exe`。
 3. 在「生物」页切换「森林／海洋」，调整数量和尺寸并保存；在「偏好」页设置风格、快捷键和录屏选项。
 4. 关闭设置后生物继续运行。双击托盘图标重开设置，右键托盘选择「退出」结束程序。
@@ -27,8 +27,8 @@ Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 ·
 
 | Release 附件 | 用途 |
 | --- | --- |
-| `DesktopLife-Portable-win-x64-v0.5.1.zip` | 推荐：主程序，包含桌面宠物、屏保预览、配置与安装入口。 |
-| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.5.1/SHA256SUMS.txt) | 主程序 ZIP 的 SHA256 校验值。 |
+| `DesktopLife-Portable-win-x64-v0.6.0.zip` | 推荐：主程序，包含桌面宠物、屏保预览、配置与安装入口。 |
+| [`SHA256SUMS.txt`](https://github.com/JonGates/DesktopLife/releases/download/v0.6.0/SHA256SUMS.txt) | 主程序 ZIP 的 SHA256 校验值。 |
 | Tags 的 `zip` / `tar.gz` 或 `Source code` | 项目源码，不能直接当作便携程序运行。 |
 
 ## 从主程序设置 Windows 屏保
@@ -48,7 +48,7 @@ Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 ·
 | ![主程序屏保管理页面](docs/images/control-center-v050-zh.png) | ![屏保数量与尺寸配置](docs/images/saver-settings-v050-zh.png) |
 
 - 主程序按「生物／屏保／偏好」分组，屏保使用相同的配色、卡片和紧凑输入表格。
-- 两个窗口支持中英文切换和调整大小，底部操作按钮固定显示。
+- 两个窗口支持简体中文、English、繁體中文、日本語、한국어切换和调整大小，底部操作按钮固定显示。
 - 桌面切换森林／海洋立即生效，两套数量与尺寸分别保存。
 - 屏保切换标签或语言保留未保存输入，点击保存后应用；桌面和屏保配置互相独立。
 
@@ -80,7 +80,7 @@ Windows 10/11 x64 · 森林与海洋共 26 种生物 · 写实／可爱风格 ·
 ## 常用操作
 
 - **暂停：** `Ctrl+Alt+P`；**恢复：** `Ctrl+Alt+S`，均可在「偏好」修改。
-- **语言：** 设置窗口右上角切换简体中文／English。
+- **语言：** 设置窗口右上角切换简体中文／English／繁體中文／日本語／한국어。
 - **退出：** 右键托盘图标 → 退出。快捷键仅在程序运行时有效。
 - **录屏排除：** 桌面模式提供可选设置，效果取决于 Windows 和录制软件，不能保证所有工具都排除；托盘和进程仍可见。
 
@@ -94,9 +94,11 @@ cd DesktopLife
 dotnet build DesktopLife.sln
 dotnet test DesktopLife.sln
 dotnet run --project src/DesktopLife.App -- --settings
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.6.0
 ```
 
-[开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)。v0.5.1 为正式版；不同 GPU、实际混合系统缩放与高数量性能仍需要更多设备验证。
+[开发与打包指南](docs/DEVELOPMENT_AND_PACKAGING.md)。v0.6.0 为正式版；不同 GPU、实际混合系统缩放与高数量性能仍需要更多设备验证。
 
 欢迎在 [Issues](https://github.com/JonGates/DesktopLife/issues) 提交反馈，并附上 Windows 版本、DesktopLife 版本、显示器排列和复现步骤。如果喜欢这个小生态，欢迎点亮 ⭐。
+
+语言文案内置，无需联网或额外安装语言包。桌面语言即时生效，屏保语言随屏保设置独立保存。[国际化维护指南](docs/LOCALIZATION.md)。

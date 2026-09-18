@@ -46,8 +46,8 @@ public sealed class TrayService : IDisposable
         _settings.Text = LanguageService.Get("Settings");
         _exit.Text = LanguageService.Get("Exit");
         _pause.Text = LanguageService.Get(_paused ? "Resume" : "Stop");
-        _summary.Text = LanguageService.Choose($"{_screens} 屏 · {_flies} 苍蝇 · {_roaches} 蟑螂 · {_ants} 蚂蚁 · {_caterpillars} 毛毛虫",
-            $"{_screens} displays · {_flies} fly · {_roaches} roaches · {_ants} ants · {_caterpillars} caterpillars");
+        _summary.Text = LanguageService.Format("{0} 屏 · {1} 苍蝇 · {2} 蟑螂 · {3} 蚂蚁 · {4} 毛毛虫",
+            "{0} displays · {1} fly · {2} roaches · {3} ants · {4} caterpillars", _screens, _flies, _roaches, _ants, _caterpillars);
         _icon.Text = "DesktopLife — " + _summary.Text;
     }
     public void SetPaused(bool paused) { _paused = paused; Translate(); }

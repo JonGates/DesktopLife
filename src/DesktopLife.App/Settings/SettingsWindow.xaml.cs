@@ -25,7 +25,7 @@ public partial class SettingsWindow : Window
         _store = store;
         _preferences = preferences ?? new PreferencesController(host, store);
         InitializeComponent();
-        LanguagePicker.SelectedIndex = LanguageService.Current == "en-US" ? 1 : 0;
+        LanguagePicker.SelectedIndex = DesktopLife.Rendering.Localization.UiLanguage.IndexOf(LanguageService.Current);
         StylePicker.SelectedIndex = (int)_preferences.Current.Style;
         StartKey.Text = _preferences.Current.StartHotkey;
         PauseKey.Text = _preferences.Current.PauseHotkey;
@@ -92,7 +92,7 @@ public partial class SettingsWindow : Window
         {
             var status = ScreenSaverLauncher.ReadRegistration();
             SaverStatus.Text = status.Selected && status.Enabled
-                ? LanguageService.Choose("Windows 已选择 DesktopLife", "DesktopLife is selected in Windows") + (status.Seconds is > 0 ? LanguageService.Choose($" · 空闲 {status.Seconds} 秒后启动", $" · starts after {status.Seconds} idle seconds") : "")
+                ? LanguageService.Choose("Windows 已选择 DesktopLife", "DesktopLife is selected in Windows") + (status.Seconds is > 0 ? LanguageService.Format(" · 空闲 {0} 秒后启动", " · starts after {0} idle seconds", status.Seconds) : "")
                 : LanguageService.Choose("尚未启用 DesktopLife 自动屏保", "Automatic DesktopLife screen saver is not enabled");
         }
         catch (Exception e) when (e is System.Security.SecurityException or UnauthorizedAccessException or IOException)
@@ -188,10 +188,15 @@ public partial class SettingsWindow : Window
     {
         if (!_ready) return;
         var language = ((ComboBoxItem)LanguagePicker.SelectedItem).Tag.ToString()!;
-        if (_preferences.SaveLanguage(language, out var error)) SetStatus("LanguageSaved");
+        var preserveStatus = _statusKey is "InvalidCounts" or "InvalidSizes" or "InvalidHotkey"
+            or "DuplicateHotkey" or "OccupiedHotkey" or "SaveFailed" or "CaptureFailed" or "ConfigWarning";
+        if (_preferences.SaveLanguage(language, out var error))
+        {
+            if (!preserveStatus) SetStatus("LanguageSaved");
+        }
         else
         {
-            _ready = false; LanguagePicker.SelectedIndex = LanguageService.Current == "en-US" ? 1 : 0; _ready = true;
+            _ready = false; LanguagePicker.SelectedIndex = DesktopLife.Rendering.Localization.UiLanguage.IndexOf(LanguageService.Current); _ready = true;
             SetStatus(error);
         }
     }
@@ -278,7 +283,7 @@ public partial class SettingsWindow : Window
     private void RefreshLayout()
     {
         if (DisplayMap == null) return;
-        DisplaySummary.Text = LanguageService.Choose($"{_host.Simulation.Worlds.Count} 块屏幕", $"{_host.Simulation.Worlds.Count} displays");
+        DisplaySummary.Text = LanguageService.Format("{0} 块屏幕", "{0} displays", _host.Simulation.Worlds.Count);
         DisplayMap.Children.Clear();
         var layout = _host.Simulation.Layout;
         if (layout.Displays.Count == 0) return;

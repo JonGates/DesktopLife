@@ -42,15 +42,15 @@ internal static class SaverSettingsUiProbe
         var tabs = (TabControl)window.FindName("HabitatTabs");
         var save = (Button)window.FindName("SaveButton");
         Field("CockroachCount").Text = "41"; Field("ClownfishCount").Text = "9";
-        foreach (var lang in new[] { 0, 1 })
-        foreach (var scene in new[] { 0, 1 })
+        foreach (var lang in Enumerable.Range(0, 5))
+        foreach (var scene in new[] { 0, 1, 2 })
         foreach (var size in new[] { new Size(620, 800), new Size(470, 600) })
         {
             language.SelectedIndex = lang; tabs.SelectedIndex = scene; window.Width = size.Width; window.Height = size.Height;
             window.UpdateLayout();
             var scroll = ((DockPanel)window.Content).Children.OfType<ScrollViewer>().Single(); scroll.ScrollToTop(); window.UpdateLayout();
             Require(Field("CockroachCount").Text == "41" && Field("ClownfishCount").Text == "9", "Switch lost unsaved input");
-            Require(Field(scene == 0 ? "CockroachCount" : "ClownfishCount").ActualWidth >= 48, "Narrow input clipped");
+            Require(scene == 2 || Field(scene == 0 ? "CockroachCount" : "ClownfishCount").ActualWidth >= 48, "Narrow input clipped");
             var savePosition = save.TranslatePoint(new Point(), window);
             Require(save.ActualHeight >= 36 && savePosition.Y + save.ActualHeight <= window.ActualHeight, "Footer clipped");
             var bitmap = new RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, PixelFormats.Pbgra32);
@@ -62,13 +62,19 @@ internal static class SaverSettingsUiProbe
         Field("AntMin").Text = "200";
         save.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Require(File.ReadAllText(store.Path) == before && tabs.SelectedIndex == 0, "Hidden invalid field was saved or not revealed");
-        Field("AntMin").Text = "60"; tabs.SelectedIndex = 1;
+        Field("AntMin").Text = "60";
+        Field("CockroachCount").Text = "-1"; save.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        language.SelectedIndex = 3;
+        var errorText = ((DockPanel)window.Content).Children.OfType<StackPanel>().Single().Children.OfType<TextBlock>().Single().Text;
+        Require(errorText.Contains("500") && errorText.Contains("整数"), "Validation error did not switch language with its argument");
+        language.SelectedIndex = 4;
+        Field("CockroachCount").Text = "41"; tabs.SelectedIndex = 1;
         save.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         var loaded = store.Load(out warning);
-        Require(warning == null && loaded.Language == "en-US" && loaded.Light && loaded.Cockroaches == 41 && loaded.Population.GetOcean(CreatureKind.Clownfish).Count == 9, "Save round-trip failed");
+        Require(warning == null && loaded.Language == "ko-KR" && loaded.Light && loaded.Cockroaches == 41 && loaded.Population.GetOcean(CreatureKind.Clownfish).Count == 9, "Save round-trip failed");
         Require(loaded.BackgroundImage == imported, "Background path was lost on save");
         var reopened = new ConfigurationWindow(store);
-        Require(((ComboBox)reopened.FindName("LanguagePicker")).SelectedIndex == 1, "Language did not persist");
+        Require(((ComboBox)reopened.FindName("LanguagePicker")).SelectedIndex == 4, "Language did not persist");
         before = File.ReadAllText(store.Path);
         ((TextBox)reopened.FindName("CockroachCount")).Text = "22"; reopened.Close();
         Require(File.ReadAllText(store.Path) == before, "Closing without save mutated settings");
@@ -77,6 +83,6 @@ internal static class SaverSettingsUiProbe
         ((Button)clearWindow.FindName("SaveButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Require(store.Load(out _).BackgroundImage == null, "Restore solid color failed");
         app.Shutdown();
-        Console.WriteLine("PASS: legacy/invalid language, 8 bilingual/resizable UI captures, unsaved edits, hidden validation, language/theme/population persistence, cancel.");
+        Console.WriteLine("PASS: legacy/invalid language, 30 multilingual/resizable UI captures, unsaved edits, hidden validation, language/theme/population persistence, cancel.");
     }
 }

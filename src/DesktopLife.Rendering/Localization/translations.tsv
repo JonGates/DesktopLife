@@ -1,0 +1,161 @@
+A little life on your desktop|デスクトップに小さな生命を|바탕 화면에 작은 생기를
+Settings sections|設定カテゴリ|설정 분류
+Creatures|生き物|생물
+Screen saver|スクリーンセーバー|화면 보호기
+Preferences|環境設定|환경 설정
+Choose a scene and set the population across your desktop.|シーンを選び、デスクトップ全体の数とサイズを設定します。|장면을 선택하고 전체 바탕 화면의 생물 수와 크기를 설정하세요.
+Bring your idle screen to life|待機中の画面にも生命を|쉬고 있는 화면에도 생기를
+Your screen saver has its own scene and population settings.|スクリーンセーバーのシーンと数は個別に設定できます。|화면 보호기의 장면과 생물 수는 별도로 설정됩니다.
+Try it first|まずはプレビュー|먼저 미리 보기
+Preview full screen; move the mouse or press a key to exit. Previewing does not enable the Windows screen saver.|全画面でプレビューします。マウス移動やキー入力で終了します。Windows の自動起動設定は変更されません。|전체 화면으로 미리 봅니다. 마우스를 움직이거나 키를 누르면 종료됩니다. 미리 보기는 Windows 화면 보호기를 자동으로 활성화하지 않습니다.
+Preview screen saver|スクリーンセーバーをプレビュー|화면 보호기 미리 보기
+Choose what appears|表示内容を選ぶ|표시할 내용 선택
+Choose Forest, Ocean or Rain window, backgrounds and creature populations.|森・海・雨の窓、背景、生き物の数を設定します。|숲, 바다, 빗방울 창과 배경 및 생물 수를 설정하세요.
+Configure screen saver|スクリーンセーバーを設定|화면 보호기 구성
+Start when your PC is idle|待機中に自動起動|PC를 사용하지 않을 때 시작
+In Windows Screen Saver Settings, select DesktopLife, set the wait time, and click Apply to enable automatic start after inactivity.|Windows のスクリーンセーバー設定で DesktopLife を選び、待ち時間を指定して「適用」を押すと自動起動します。|Windows 화면 보호기 설정에서 DesktopLife를 선택하고 대기 시간을 지정한 다음 적용을 누르면 자동으로 시작됩니다.
+Open Windows screen saver settings|Windows のスクリーンセーバー設定を開く|Windows 화면 보호기 설정 열기
+Make it yours|使い方をカスタマイズ|사용 방식 설정
+Creature styles apply to Forest and Ocean; shortcuts and capture options apply to all scenes.|生き物のスタイルは森と海に、ショートカットと録画設定はすべてのシーンに適用されます。|생물 스타일은 숲과 바다에 적용되며 단축키와 화면 캡처 옵션은 모든 장면에 적용됩니다.
+Forest|森|숲
+Ocean|海|바다
+Rain window|雨の窓|빗방울 창
+Rain intensity|雨の強さ|빗방울 양
+Save rain intensity|雨の強さを保存|빗방울 양 저장
+Drizzle|霧雨|이슬비
+Light rain|小雨|약한 비
+Moderate rain|普通の雨|보통 비
+Heavy rain|大雨|강한 비
+Downpour|豪雨|폭우
+A rain-covered pane of glass|画面を雨の窓に|화면을 빗방울 맺힌 창으로
+Drops grow on the glass and slide under their own weight. Touch a drop with the pointer to release it; it gathers smaller drops along its path. Click for one of three fracture effects, fading after three seconds. Clicks still reach windows underneath. Pause freezes the scene.|ガラスに水滴がたまり、成長すると滑り落ちます。ポインターで触れると滑り始め、途中の小さな水滴を取り込みます。クリックで3種類のひび割れが現れ、3秒後に消えます。クリックは背後のウィンドウにも届きます。一時停止で動きを止められます。|유리에 맺힌 물방울은 커지면 흘러내립니다. 포인터로 건드리면 미끄러지며 작은 물방울을 합칩니다. 클릭하면 세 가지 균열 효과 중 하나가 나타나고 3초 후 사라집니다. 클릭은 뒤의 창에도 전달됩니다. 일시 정지하면 장면이 멈춥니다.
+Desktop scene|デスクトップのシーン|바탕 화면 장면
+Scenes switch immediately; Forest and Ocean populations are retained.|シーンはすぐに切り替わり、森と海の数はそれぞれ保持されます。|장면은 즉시 전환되며 숲과 바다의 생물 수는 각각 유지됩니다.
+Scene changed. Settings saved.|シーンを切り替え、設定を保存しました。|장면을 전환하고 설정을 저장했습니다.
+Green turtle · always one|アオウミガメ · 常に1匹|푸른바다거북 · 항상 1마리
+Same motion as the fly · reaches the click, then retreats into its shell for 3 seconds|ハエと同じ動き · クリック位置で3秒間甲羅に隠れます|파리와 같은 움직임 · 클릭한 위치에 도착한 뒤 3초간 등껍질에 숨습니다
+Ocean creatures · 12 fish species|海の生き物 · 魚12種|바다 생물 · 물고기 12종
+Up to 100 of each fish; 0 disables it. Sizes: 10–300%.|各種100匹まで。0で非表示。サイズ：10～300%。|종별 최대 100마리, 0이면 숨김. 크기: 10~300%.
+Exclude creatures and settings from screen capture|生き物と設定画面を録画から除外|생물과 설정 창을 화면 캡처에서 제외
+Still visible on your display. Requires Windows 10 2004 or later. Only compatible capture tools honor this setting; it cannot block every monitoring tool.|自分の画面には表示されます。Windows 10 2004以降が必要です。対応する録画ツールのみ有効で、すべての監視ソフトを防ぐことはできません。|내 화면에는 계속 표시됩니다. Windows 10 2004 이상이 필요합니다. 이 기능을 지원하는 캡처 도구에서만 작동하며 모든 모니터링 도구의 녹화를 차단하지는 못합니다.
+Capture preference saved.|録画設定を保存しました。|캡처 설정을 저장했습니다.
+Windows could not apply capture exclusion to every window. Do not rely on it to hide content.|一部のウィンドウを録画から除外できませんでした。内容を隠す手段として使用しないでください。|일부 창에 캡처 제외를 적용하지 못했습니다. 내용을 숨기는 용도로 의존하지 마세요.
+Capture & sharing|録画と共有|캡처 및 공유
+Min size %|最小サイズ %|최소 크기 %
+Max size %|最大サイズ %|최대 크기 %
+Sizes must be whole percentages from 10–300%; min must not exceed max.|サイズは10～300%の整数で、最小値は最大値以下にしてください。|크기는 10~300%의 정수이며 최소값은 최대값 이하여야 합니다.
+Creature style|生き物のスタイル|생물 스타일
+Realistic|リアル|사실적
+Cute · soft and rounded|かわいい · 丸く柔らか|귀여움 · 부드럽고 둥글게
+Applies immediately, keeping populations and positions.|数と位置を保ったまますぐに反映されます。|생물 수와 위치를 유지한 채 즉시 적용됩니다.
+Creature style saved.|生き物のスタイルを保存しました。|생물 스타일을 저장했습니다.
+DesktopLife · Settings|DesktopLife · 設定|DesktopLife · 설정
+Let creatures roam across your desktop|デスクトップ全体を自由に動き回る生き物たち|전체 바탕 화면을 자유롭게 돌아다니는 생물들
+Save population & sizes|数とサイズを保存|생물 수와 크기 저장
+Pause all|すべて一時停止|모두 일시 정지
+Start / resume|開始／再開|시작 / 재개
+Display layout|画面の配置|화면 배치
+Detected display layout|検出された画面の配置|감지된 화면 배치
+Creatures cross touching edges, following your Windows display layout.|Windows の画面配置に従い、接する端から別の画面へ移動します。|Windows 화면 배치에 따라 서로 맞닿은 가장자리를 넘어 이동합니다.
+Desktop population|デスクトップ全体の数|전체 바탕 화면 생물 수
+Creature settings · 12 species|生き物の設定 · 12種|생물 설정 · 12종
+0 disables a species. Limit: 500 cockroaches or ants, 100 others. Sizes: 10–300%.|0で非表示。ゴキブリとアリは500匹、その他は100匹まで。サイズ：10～300%。|0이면 숨김. 바퀴벌레와 개미는 최대 500마리, 나머지는 100마리. 크기: 10~300%.
+Count|数|수
+Min %|最小 %|최소 %
+Max %|最大 %|최대 %
+All displays share one population. Adding a display keeps the same counts.|すべての画面で数を共有します。画面を追加しても数は増えません。|모든 화면이 생물 수를 공유합니다. 화면을 추가해도 수는 늘지 않습니다.
+Fly · always one|ハエ · 常に1匹|파리 · 항상 1마리
+Orbits the cursor · lands and grooms for 3 seconds after a click|カーソルの周りを飛行 · クリック後3秒間止まって脚をこすります|커서 주변을 비행 · 클릭 후 3초간 앉아서 다리를 비빕니다
+Cockroaches|ゴキブリ|바퀴벌레
+Crawls and avoids the cursor · 0–500|カーソルを避けて歩く · 0～500|커서를 피하며 기어 다님 · 0~500
+Ants|アリ|개미
+Fast walkers that avoid the cursor · 0–500|カーソルを避けて素早く歩く · 0～500|커서를 피하며 빠르게 걸음 · 0~500
+Caterpillars|イモムシ|애벌레
+Slow, rippling crawl · 0–100|ゆっくり体をくねらせて進む · 0～100|천천히 꿈틀거리며 이동 · 0~100
+Total cockroaches|ゴキブリの総数|바퀴벌레 총수
+Total ants|アリの総数|개미 총수
+Total caterpillars|イモムシの総数|애벌레 총수
+Cockroach count slider|ゴキブリの数のスライダー|바퀴벌레 수 슬라이더
+Ant count slider|アリの数のスライダー|개미 수 슬라이더
+Caterpillar count slider|イモムシの数のスライダー|애벌레 수 슬라이더
+Set a creature count to 0 to disable it. Closing this window keeps DesktopLife running.|数を0にすると非表示になります。このウィンドウを閉じても動作は続きます。|생물 수를 0으로 설정하면 숨겨집니다. 이 창을 닫아도 DesktopLife는 계속 실행됩니다.
+Language|言語|언어
+Global shortcuts|グローバルショートカット|전역 단축키
+Pause|一時停止|일시 정지
+Save shortcuts|ショートカットを保存|단축키 저장
+Focus a field and press a shortcut; Backspace clears it. Shortcuts work globally while DesktopLife is running.|入力欄を選んでキーを押してください。Backspaceで消去。DesktopLifeの実行中は他のアプリでも使えます。|입력란을 선택하고 단축키를 누르세요. Backspace로 지웁니다. DesktopLife 실행 중에는 모든 앱에서 사용할 수 있습니다.
+Use Ctrl, Alt or Shift with a letter, digit or F1–F11.|Ctrl・Alt・Shiftと英字、数字、F1～F11を組み合わせてください。|Ctrl, Alt 또는 Shift와 문자, 숫자, F1~F11을 조합하세요.
+Start and pause must use different shortcuts.|開始と一時停止には別のショートカットを指定してください。|시작과 일시 정지에는 서로 다른 단축키를 지정하세요.
+A shortcut is unavailable. Changes were not saved; choose another combination.|ショートカットが使用中です。保存していません。別の組み合わせを選んでください。|사용할 수 없는 단축키입니다. 변경 사항은 저장되지 않았습니다. 다른 조합을 선택하세요.
+Could not save. Settings are unchanged; check access to the settings folder.|保存できませんでした。設定は変更されていません。設定フォルダーの権限を確認してください。|저장하지 못했습니다. 설정은 변경되지 않았습니다. 설정 폴더의 접근 권한을 확인하세요.
+Shortcuts saved and active.|ショートカットを保存し、有効にしました。|단축키를 저장하고 적용했습니다.
+Language saved.|言語を保存しました。|언어를 저장했습니다.
+Enter whole numbers: cockroaches and ants 0–500; all other creatures 0–100.|整数を入力してください。ゴキブリとアリは0～500、その他は0～100です。|정수를 입력하세요. 바퀴벌레와 개미는 0~500, 나머지는 0~100입니다.
+Population saved for the next launch.|数を保存しました。次回起動時に復元します。|생물 수를 저장했습니다. 다음 실행 시 복원됩니다.
+Saved settings could not be read. Defaults are in use.|設定を読み込めないため、初期値を使用しています。|저장된 설정을 읽지 못해 기본값을 사용합니다.
+Primary|メイン|기본
+Settings…|設定…|설정…
+Exit|終了|종료
+DesktopLife · Screen saver settings|DesktopLife · スクリーンセーバー設定|DesktopLife · 화면 보호기 설정
+Could not read the previous settings; defaults are shown.|以前の設定を読み込めないため、初期値を表示しています。|이전 설정을 읽지 못해 기본값을 표시합니다.
+Save to apply the scene and both populations. Desktop settings stay separate.|保存するとシーンと両方の数を適用します。デスクトップ設定とは別に保存されます。|저장하면 장면과 두 생물 그룹의 수를 적용합니다. 바탕 화면 설정과 별도로 저장됩니다.
+Save screen saver|スクリーンセーバー設定を保存|화면 보호기 저장
+Background|背景|배경
+Dark|ダーク|어둡게
+Light|ライト|밝게
+Cute|かわいい|귀여움
+Background image|背景画像|배경 이미지
+Using a solid background|単色の背景を使用|단색 배경 사용 중
+Image unavailable; the screen saver will use a solid background.|画像を読み込めないため、単色の背景を使用します。|이미지를 사용할 수 없어 단색 배경을 사용합니다.
+Choose image…|画像を選択…|이미지 선택…
+Use solid color|単色に戻す|단색으로 복원
+Fills each screen without distortion, cropping the edges. Saving keeps a copy of the image.|縦横比を保って画面を埋め、端を切り取ります。保存時に画像のコピーを保持します。|비율을 유지하며 화면을 채우고 가장자리는 잘립니다. 저장할 때 이미지 사본을 보관합니다.
+Cannot read the image. Choose a valid PNG, JPG or BMP.|画像を読み込めません。有効なPNG・JPG・BMPを選んでください。|이미지를 읽을 수 없습니다. 올바른 PNG, JPG 또는 BMP를 선택하세요.
+Rain on your screen|画面に雨の窓を|화면 위의 빗방울 창
+Drops gather, slide and merge. The screen saver plays automatically; real mouse or keyboard input exits. Desktop rain supports pointer interaction and click fractures.|水滴がたまり、滑り落ちて合体します。スクリーンセーバーでは自動再生し、実際のマウスやキー入力で終了します。デスクトップではポインター操作とクリックによるひび割れを楽しめます。|물방울이 맺히고 흘러내리며 합쳐집니다. 화면 보호기에서는 자동 재생되며 실제 마우스나 키 입력으로 종료됩니다. 바탕 화면에서는 포인터 조작과 클릭 균열을 지원합니다.
+Roams automatically. Move the mouse or press a key to exit.|自動で動き回ります。マウス移動やキー入力で終了します。|자동으로 돌아다닙니다. 마우스를 움직이거나 키를 누르면 종료됩니다.
+Ocean creatures · 12 species|海の生き物 · 12種|바다 생물 · 12종
+Creatures · 12 species|生き物 · 12種|생물 · 12종
+Counts 0–100; 0 disables a species. Sizes: 10–300%.|数は0～100、0で非表示。サイズ：10～300%。|수는 0~100, 0이면 숨김. 크기: 10~300%.
+0 disables a species. Roaches and ants: up to 500; others: 100. Sizes: 10–300%.|0で非表示。ゴキブリとアリは500匹、その他は100匹まで。サイズ：10～300%。|0이면 숨김. 바퀴벌레와 개미는 최대 500마리, 나머지는 100마리. 크기: 10~300%.
+Choose the automatic activation delay and sign-in option in Windows screen saver settings.|自動起動の待ち時間と再開時のサインインは、Windowsのスクリーンセーバー設定で変更できます。|자동 시작 대기 시간과 복귀 시 로그인 옵션은 Windows 화면 보호기 설정에서 변경하세요.
+Enter a whole count from 0 to {0}.|数は0～{0}の整数を入力してください。|수는 0~{0}의 정수를 입력하세요.
+Sizes must be 10–300%, with minimum no greater than maximum.|サイズは10～300%で、最小値は最大値以下にしてください。|크기는 10~300%이며 최소값은 최대값 이하여야 합니다.
+Unable to save. Check that the settings folder is writable.|保存できません。設定フォルダーに書き込めるか確認してください。|저장할 수 없습니다. 설정 폴더에 쓸 수 있는지 확인하세요.
+Windows|Windows|Windows
+DesktopLife is selected in Windows|WindowsでDesktopLifeが選択されています|Windows에서 DesktopLife가 선택되었습니다
+ · starts after {0} idle seconds| · 待機{0}秒後に開始| · {0}초 동안 사용하지 않으면 시작
+Automatic DesktopLife screen saver is not enabled|DesktopLifeの自動スクリーンセーバーは無効です|DesktopLife 자동 화면 보호기가 활성화되지 않았습니다
+Check automatic activation in Windows settings|Windows設定で自動起動を確認してください|Windows 설정에서 자동 시작 상태를 확인하세요
+Unable to open the screen saver. Check that the app folder is accessible.|スクリーンセーバーを開けません。アプリのフォルダーにアクセスできるか確認してください。|화면 보호기를 열 수 없습니다. 앱 폴더에 접근할 수 있는지 확인하세요.
+Unable to start the screen saver preview.|スクリーンセーバーのプレビューを開始できません。|화면 보호기 미리 보기를 시작할 수 없습니다.
+Select DesktopLife, choose a wait time, then click Apply.|DesktopLifeを選び、待ち時間を設定して「適用」を押してください。|DesktopLife를 선택하고 대기 시간을 설정한 다음 적용을 누르세요.
+Unable to prepare the saver. Use the portable build and check folder permissions.|スクリーンセーバーを準備できません。ポータブル版を使用し、フォルダーの権限を確認してください。|화면 보호기를 준비할 수 없습니다. 포터블 버전을 사용하고 폴더 권한을 확인하세요.
+{0} displays|画面 {0} 台|화면 {0}개
+{0} displays · {1} fly · {2} roaches · {3} ants · {4} caterpillars|画面{0}台 · ハエ{1} · ゴキブリ{2} · アリ{3} · イモムシ{4}|화면 {0}개 · 파리 {1} · 바퀴벌레 {2} · 개미 {3} · 애벌레 {4}
+Cockroach|ゴキブリ|바퀴벌레
+Ant|アリ|개미
+Caterpillar|イモムシ|애벌레
+Ladybug|テントウムシ|무당벌레
+Ground beetle|オサムシ|딱정벌레
+Earwig|ハサミムシ|집게벌레
+Silverfish|シミ|좀벌레
+Cricket|コオロギ|귀뚜라미
+Grasshopper|バッタ|메뚜기
+Mantis|カマキリ|사마귀
+Stick insect|ナナフシ|대벌레
+Spider|クモ|거미
+Green turtle|アオウミガメ|푸른바다거북
+Clownfish|クマノミ|흰동가리
+Blue tang|ナンヨウハギ|블루탱
+Yellow tang|キイロハギ|옐로탱
+Butterflyfish|チョウチョウウオ|나비고기
+Angelfish|エンゼルフィッシュ|엔젤피시
+Lionfish|ミノカサゴ|쏠배감펭
+Pufferfish|フグ|복어
+Seahorse|タツノオトシゴ|해마
+Mandarin fish|ニシキテグリ|만다린피시
+Royal gramma|ロイヤルグラマ|로열그래마
+Moorish idol|ツノダシ|깃대돔
+Six-line wrasse|ニセモチノウオ|식스라인래스
+Images|画像|이미지

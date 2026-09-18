@@ -6,19 +6,19 @@
 
 Flies chase your cursor, spiders escape on silk, and a green turtle swims among 12 fish species. Switch between Forest and Ocean, across your monitors or as a native Windows screen saver.
 
-[**Download DesktopLife v0.5.1**](https://github.com/JonGates/DesktopLife/releases/download/v0.5.1/DesktopLife-Portable-win-x64-v0.5.1.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
+[**Download DesktopLife v0.6.0**](https://github.com/JonGates/DesktopLife/releases/download/v0.6.0/DesktopLife-Portable-win-x64-v0.6.0.zip) · [简体中文](README.zh-CN.md) · [All releases](https://github.com/JonGates/DesktopLife/releases)
 
 Windows 10/11 x64 · 26 creature types across two scenes · Realistic and cute styles · Multi-monitor · Portable
 
 </div>
 
-> **New in v0.5.1:** Interactive Rain Window joins Forest and Ocean. Five rain levels, sliding and merging drops, temporary glass fractures, and screen saver background images with approximate refraction. [Release notes](docs/RELEASE_v0.5.1.md).
+> **New in v0.6.0:** Five interface languages across the desktop app and screen saver: 简体中文, English, 繁體中文, 日本語 and 한국어. Includes localized creature names, tray menus and validation messages. [Release notes](docs/RELEASE_v0.6.0.md).
 
-**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** v0.5.1 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
+**Recommended: download the DesktopLife Portable ZIP. It includes both desktop pets and screen saver functionality.** v0.6.0 is a stable release distributed as one application package. [Screen saver guide](docs/SCREENSAVER.md).
 
 ![DesktopLife insects roaming across a Windows desktop](docs/images/live-desktop.gif)
 
-> DesktopLife v0.5.1 is a stable release. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
+> DesktopLife v0.6.0 is a stable release. If it made your desktop more alive—or slightly worse—⭐ star the repository and [tell us which creature should arrive next](https://github.com/JonGates/DesktopLife/issues).
 
 ## What lives on your desktop?
 
@@ -73,7 +73,7 @@ The app prepares a persistent screen saver copy under `%LocalAppData%\DesktopLif
 | --- | --- |
 | ![DesktopLife main app screen saver controls](docs/images/control-center-v050.png) | ![DesktopLife compact screen saver species settings](docs/images/saver-settings-v050.png) |
 
-Both windows support English and Simplified Chinese, resizing and persistent bottom actions. Screen saver settings remain separate from desktop settings.
+Both windows support Simplified Chinese, English, Traditional Chinese, Japanese and Korean, resizing and persistent bottom actions. Screen saver settings remain separate from desktop settings.
 
 > GitHub's automatically generated **Source code** archives contain project files, not the ready-to-run Windows app. Download the Portable package above.
 
@@ -93,7 +93,7 @@ Realistic mode combines generated macro-style body textures with program-driven 
 
 ### Live insects and bilingual settings
 
-This recording shows the earlier settings layout; the current v0.5.1 interface is shown above.
+This recording shows the earlier settings layout; the current v0.6.0 interface is shown above.
 
 ![DesktopLife settings with live insects and Chinese-English language switching](docs/images/live-settings.gif)
 
@@ -102,7 +102,7 @@ This recording shows the earlier settings layout; the current v0.5.1 interface i
 - **Pause everything:** `Ctrl+Alt+P`
 - **Resume everything:** `Ctrl+Alt+S`
 - **Change shortcuts:** open settings and edit the Global hotkeys section
-- **Change language:** switch between English and Simplified Chinese in settings
+- **Change language:** choose 简体中文, English, 繁體中文, 日本語 or 한국어 in settings
 - **Change populations or sizes:** save the Insect settings; existing creatures keep their positions where possible
 - **Quit:** right-click the DesktopLife tray icon and select Exit
 
@@ -124,7 +124,7 @@ Desktop settings are stored under **`%AppData%\DesktopLife`**. The desktop app a
 
 ### Is this a finished release?
 
-**v0.5.1 is a stable release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
+**v0.6.0 is a stable release.** Animation feedback and compatibility reports are especially useful—please include your Windows version and monitor arrangement when reporting a problem.
 
 ## Build from source
 
@@ -141,7 +141,7 @@ dotnet run --project src/DesktopLife.App -- --settings
 Create a self-contained Windows x64 package:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.5.1
+powershell -ExecutionPolicy Bypass -File scripts/Package-Portable.ps1 -Version 0.6.0
 ```
 
 For implementation details, packaging commands and diagnostics, see the [development and packaging guide](docs/DEVELOPMENT_AND_PACKAGING.md). Motion and size behavior are documented in [locomotion](docs/LOCOMOTION.md) and [species and proportions](docs/INSECTS.md).
@@ -163,6 +163,12 @@ When reporting a problem, include:
 
 **If DesktopLife earned a permanent place on your desktop, consider giving it a ⭐.**
 
-[Download v0.5.1](https://github.com/JonGates/DesktopLife/releases/tag/v0.5.1) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
+[Download v0.6.0](https://github.com/JonGates/DesktopLife/releases/tag/v0.6.0) · [中文说明](README.zh-CN.md) · [Report a bug](https://github.com/JonGates/DesktopLife/issues)
 
 </div>
+
+### Five interface languages
+
+Switch language at the top right of settings. Changes apply immediately in the main app; screen saver language is saved separately with its settings. No language pack or network connection is required. [Localization guide](docs/LOCALIZATION.md).
+
+![Japanese settings in DesktopLife v0.6.0](docs/images/settings-ja-v060.png)
